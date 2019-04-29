@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "939518793519",
+    "firebase_url": "https://synergyet-android.firebaseio.com",
+    "project_id": "synergyet-android",
+    "storage_bucket": "synergyet-android.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:939518793519:android:63e536dac8e930ba",
+        "android_client_info": {
+          "package_name": "com.synergy.synergyet"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "939518793519-a4p6dla6gdob1e8beor9bo19k341tq00.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.synergy.synergyet",
+            "certificate_hash": "01975e9f2a328be9f3ee68f666f9ec10959d8c38"
+          }
+        },
+        {
+          "client_id": "939518793519-lt8khf2ipjp3val6v89hfk11k1ck4sbh.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBVzXKSj8c-tQpQMWNscoTkhATICgh-zOk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "939518793519-lt8khf2ipjp3val6v89hfk11k1ck4sbh.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
