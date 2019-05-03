@@ -51,7 +51,7 @@ public class MainActivity extends AppCompatActivity {
         user = FirebaseAuth.getInstance().getCurrentUser();
         if (user != null) {
             // Si el usuario ya ha iniciado sesión antes, se le mostrará la pantalla principal de la aplicación
-            //TODO: Mostrar la pantalla principal (el calendario)
+            //TODO: Mostrar la pantalla principal
         }
         Button btnLogin = findViewById(R.id.btnLogin);
         btnLogin.setOnClickListener(new View.OnClickListener() {
@@ -106,7 +106,7 @@ public class MainActivity extends AppCompatActivity {
                             //TODO: Mostrar el nombre del usuario al hacer login correctamente. ej: 'Bienvendido Marc!! :)'
                             Toast.makeText(MainActivity.this, toast_txt1+" (nombre)!! :)",
                                     Toast.LENGTH_SHORT).show();
-                            //TODO: Abrir el activity prinicipal de la aplicación (el calendario)
+                            //TODO: Abrir el activity prinicipal de la aplicación
 
                         } else {
                             // Si el login falla, se mostrará al usuario un diálogo con un mensaje de error

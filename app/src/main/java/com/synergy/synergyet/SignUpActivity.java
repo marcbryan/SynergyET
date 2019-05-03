@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Base64;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -14,6 +15,9 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 
 public class SignUpActivity extends AppCompatActivity {
     private FirebaseAuth mAuth;
@@ -62,7 +66,12 @@ public class SignUpActivity extends AppCompatActivity {
                         showDialog(diff_pass);
                     } else {
                         // Crear cuenta
-
+                        String hash = encryptSHA256(pass_1);
+                        System.out.println(hash);
+                        if (hash.equals(encryptSHA256(pass_1))){
+                            System.out.println("correcto");
+                        }
+                        finish();
                     }
                 }
             }
@@ -77,9 +86,7 @@ public class SignUpActivity extends AppCompatActivity {
                 .setCancelable(false)
                 .setPositiveButton(dialogOK, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
-                        // Borra el texto del EditText del usuario y de la contraseña
-                        //et_user.setText("");
-                        //et_pass.setText("");
+
                     }
                 });
         AlertDialog alert = builder.create();
@@ -96,7 +103,6 @@ public class SignUpActivity extends AppCompatActivity {
                             // Si la cuenta se ha creado correctamente, volverá a la pantalla de login para poder acceder a la cuenta
                             //Log.d(TAG, "createUserWithEmail:success");
                             //user = mAuth.getCurrentUser();
-                            //TODO: Acceder a la pantalla principal
 
                         } else {
                             // Si falla el registro, se mostrará un mensaje
@@ -107,6 +113,19 @@ public class SignUpActivity extends AppCompatActivity {
                         }
                     }
                 });
+        mAuth.getPendingAuthResult();
+    }
+
+    public String encryptSHA256 (String text) {
+        MessageDigest md = null;
+        try {
+            md = MessageDigest.getInstance("SHA-256");
+        } catch (NoSuchAlgorithmException e){
+            e.printStackTrace();
+        }
+        md.update(text.getBytes());
+        byte[] digest = md.digest();
+        return Base64.encodeToString(digest, Base64.DEFAULT);
     }
 
 }
