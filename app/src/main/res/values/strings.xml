@@ -11,4 +11,9 @@
     <string name="dialog1_txt2">Credenciales incorrectas, introduce un mail y contraseña válidos!</string>
     <string name="dialogOK_button">Aceptar</string>
     <string name="toast1">Bienvenido</string>
+
+    <!-- Textos SignUpActivity -->
+    <string name="dialog2_txt1">Faltan campos por rellenar</string>
+    <string name="dialog2_txt2">Las contraseñas no coinciden</string>
+    <string name="dialog2_txt3">El registro de la cuenta ha fallado, vuelve a intentarlo</string>
 </resources>
