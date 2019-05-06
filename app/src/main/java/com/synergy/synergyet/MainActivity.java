@@ -6,6 +6,8 @@ import android.support.annotation.NonNull;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Base64;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -13,10 +15,21 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QuerySnapshot;
+import com.synergy.synergyet.model.User;
+
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -25,11 +38,15 @@ public class MainActivity extends AppCompatActivity {
 
     private FirebaseAuth mAuth;
     private FirebaseUser user;
+    private FirebaseFirestore db;
 
     private String dialog_txt1;
     private String dialog_txt2;
     private String dialogOK;
     private String toast_txt1;
+
+    private final String COLLECTION_1 = "users";
+    private final String FIELD1_C1 = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,7 +80,7 @@ public class MainActivity extends AppCompatActivity {
                     showDialog(dialog_txt1);
                 } else {
                     // Si el usuario introduce email y password, comprobaremos si las credenciales son correctas
-                    signIn(email, password);
+                    signIn(email, encryptSHA256(password));
                 }
             }
         });
@@ -95,6 +112,18 @@ public class MainActivity extends AppCompatActivity {
         alert.show();
     }
 
+    private String encryptSHA256 (String text) {
+        MessageDigest md = null;
+        try {
+            md = MessageDigest.getInstance("SHA-256");
+        } catch (NoSuchAlgorithmException e){
+            e.printStackTrace();
+        }
+        md.update(text.getBytes());
+        byte[] digest = md.digest();
+        return Base64.encodeToString(digest, Base64.DEFAULT);
+    }
+
     private void signIn(String email, String password){
         mAuth.signInWithEmailAndPassword(email, password)
                 .addOnCompleteListener(MainActivity.this, new OnCompleteListener<AuthResult>() {
@@ -115,4 +144,27 @@ public class MainActivity extends AppCompatActivity {
                     }
                 });
     }
+
+    //TODO: Incompleto (no funciona)
+    private void getUserData(String UID){
+        //DocumentReference docRef = db.collection(COLLECTION_1).document();
+        //CollectionReference colRef =
+
+                                        //.whereEqualTo(UID, user.getUid())
+                                        //.get();
+        db.collection(COLLECTION_1)
+                .whereEqualTo(UID, user.getUid())
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        if (task.isSuccessful()){
+                            //for
+                        } else {
+
+                        }
+                    }
+                });
+    }
+
 }

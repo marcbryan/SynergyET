@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.text.TextUtils;
 import android.util.Base64;
 import android.util.Log;
 import android.view.View;
@@ -27,7 +28,7 @@ import java.security.NoSuchAlgorithmException;
 
 public class SignUpActivity extends AppCompatActivity {
     private FirebaseAuth mAuth;
-    private FirebaseUser user;
+    //private FirebaseUser user;
     private FirebaseFirestore db;
 
     private EditText et_name;
@@ -41,13 +42,17 @@ public class SignUpActivity extends AppCompatActivity {
     private String diff_pass;
     private String create_acc_failed;
 
-    private final String users_collection = "users";
+    private final String DEFAULT_USER_TYPE = "student";
+    private final String COLLECTION_1 = "users";
     private final String TAG = "DOC";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_signup);
+
+        mAuth = FirebaseAuth.getInstance();
+        db = FirebaseFirestore.getInstance();
 
         dialogOK = getString(R.string.dialogOK_button);
         notCompleted = getString(R.string.dialog2_txt1);
@@ -68,20 +73,23 @@ public class SignUpActivity extends AppCompatActivity {
                 String email = et_email.getText().toString();
                 String pass_1 = et_password1.getText().toString();
                 String pass_2 = et_password2.getText().toString();
-
                 if (name.equals("") || surname.equals("") || email.equals("") || pass_1.equals("") || pass_2.equals("")) {
+                //if (TextUtils.isEmpty(name) || TextUtils.isEmpty(surname) || TextUtils.isEmpty(email) || TextUtils.isEmpty(pass_1) || TextUtils.isEmpty(pass_2)) {
                     showDialog(notCompleted);
                 } else {
                     if (!pass_1.equals(pass_2)) {
                         showDialog(diff_pass);
                     } else {
                         // Crear cuenta
-                        String hash = encryptSHA256(pass_1);
-                        System.out.println(hash);
-                        if (hash.equals(encryptSHA256(pass_1))){
-                            System.out.println("correcto");
-                        }
-                        finish();
+                        String hashed_pwd = encryptSHA256(pass_1);
+                        User user = new User(name, surname, email, hashed_pwd, DEFAULT_USER_TYPE);
+                        System.out.println("toString 1 -> "+user.toString());
+                        signUp(email, hashed_pwd, user);
+                        //System.out.println(hash);
+                        //if (hash.equals(encryptSHA256(pass_1))){
+                           //System.out.println("correcto");
+                        //}
+                        //finish();
                     }
                 }
             }
@@ -116,12 +124,17 @@ public class SignUpActivity extends AppCompatActivity {
         return Base64.encodeToString(digest, Base64.DEFAULT);
     }
 
-    private void signUp(String email, String password) {
+    private void signUp(String email, String password, final User user) {
         mAuth.createUserWithEmailAndPassword(email, password)
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {
+                            // Una vez se cree la cuenta, se podrá poner el UID
+                            user.setUID(mAuth.getCurrentUser().getUid());
+                            System.out.println(user.toString());
+                            // Ahora añadimos los datos de la cuenta a Cloud Firestore
+                            addAccount(user);
                             // Si la cuenta se ha creado correctamente, volverá a la pantalla de login para poder acceder a la cuenta
                             //Log.d(TAG, "createUserWithEmail:success");
                             //user = mAuth.getCurrentUser();
@@ -139,19 +152,21 @@ public class SignUpActivity extends AppCompatActivity {
     }
 
     private void addAccount(User user) {
-        db.collection(users_collection)
+        db.collection(COLLECTION_1)
                 .add(user)
                 .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
                     @Override
                     public void onSuccess(DocumentReference documentReference) {
                         Log.d(TAG, "Document added with ID: " + documentReference.getId());
+                        finish();
                     }
                 })
                 .addOnFailureListener(new OnFailureListener() {
                     @Override
                     public void onFailure(@NonNull Exception e) {
-                        //Log.w(TAG, "Error writing document", e);
+                        Log.w(TAG, "Error writing document", e);
                     }
                 });
+
     }
 }

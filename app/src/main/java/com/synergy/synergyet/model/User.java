@@ -27,6 +27,14 @@ public class User {
         this.type = type;
     }
 
+    public User(String name, String surname, String username, String password, String type) {
+        this.name = name;
+        this.surname = surname;
+        this.username = username;
+        this.password = password;
+        this.type = type;
+    }
+
     public String getUID() {
         return UID;
     }
@@ -81,5 +89,18 @@ public class User {
 
     public void setCourses(ArrayList<Integer> courses) {
         this.courses = courses;
+    }
+
+    @Override
+    public String toString() {
+        return "User{" +
+                "UID='" + UID + '\'' +
+                ", name='" + name + '\'' +
+                ", surname='" + surname + '\'' +
+                ", username='" + username + '\'' +
+                ", password='" + password + '\'' +
+                ", type='" + type + '\'' +
+                ", courses=" + courses +
+                '}';
     }
 }
