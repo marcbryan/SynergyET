@@ -6,15 +6,21 @@ import android.support.annotation.NonNull;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Base64;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.synergy.synergyet.model.User;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -22,6 +28,7 @@ import java.security.NoSuchAlgorithmException;
 public class SignUpActivity extends AppCompatActivity {
     private FirebaseAuth mAuth;
     private FirebaseUser user;
+    private FirebaseFirestore db;
 
     private EditText et_name;
     private EditText et_surname;
@@ -33,6 +40,9 @@ public class SignUpActivity extends AppCompatActivity {
     private String notCompleted;
     private String diff_pass;
     private String create_acc_failed;
+
+    private final String users_collection = "users";
+    private final String TAG = "DOC";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -94,6 +104,18 @@ public class SignUpActivity extends AppCompatActivity {
         alert.show();
     }
 
+    private String encryptSHA256 (String text) {
+        MessageDigest md = null;
+        try {
+            md = MessageDigest.getInstance("SHA-256");
+        } catch (NoSuchAlgorithmException e){
+            e.printStackTrace();
+        }
+        md.update(text.getBytes());
+        byte[] digest = md.digest();
+        return Base64.encodeToString(digest, Base64.DEFAULT);
+    }
+
     private void signUp(String email, String password) {
         mAuth.createUserWithEmailAndPassword(email, password)
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
@@ -116,16 +138,20 @@ public class SignUpActivity extends AppCompatActivity {
         mAuth.getPendingAuthResult();
     }
 
-    public String encryptSHA256 (String text) {
-        MessageDigest md = null;
-        try {
-            md = MessageDigest.getInstance("SHA-256");
-        } catch (NoSuchAlgorithmException e){
-            e.printStackTrace();
-        }
-        md.update(text.getBytes());
-        byte[] digest = md.digest();
-        return Base64.encodeToString(digest, Base64.DEFAULT);
+    private void addAccount(User user) {
+        db.collection(users_collection)
+                .add(user)
+                .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
+                    @Override
+                    public void onSuccess(DocumentReference documentReference) {
+                        Log.d(TAG, "Document added with ID: " + documentReference.getId());
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        //Log.w(TAG, "Error writing document", e);
+                    }
+                });
     }
-
 }
