@@ -56,8 +56,8 @@ public class MainActivity extends AppCompatActivity {
         toast_txt1 = getString(R.string.toast1);
 
         // Obtener los componentes del activity
-        et_user = findViewById(R.id.et_user);
-        et_pass = findViewById(R.id.et_pass);
+        et_user = findViewById(R.id.et_username);
+        et_pass = findViewById(R.id.et_password);
 
         mAuth = FirebaseAuth.getInstance();
         // Para obtener el usuario actual (el último que usó el usuario)
@@ -69,7 +69,7 @@ public class MainActivity extends AppCompatActivity {
             startActivity(intent);
         }
         db = FirebaseFirestore.getInstance();
-        Button btnLogin = findViewById(R.id.btnLogin);
+        Button btnLogin = findViewById(R.id.btn_login);
         btnLogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -83,7 +83,7 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         });
-        TextView signUp = findViewById(R.id.tvCreateAcc);
+        TextView signUp = findViewById(R.id.lbl_create_user);
         signUp.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
