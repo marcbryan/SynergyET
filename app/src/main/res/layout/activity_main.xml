@@ -73,7 +73,7 @@
         android:background="@drawable/btn_bg"
         android:text="@string/login"
         android:textAllCaps="false"
-        android:textColor="@color/login_form_details_medium"
+        android:textColor="@color/login_form_details"
         app:layout_constraintEnd_toStartOf="@+id/guideline_right"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="@+id/guideline_left"
