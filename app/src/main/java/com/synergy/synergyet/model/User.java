@@ -12,19 +12,10 @@ public class User {
     private ArrayList<Integer> courses;
 
     /**
-     * Para poder insertar los datos de una clase personalizada se necesita un constructor público sin parámetros
+     * Para poder insertar los datos de una clase personalizada en Cloud Firestore, se necesita un constructor público sin parámetros
      */
     public User(){
 
-    }
-
-    public User(String UID, String name, String surname, String username, String password, String type) {
-        this.UID = UID;
-        this.name = name;
-        this.surname = surname;
-        this.username = username;
-        this.password = password;
-        this.type = type;
     }
 
     public User(String name, String surname, String username, String password, String type) {

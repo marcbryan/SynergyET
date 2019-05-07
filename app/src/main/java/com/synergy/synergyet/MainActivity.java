@@ -7,7 +7,6 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Base64;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -21,12 +20,12 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.QuerySnapshot;
 import com.synergy.synergyet.model.User;
+import com.synergy.synergyet.strings.FirebaseStrings;
+import com.synergy.synergyet.strings.IntentExtras;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -44,9 +43,6 @@ public class MainActivity extends AppCompatActivity {
     private String dialog_txt2;
     private String dialogOK;
     private String toast_txt1;
-
-    private final String COLLECTION_1 = "users";
-    private final String FIELD1_C1 = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -68,8 +64,11 @@ public class MainActivity extends AppCompatActivity {
         user = FirebaseAuth.getInstance().getCurrentUser();
         if (user != null) {
             // Si el usuario ya ha iniciado sesión antes, se le mostrará la pantalla principal de la aplicación
-            //TODO: Mostrar la pantalla principal
+            Intent intent = new Intent(MainActivity.this, WelcomeActivity.class);
+            //TODO: Pasarle sus datos al siguiente activity
+            startActivity(intent);
         }
+        db = FirebaseFirestore.getInstance();
         Button btnLogin = findViewById(R.id.btnLogin);
         btnLogin.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -80,7 +79,7 @@ public class MainActivity extends AppCompatActivity {
                     showDialog(dialog_txt1);
                 } else {
                     // Si el usuario introduce email y password, comprobaremos si las credenciales son correctas
-                    signIn(email, encryptSHA256(password));
+                    signIn(email, hashSHA256(password));
                 }
             }
         });
@@ -95,6 +94,10 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * Muesta un diálogo con un botón de ok y el texto que le pasamos como parámetro
+     * @param dialog_txt - El texto a mostrar en el diálogo
+     */
     private void showDialog(String dialog_txt) {
         // Creo un diálogo
         AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
@@ -112,7 +115,12 @@ public class MainActivity extends AppCompatActivity {
         alert.show();
     }
 
-    private String encryptSHA256 (String text) {
+    /**
+     * Hashea un string en SHA-256 (hash)
+     * @param text - El texto que queremos hashear
+     * @return Devuelve el hash del string que le pasamos como parámetro
+     */
+    private String hashSHA256(String text) {
         MessageDigest md = null;
         try {
             md = MessageDigest.getInstance("SHA-256");
@@ -124,6 +132,11 @@ public class MainActivity extends AppCompatActivity {
         return Base64.encodeToString(digest, Base64.DEFAULT);
     }
 
+    /**
+     * Hace login en Firebase
+     * @param email - El email con el que queremos acceder
+     * @param password - La contraseña con la que queremos acceder
+     */
     private void signIn(String email, String password){
         mAuth.signInWithEmailAndPassword(email, password)
                 .addOnCompleteListener(MainActivity.this, new OnCompleteListener<AuthResult>() {
@@ -132,39 +145,44 @@ public class MainActivity extends AppCompatActivity {
                         if (task.isSuccessful()) {
                             // Si el login se realiza con éxito, accederá a la aplicación
                             user = mAuth.getCurrentUser();
-                            //TODO: Mostrar el nombre del usuario al hacer login correctamente. ej: 'Bienvendido Marc!! :)'
-                            Toast.makeText(MainActivity.this, toast_txt1+" (nombre)!! :)",
-                                    Toast.LENGTH_SHORT).show();
-                            //TODO: Abrir el activity prinicipal de la aplicación
-
+                            getUserData(user.getUid());
                         } else {
                             // Si el login falla, se mostrará al usuario un diálogo con un mensaje de error
+                            //Log.w("FirebaseError", "signInWithEmail:failure", task.getException());
                             showDialog(dialog_txt2);
                         }
                     }
                 });
     }
 
-    //TODO: Incompleto (no funciona)
+    /**
+     * Busca los datos de un usuario en Cloud Firestore sabiendo su UID
+     * @param UID - El UID del usuario del que queremos los datos
+     */
     private void getUserData(String UID){
-        //DocumentReference docRef = db.collection(COLLECTION_1).document();
-        //CollectionReference colRef =
-
-                                        //.whereEqualTo(UID, user.getUid())
-                                        //.get();
-        db.collection(COLLECTION_1)
-                .whereEqualTo(UID, user.getUid())
-                .get()
-                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                    @Override
-                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                        if (task.isSuccessful()){
-                            //for
-                        } else {
-
-                        }
-                    }
-                });
+        final DocumentReference docRef = db.collection(FirebaseStrings.COLLECTION_1).document(UID);
+        docRef.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+            @Override
+            public void onSuccess(DocumentSnapshot documentSnapshot) {
+                // Obtener los datos del usuario
+                User user = documentSnapshot.toObject(User.class);
+                // Mostrar Toast de bienvienida
+                Toast.makeText(MainActivity.this, toast_txt1 + " " + user.getName() + "!! :)",
+                Toast.LENGTH_SHORT).show();
+                // Creamos el intent de la pantalla de bienvenida
+                Intent intent = new Intent(MainActivity.this, WelcomeActivity.class);
+                //TODO: Pasarle sus datos (Clase User) al siguiente activity, para no volver a consultarlos
+                //intent.putExtra(IntentExtras.EXTRA_USER_DATA, (User) user);
+                // Iniciamos el activity
+                startActivity(intent);
+            }
+        })
+        .addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                System.out.println("Error -> " + e);
+            }
+        });
     }
 
 }

@@ -5,12 +5,12 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
-import android.text.TextUtils;
 import android.util.Base64;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -18,17 +18,15 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.synergy.synergyet.model.User;
+import com.synergy.synergyet.strings.FirebaseStrings;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
 public class SignUpActivity extends AppCompatActivity {
     private FirebaseAuth mAuth;
-    //private FirebaseUser user;
     private FirebaseFirestore db;
 
     private EditText et_name;
@@ -41,9 +39,8 @@ public class SignUpActivity extends AppCompatActivity {
     private String notCompleted;
     private String diff_pass;
     private String create_acc_failed;
+    private String create_acc_ok;
 
-    private final String DEFAULT_USER_TYPE = "student";
-    private final String COLLECTION_1 = "users";
     private final String TAG = "DOC";
 
     @Override
@@ -51,6 +48,7 @@ public class SignUpActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_signup);
 
+        // Obtener las instancias de FirebaseAuth y FirebaseFirestore (MUY IMPORTANTE!!)
         mAuth = FirebaseAuth.getInstance();
         db = FirebaseFirestore.getInstance();
 
@@ -58,6 +56,7 @@ public class SignUpActivity extends AppCompatActivity {
         notCompleted = getString(R.string.dialog2_txt1);
         diff_pass = getString(R.string.dialog2_txt2);
         create_acc_failed = getString(R.string.dialog2_txt3);
+        create_acc_ok = getString(R.string.toast2);
 
         et_name = findViewById(R.id.et_name);
         et_surname = findViewById(R.id.et_surname);
@@ -74,7 +73,6 @@ public class SignUpActivity extends AppCompatActivity {
                 String pass_1 = et_password1.getText().toString();
                 String pass_2 = et_password2.getText().toString();
                 if (name.equals("") || surname.equals("") || email.equals("") || pass_1.equals("") || pass_2.equals("")) {
-                //if (TextUtils.isEmpty(name) || TextUtils.isEmpty(surname) || TextUtils.isEmpty(email) || TextUtils.isEmpty(pass_1) || TextUtils.isEmpty(pass_2)) {
                     showDialog(notCompleted);
                 } else {
                     if (!pass_1.equals(pass_2)) {
@@ -82,14 +80,9 @@ public class SignUpActivity extends AppCompatActivity {
                     } else {
                         // Crear cuenta
                         String hashed_pwd = encryptSHA256(pass_1);
-                        User user = new User(name, surname, email, hashed_pwd, DEFAULT_USER_TYPE);
+                        User user = new User(name, surname, email, hashed_pwd, FirebaseStrings.DEFAULT_USER_TYPE);
                         System.out.println("toString 1 -> "+user.toString());
                         signUp(email, hashed_pwd, user);
-                        //System.out.println(hash);
-                        //if (hash.equals(encryptSHA256(pass_1))){
-                           //System.out.println("correcto");
-                        //}
-                        //finish();
                     }
                 }
             }
@@ -124,6 +117,8 @@ public class SignUpActivity extends AppCompatActivity {
         return Base64.encodeToString(digest, Base64.DEFAULT);
     }
 
+    //TODO: Método para comprobar si el mail existe
+
     private void signUp(String email, String password, final User user) {
         mAuth.createUserWithEmailAndPassword(email, password)
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
@@ -152,12 +147,17 @@ public class SignUpActivity extends AppCompatActivity {
     }
 
     private void addAccount(User user) {
-        db.collection(COLLECTION_1)
-                .add(user)
-                .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
+        db.collection(FirebaseStrings.COLLECTION_1)
+                // El ID del documento será el UID de Firebase del usuario que se registra (para luego buscar el documento por el ID)
+                .document(user.getUID())
+                .set(user)
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
-                    public void onSuccess(DocumentReference documentReference) {
-                        Log.d(TAG, "Document added with ID: " + documentReference.getId());
+                    public void onSuccess(Void aVoid) {
+                        // Mostrar Toast de cuenta creada
+                        Toast.makeText(SignUpActivity.this, create_acc_ok,
+                                Toast.LENGTH_SHORT).show();
+                        //Cerrar el activity
                         finish();
                     }
                 })
