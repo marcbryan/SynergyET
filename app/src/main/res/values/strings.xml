@@ -7,6 +7,7 @@
     <string name="forgot_password">Ha olvidado su contraseña?</string>
     <string name="create_user">No tiene una cuenta de usuario?</string>
     <string name="or">o</string>
+    <string name="desc_eye">Ver contraseña</string>
     <string name="dialog1_txt1">Introduce tu mail y contraseña</string>
     <string name="dialog1_txt2">Credenciales incorrectas, introduce un mail y contraseña válidos!</string>
     <string name="dialogOK_button">Aceptar</string>

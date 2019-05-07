@@ -26,7 +26,7 @@
         android:layout_width="224dp"
         android:layout_height="167dp"
         android:layout_marginTop="24dp"
-        android:contentDescription="logo"
+        android:contentDescription="@string/app_name"
         android:src="@drawable/logo"
         app:layout_constraintEnd_toStartOf="@+id/guideline_right"
         app:layout_constraintHorizontal_bias="0.506"
@@ -54,8 +54,6 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="20dp"
         android:background="@drawable/et_bg"
-        android:drawableEnd="@drawable/ic_eye"
-        android:drawableRight="@drawable/ic_eye"
         android:hint="@string/password"
         android:inputType="textPassword"
         android:padding="16dp"
@@ -136,5 +134,19 @@
         android:background="@color/login_form_details_medium"
         app:layout_constraintEnd_toEndOf="@id/guideline_right"
         app:layout_constraintTop_toBottomOf="@id/lbl_forgot_password" />
+
+    <ImageView
+        android:id="@+id/eye_icon"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginTop="36dp"
+        android:contentDescription="@string/desc_eye"
+        app:layout_constraintEnd_toEndOf="@+id/et_password"
+        app:layout_constraintHorizontal_bias="0.954"
+        app:layout_constraintStart_toStartOf="@+id/et_password"
+        app:layout_constraintTop_toBottomOf="@+id/et_username"
+        app:srcCompat="@drawable/ic_eye" />
 
 </android.support.constraint.ConstraintLayout>

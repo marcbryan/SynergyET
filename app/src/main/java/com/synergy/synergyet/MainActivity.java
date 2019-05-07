@@ -2,14 +2,19 @@ package com.synergy.synergyet;
 
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.drawable.Drawable;
 import android.support.annotation.NonNull;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.text.method.PasswordTransformationMethod;
 import android.util.Base64;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -25,7 +30,6 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.synergy.synergyet.model.User;
 import com.synergy.synergyet.strings.FirebaseStrings;
-import com.synergy.synergyet.strings.IntentExtras;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -34,6 +38,9 @@ public class MainActivity extends AppCompatActivity {
 
     private EditText et_user;
     private EditText et_pass;
+    private ImageView eye;
+    private Drawable visible;
+    private Drawable not_visible;
 
     private FirebaseAuth mAuth;
     private FirebaseUser user;
@@ -43,11 +50,21 @@ public class MainActivity extends AppCompatActivity {
     private String dialog_txt2;
     private String dialogOK;
     private String toast_txt1;
+    private boolean showing_pass = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        // Para obtener el usuario actual (el último que usó el usuario)
+        user = FirebaseAuth.getInstance().getCurrentUser();
+        if (user != null) {
+            // Si el usuario ya ha iniciado sesión antes, se le mostrará la pantalla principal de la aplicación
+            Intent intent = new Intent(MainActivity.this, WelcomeActivity.class);
+            //TODO: Pasarle sus datos al siguiente activity
+            startActivity(intent);
+        }
 
         // Obtener los textos de strings.xml
         dialog_txt1 = getString(R.string.dialog1_txt1);
@@ -59,16 +76,62 @@ public class MainActivity extends AppCompatActivity {
         et_user = findViewById(R.id.et_username);
         et_pass = findViewById(R.id.et_password);
 
+        // Obtener las imagenes de visible y no visible
+        visible = ContextCompat.getDrawable(MainActivity.this, R.drawable.ic_eye);
+        not_visible = ContextCompat.getDrawable(MainActivity.this, R.drawable.ic_visibility_off_white_24dp);
+
         mAuth = FirebaseAuth.getInstance();
-        // Para obtener el usuario actual (el último que usó el usuario)
-        user = FirebaseAuth.getInstance().getCurrentUser();
-        if (user != null) {
-            // Si el usuario ya ha iniciado sesión antes, se le mostrará la pantalla principal de la aplicación
-            Intent intent = new Intent(MainActivity.this, WelcomeActivity.class);
-            //TODO: Pasarle sus datos al siguiente activity
-            startActivity(intent);
-        }
         db = FirebaseFirestore.getInstance();
+
+        eye = findViewById(R.id.eye_icon);
+        eye.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (!et_pass.getText().toString().equals("")) {
+                    if (!showing_pass) {
+                        //System.out.println("showing");
+                        //et_pass.setSelection(et_pass.getText().length());
+                        // Muestra la contraseña
+                        et_pass.setTransformationMethod(null);
+                        eye.setImageDrawable(not_visible);
+                        showing_pass = true;
+                    } else {
+                        //System.out.println("hiding");
+                        //et_pass.setSelection(et_pass.getText().length());
+                        // Oculta la contraseña
+                        et_pass.setTransformationMethod(new PasswordTransformationMethod());
+                        eye.setImageDrawable(visible);
+                        showing_pass = false;
+                    }
+                }
+            }
+        });
+        //et_pass.setTransformationMethod(new PasswordTransformationMethod());
+        /*
+        et_pass.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                System.out.println("Click");
+                final int DRAWABLE_RIGHT = 2;
+                if (event.getAction() == MotionEvent.ACTION_UP) {
+                    if (event.getX() >= (et_pass.getWidth() - et_pass.getCompoundDrawables()[DRAWABLE_RIGHT].getBounds().width() - et_pass.getPaddingRight())) {
+                        if (!showing_pass) {
+                            System.out.println("showing");
+                            //et_pass.setSelection(et_pass.getText().length());
+                            et_pass.setTransformationMethod(null);
+                            showing_pass = true;
+                        } else {
+                            System.out.println("hiding");
+                            //et_pass.setSelection(et_pass.getText().length());
+                            et_pass.setTransformationMethod(new PasswordTransformationMethod());
+                            showing_pass = false;
+                        }
+                        return true;
+                    }
+                }
+                return false;
+            }
+        });*/
         Button btnLogin = findViewById(R.id.btn_login);
         btnLogin.setOnClickListener(new View.OnClickListener() {
             @Override
