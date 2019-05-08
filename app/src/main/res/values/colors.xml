@@ -11,4 +11,6 @@
     <color name="login_form_details_medium">#66ffffff</color>
     <color name="colorWhite">#ffffff</color>
     <color name="colorHint">#a0a0a0</color>
+
+    <color name="colorBlueTitle">#0070a8</color>
 </resources>
