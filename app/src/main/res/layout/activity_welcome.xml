@@ -24,6 +24,7 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <ListView
+        android:id="@+id/courses_list"
         android:layout_width="0dp"
         android:layout_height="252dp" />
 </android.support.constraint.ConstraintLayout>
