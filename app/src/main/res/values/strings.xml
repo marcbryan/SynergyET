@@ -18,4 +18,11 @@
     <string name="dialog2_txt2">Las contraseñas no coinciden</string>
     <string name="dialog2_txt3">El registro de la cuenta ha fallado, vuelve a intentarlo</string>
     <string name="toast2">Cuenta creada correctamente!</string>
+
+    <!-- Textos WelcomeActivity -->
+    <string name="titleWelcome">Mis cursos</string>
+    <string name="inscribe_course">Inscribirme a un curso</string>
+
+    <!-- Textos InscribeCourseActivity -->
+    <string name="titleInscribe">Inscribirse a un curso</string>
 </resources>

@@ -9,6 +9,8 @@
         <!-- Ocultar el ActionBar y el titulo -->
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
+        <!-- Cambia el color de la flecha del ActionBar -->
+        <item name="colorControlNormal">@color/colorWhite</item>
     </style>
 
 </resources>
