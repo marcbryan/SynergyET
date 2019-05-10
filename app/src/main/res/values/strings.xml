@@ -3,7 +3,7 @@
     <string name="email_address">Correo electrónico</string>
     <string name="password">Contraseña</string>
     <string name="login">Login</string>
-    <string name="forgot_password">Ha olvidado su contraseña?</string>
-    <string name="create_user">No tiene una cuenta de usuario?</string>
+    <string name="forgot_password"><u>Ha olvidado su contraseña?</u></string>
+    <string name="create_user"><u>No tiene una cuenta de usuario?</u></string>
     <string name="or">o</string>
 </resources>
