@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.ExpandableListView;
+import android.widget.Toast;
 
 import com.synergy.synergyet.custom.InscribeExpandableListAdapter;
 
@@ -60,6 +61,7 @@ public class InscribeCourseActivity extends AppCompatActivity {
         expandableListView.setOnChildClickListener(new ExpandableListView.OnChildClickListener() {
             @Override
             public boolean onChildClick(ExpandableListView parent, View v, int groupPosition, int childPosition, long id) {
+                Toast.makeText(v.getContext(), expandableListDetail.get(expandableListTitle.get(groupPosition)).get(childPosition), Toast.LENGTH_SHORT).show();
                 return false;
             }
         });
@@ -69,7 +71,12 @@ public class InscribeCourseActivity extends AppCompatActivity {
     public HashMap<String, List<String>> getData() {
         List<String> cfgs = new ArrayList<>();
         cfgs.add("Informática");
+        cfgs.add("Fabricación Mecánica");
         expandableListDetail.put("Ciclos Formativos (Grado Superior)", cfgs);
+        List<String> batx = new ArrayList<>();
+        batx.add("1º Bachillerato");
+        batx.add("2º Bachillerato");
+        expandableListDetail.put("Bachillerato", batx);
         return expandableListDetail;
     }
 

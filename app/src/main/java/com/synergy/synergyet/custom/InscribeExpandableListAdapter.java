@@ -2,12 +2,14 @@ package com.synergy.synergyet.custom;
 
 import android.content.Context;
 import android.graphics.Typeface;
+import android.graphics.drawable.Drawable;
+import android.support.v4.content.ContextCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseExpandableListAdapter;
+import android.widget.ImageView;
 import android.widget.TextView;
-
 import com.synergy.synergyet.R;
 
 import java.util.HashMap;
@@ -18,13 +20,18 @@ public class InscribeExpandableListAdapter extends BaseExpandableListAdapter {
     private List<String> expandableListTitle;
     private HashMap<String, List<String>> expandableListDetail;
 
+    private Drawable expand_more;
+    private Drawable expand_less;
+
     public InscribeExpandableListAdapter(Context context, List<String> expandableListTitle,
                                          HashMap<String, List<String>> expandableListDetail) {
         this.context = context;
         this.expandableListTitle = expandableListTitle;
         this.expandableListDetail = expandableListDetail;
+        // Las imagenes de las flechas del ExpandableListView
+        expand_less = ContextCompat.getDrawable(context, R.drawable.ic_expand_less_gray_24dp);
+        expand_more = ContextCompat.getDrawable(context, R.drawable.ic_expand_more_gray_24dp);
     }
-
 
     @Override
     public Object getChild(int listPosition, int expandedListPosition) {
@@ -43,10 +50,10 @@ public class InscribeExpandableListAdapter extends BaseExpandableListAdapter {
         if (convertView == null) {
             LayoutInflater layoutInflater = (LayoutInflater) this.context
                     .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            convertView = layoutInflater.inflate(R.layout.inscribe_expandable_list, null);//R.layout.list_item, null);
+            convertView = layoutInflater.inflate(R.layout.inscribe_expandable_item, null);//R.layout.list_item, null);
         }
         TextView expandedListTextView = (TextView) convertView
-                .findViewById(R.id.listTitle);//expandedListItem);
+                .findViewById(R.id.itemTitle);//expandedListItem);
         expandedListTextView.setText(expandedListText);
         return convertView;
     }
@@ -85,6 +92,14 @@ public class InscribeExpandableListAdapter extends BaseExpandableListAdapter {
                 .findViewById(R.id.listTitle);
         listTitleTextView.setTypeface(null, Typeface.BOLD);
         listTitleTextView.setText(listTitle);
+        ImageView indicator = convertView.findViewById(R.id.indicator);
+        if (isExpanded) {
+            // Cuando se está abriendo el ExpandableListView, cambiamos de imagen (la flecha hacia arriba)
+            indicator.setImageDrawable(expand_less);
+        } else {
+            // Cuando se está cerrando el ExpandableListView, cambiamos de imagen (la flecha hacia abajo)
+            indicator.setImageDrawable(expand_more);
+        }
         return convertView;
     }
 
