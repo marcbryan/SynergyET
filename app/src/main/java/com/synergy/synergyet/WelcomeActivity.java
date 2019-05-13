@@ -85,7 +85,7 @@ public class WelcomeActivity extends AppCompatActivity {
         int id = item.getItemId();
         if (id == R.id.action_inscribeBook) {
             // Si el id es igual al icono del libro se abrirá un activity con todos los cursos
-            Intent intent = new Intent(WelcomeActivity.this, InscribeCourseActivity.class);
+            Intent intent = new Intent(WelcomeActivity.this, CategoriesActivity.class);
             startActivity(intent);
             return true;
         }

@@ -25,6 +25,29 @@
     <string name="titleWelcome">Mis cursos</string>
     <string name="inscribe_course">Inscribirme a un curso</string>
 
-    <!-- Textos InscribeCourseActivity -->
-    <string name="titleInscribe">Inscribirse a un curso</string>
+    <!-- Textos CategoriesActivity -->
+    <string name="titleCategories">Selecciona una categoría</string>
+    <string name="group1">ESO</string>
+    <string name="group2">Bachillerato</string>
+    <string name="group3">Ciclos Formativos</string>
+    <string-array name="array_g1">
+        <item>1º ESO</item>
+        <item>2º ESO</item>
+        <item>3º ESO</item>
+        <item>4º ESO</item>
+    </string-array>
+    <string-array name="array_g2">
+        <item>1º Bachillerato</item>
+        <item>2º Bachillerato</item>
+    </string-array>
+    <string-array name="array_g3">
+        <item>Administración de empresas</item>
+        <item>Artes gráficas</item>
+        <item>Automoción</item>
+        <item>Informática</item>
+        <item>Mantenimiento industrial</item>
+        <item>Riesgos profesionales</item>
+        <item>Fabricación mecánica</item>
+    </string-array>
+
 </resources>
