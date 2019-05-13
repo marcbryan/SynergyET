@@ -28,6 +28,7 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.synergy.synergyet.custom.DelayedProgressDialog;
 import com.synergy.synergyet.model.User;
 import com.synergy.synergyet.strings.FirebaseStrings;
 
@@ -51,6 +52,8 @@ public class MainActivity extends AppCompatActivity {
     private String dialogOK;
     private String toast_txt1;
     private boolean showing_pass = false;
+
+    private DelayedProgressDialog progressDialog = new DelayedProgressDialog();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -106,32 +109,7 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         });
-        //et_pass.setTransformationMethod(new PasswordTransformationMethod());
-        /*
-        et_pass.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                System.out.println("Click");
-                final int DRAWABLE_RIGHT = 2;
-                if (event.getAction() == MotionEvent.ACTION_UP) {
-                    if (event.getX() >= (et_pass.getWidth() - et_pass.getCompoundDrawables()[DRAWABLE_RIGHT].getBounds().width() - et_pass.getPaddingRight())) {
-                        if (!showing_pass) {
-                            System.out.println("showing");
-                            //et_pass.setSelection(et_pass.getText().length());
-                            et_pass.setTransformationMethod(null);
-                            showing_pass = true;
-                        } else {
-                            System.out.println("hiding");
-                            //et_pass.setSelection(et_pass.getText().length());
-                            et_pass.setTransformationMethod(new PasswordTransformationMethod());
-                            showing_pass = false;
-                        }
-                        return true;
-                    }
-                }
-                return false;
-            }
-        });*/
+
         Button btnLogin = findViewById(R.id.btn_login);
         btnLogin.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -142,6 +120,7 @@ public class MainActivity extends AppCompatActivity {
                     showDialog(dialog_txt1);
                 } else {
                     // Si el usuario introduce email y password, comprobaremos si las credenciales son correctas
+                    progressDialog.show(getSupportFragmentManager(), "tag");
                     signIn(email, hashSHA256(password));
                 }
             }
@@ -237,6 +216,7 @@ public class MainActivity extends AppCompatActivity {
                 //TODO: Pasarle sus datos (Clase User) al siguiente activity, para no volver a consultarlos
                 //intent.putExtra(IntentExtras.EXTRA_USER_DATA, (User) user);
                 // Iniciamos el activity
+                progressDialog.cancel();
                 startActivity(intent);
             }
         })
