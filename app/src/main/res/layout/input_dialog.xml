@@ -16,6 +16,7 @@
         android:layout_centerHorizontal="true"
         android:layout_marginTop="15dp"
         android:text="@string/titleInscribe"
+        android:textColor="@color/colorWhite"
         android:textSize="18sp"
         android:textStyle="bold" />
 
@@ -27,6 +28,7 @@
         android:layout_centerHorizontal="true"
         android:layout_marginTop="55dp"
         android:text="@string/dialog_msg"
+        android:textColor="@color/colorWhite"
         android:textSize="14sp" />
 
     <EditText
@@ -38,6 +40,8 @@
         android:layout_marginTop="107dp"
         android:ems="10"
         android:hint="@string/password"
+        android:textColor="@color/colorWhite"
+        android:textColorHint="@color/colorHint"
         android:inputType="textPassword"
         android:singleLine="false"
         android:gravity="start" />

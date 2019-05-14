@@ -68,13 +68,13 @@ public class InscribeCourseActivity extends AppCompatActivity {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Course course = (Course) listView.getItemAtPosition(position);
-                AlertDialog.Builder builder = new AlertDialog.Builder(InscribeCourseActivity.this);
+                AlertDialog.Builder builder = new AlertDialog.Builder(InscribeCourseActivity.this, R.style.CustomAlertDialog);
                 LayoutInflater inflater = getLayoutInflater();
                 builder.setView(inflater.inflate(R.layout.input_dialog, null));
                 builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        System.out.println("ok");
+                        //System.out.println("ok");
                     }
                 });
 
@@ -84,7 +84,7 @@ public class InscribeCourseActivity extends AppCompatActivity {
                         dialog.dismiss();
                     }
                 });
-                //builder.create();
+                // Mostramos el diálogo
                 builder.show();
 
                 //dialog = new Dialog(InscribeCourseActivity.this);
@@ -121,8 +121,6 @@ public class InscribeCourseActivity extends AppCompatActivity {
                         }
                     }
                 });*/
-
-                //dialog.show();
             }
         });
         // Creamos el array que tendrá los datos del ListView
