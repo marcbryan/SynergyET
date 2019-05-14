@@ -52,4 +52,6 @@
     <!-- Textos InscribeCourseActivity -->
     <string name="titleInscribe">Inscribirse a un curso</string>
     <string name="searchCourse">Buscar un curso</string>
+    <string name="dialog_msg">Necesitamos la contraseña de este curso para que puedas inscribirte</string>
+    <string name="alert_dialog_title">Escribe una contraseña!</string>
 </resources>

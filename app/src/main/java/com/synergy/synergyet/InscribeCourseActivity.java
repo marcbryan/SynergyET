@@ -1,8 +1,11 @@
 package com.synergy.synergyet;
 
+import android.app.Dialog;
 import android.app.SearchManager;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.SearchView;
@@ -10,6 +13,10 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.Window;
+import android.widget.AdapterView;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -21,6 +28,7 @@ import com.synergy.synergyet.strings.IntentExtras;
 import java.util.ArrayList;
 
 public class InscribeCourseActivity extends AppCompatActivity {
+    private Dialog dialog;
     private Toolbar toolbar;
     private ListView listView;
     private ArrayList<Course> courses;
@@ -52,8 +60,48 @@ public class InscribeCourseActivity extends AppCompatActivity {
         String txt = group+" > "+category;
         tv_category.setText(txt);
 
-        // Bucamos el ListView
+
+        // Buscamos el ListView
         listView = findViewById(R.id.courses_list);
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Course course = (Course) listView.getItemAtPosition(position);
+                dialog = new Dialog(InscribeCourseActivity.this);
+                // Para no mostrar titulo en el diálogo
+                dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+                // Pone el layout en el diálogo
+                dialog.setContentView(R.layout.input_dialog);
+                final EditText et_pass = dialog.findViewById(R.id.et_password);
+                Button buttonOK = dialog.findViewById(R.id.ok_button);
+                buttonOK.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        dialog.dismiss();
+                        String pwd = et_pass.getText().toString();
+                        if (pwd.equals("")) {
+                            // Creamos el AlertDialog
+                            AlertDialog alertDialog = new AlertDialog.Builder(InscribeCourseActivity.this).create();
+                            // Le ponemos el titulo
+                            alertDialog.setTitle(getString(R.string.alert_dialog_title));
+                            alertDialog.setCancelable(true);
+                            // Le añadimos el botón de aceptar
+                            alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, getString(R.string.dialogOK_button),
+                                    new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialogInterface, int which) {
+                                            dialogInterface.dismiss();
+                                            dialog.show();
+                                        }
+                                    });
+                        } else {
+                            //TODO: Comprobar contraseña del curso
+                        }
+                    }
+                });
+                dialog.show();
+            }
+        });
         // Creamos el array que tendrá los datos del ListView
         courses = new ArrayList<>();
         //TODO: Cambiar datos hardcodeados por datos de consulta
