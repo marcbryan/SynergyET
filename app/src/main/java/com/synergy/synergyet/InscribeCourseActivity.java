@@ -10,6 +10,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -67,13 +68,34 @@ public class InscribeCourseActivity extends AppCompatActivity {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Course course = (Course) listView.getItemAtPosition(position);
-                dialog = new Dialog(InscribeCourseActivity.this);
+                AlertDialog.Builder builder = new AlertDialog.Builder(InscribeCourseActivity.this);
+                LayoutInflater inflater = getLayoutInflater();
+                builder.setView(inflater.inflate(R.layout.input_dialog, null));
+                builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        System.out.println("ok");
+                    }
+                });
+
+                builder.setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                });
+                //builder.create();
+                builder.show();
+
+                //dialog = new Dialog(InscribeCourseActivity.this);
                 // Para no mostrar titulo en el diálogo
-                dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+                //dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
                 // Pone el layout en el diálogo
-                dialog.setContentView(R.layout.input_dialog);
-                final EditText et_pass = dialog.findViewById(R.id.et_password);
-                Button buttonOK = dialog.findViewById(R.id.ok_button);
+                //dialog.setContentView(R.layout.input_dialog);
+                //final EditText et_pass = dialog.findViewById(R.id.et_password);
+                //Button buttonOK = dialog.findViewById(R.id.ok_button);
+                /*
+                TextView buttonOK = dialog.findViewById(R.id.ok_button);
                 buttonOK.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
@@ -98,8 +120,9 @@ public class InscribeCourseActivity extends AppCompatActivity {
                             //TODO: Comprobar contraseña del curso
                         }
                     }
-                });
-                dialog.show();
+                });*/
+
+                //dialog.show();
             }
         });
         // Creamos el array que tendrá los datos del ListView

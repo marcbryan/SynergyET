@@ -42,14 +42,6 @@
         android:singleLine="false"
         android:gravity="start" />
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/et_password"
-        android:layout_alignParentRight="true"
-        android:layout_marginTop="25dp"
-        android:text="@string/dialogOK_button" />
-
     <!--
     <Button
         android:id="@+id/ok_button"
