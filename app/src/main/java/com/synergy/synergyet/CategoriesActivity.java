@@ -64,11 +64,12 @@ public class CategoriesActivity extends AppCompatActivity {
                 //TODO: Pruebas, cambiar por implementación final
                 // Al hacer click en el elemento "Informática" (dentro de Ciclos Formativos), abrir Activity con los cursos de esa categoria
                 if (expandableListDetail.get(expandableListTitle.get(groupPosition)).get(childPosition).equals("Informática")) {
-                    String category_name = expandableListDetail.get(expandableListTitle.get(groupPosition)).get(childPosition);
+                    String group_name = expandableListTitle.get(groupPosition);
+                    String category_name = expandableListDetail.get(group_name).get(childPosition);
                     Intent intent = new Intent(v.getContext(), InscribeCourseActivity.class);
+                    intent.putExtra(IntentExtras.EXTRA_GROUP_NAME, group_name);
                     intent.putExtra(IntentExtras.EXTRA_CATEGORY_NAME, category_name);
                     startActivity(intent);
-                    //Toast.makeText(v.getContext(), "Informática -> Abrir activity", Toast.LENGTH_SHORT).show();
                 } else {
                     Toast.makeText(v.getContext(), expandableListDetail.get(expandableListTitle.get(groupPosition)).get(childPosition), Toast.LENGTH_SHORT).show();
                 }

@@ -51,5 +51,5 @@
 
     <!-- Textos InscribeCourseActivity -->
     <string name="titleInscribe">Inscribirse a un curso</string>
-
+    <string name="searchCourse">Buscar un curso</string>
 </resources>

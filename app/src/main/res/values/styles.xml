@@ -11,6 +11,14 @@
         <item name="windowNoTitle">true</item>
         <!-- Cambia el color de la flecha del ActionBar -->
         <item name="colorControlNormal">@color/colorWhite</item>
+        <!-- Aplicar el style para el SearchView -->
+        <item name="autoCompleteTextViewStyle">@style/SearchAutoCompleteTextView</item>
+    </style>
+
+    <!-- Style para el SearchView -->
+    <style name="SearchAutoCompleteTextView" parent="Widget.AppCompat.Light.AutoCompleteTextView">
+        <item name="android:textColor">@color/colorWhite</item>
+        <item name="android:textColorHint">@color/colorHint</item>
     </style>
 
 </resources>
