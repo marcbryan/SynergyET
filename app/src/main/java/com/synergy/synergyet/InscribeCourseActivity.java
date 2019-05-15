@@ -1,10 +1,11 @@
 package com.synergy.synergyet;
 
-import android.app.Dialog;
 import android.app.SearchManager;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.support.design.widget.TextInputEditText;
+import android.support.design.widget.TextInputLayout;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -14,10 +15,7 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.Window;
 import android.widget.AdapterView;
-import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -29,11 +27,14 @@ import com.synergy.synergyet.strings.IntentExtras;
 import java.util.ArrayList;
 
 public class InscribeCourseActivity extends AppCompatActivity {
-    private Dialog dialog;
     private Toolbar toolbar;
     private ListView listView;
     private ArrayList<Course> courses;
     private CoursesListAdapater adapter;
+    private AlertDialog.Builder builder;
+
+    private String ok_text;
+    private String cancel_text;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,6 +43,7 @@ public class InscribeCourseActivity extends AppCompatActivity {
         Intent intent = getIntent();
         String category = intent.getStringExtra(IntentExtras.EXTRA_CATEGORY_NAME);
         String group = intent.getStringExtra(IntentExtras.EXTRA_GROUP_NAME);
+        //TODO: Borrar toast de pruebas
         Toast.makeText(getApplicationContext(), "Categoria: "+category, Toast.LENGTH_SHORT).show();
 
         // Obtenemos el toolbar y lo añadimos al activity (para que se vean los iconos)
@@ -56,71 +58,62 @@ public class InscribeCourseActivity extends AppCompatActivity {
                 onBackPressed();
             }
         });
-
+        // Mostramos la categoria y el grupo al que pertenece (el que seleccionó el usuario en el activity anterior)
         TextView tv_category = findViewById(R.id.infoBar_title);
         String txt = group+" > "+category;
         tv_category.setText(txt);
 
+        // Obtenemos los textos 'Aceptar' y 'Cancelar' de strings.xml (para ponerlo en el Dialog)
+        ok_text = getString(R.string.dialogOK_button);
+        cancel_text = getString(R.string.dialogCancel);
 
         // Buscamos el ListView
         listView = findViewById(R.id.courses_list);
+        // Añadimos un listener (al pulsar un elemento del ListView)
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Course course = (Course) listView.getItemAtPosition(position);
-                AlertDialog.Builder builder = new AlertDialog.Builder(InscribeCourseActivity.this, R.style.CustomAlertDialog);
+                // Creamos el InputDialog
+                builder = new AlertDialog.Builder(InscribeCourseActivity.this, R.style.CustomAlertDialog);
                 LayoutInflater inflater = getLayoutInflater();
-                builder.setView(inflater.inflate(R.layout.input_dialog, null));
-                builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                // Le ponemos la vista personalizada
+                View dialogView = inflater.inflate(R.layout.input_dialog, null);
+                builder.setCancelable(false);
+                builder.setView(dialogView);
+                // Obtenemos el TextInputEditText del InputDialog (para poder obtener el texto que introduce el usuario)
+                final TextInputEditText et_pass = dialogView.findViewById(R.id.input_password);
+                final TextInputLayout til = dialogView.findViewById(R.id.text_input_layout);
+                // Creamos el listener del botón Aceptar vacío (más adelante lo sobreescribiremos)
+                builder.setPositiveButton(ok_text, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {}
+                });
+                // Listener del botón Cancelar
+                builder.setNegativeButton(cancel_text, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        //System.out.println("ok");
+                        // Si pulsa Cancelar se cerrará el Dialog
+                        dialog.cancel();
                     }
                 });
 
-                builder.setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.dismiss();
-                    }
-                });
-                // Mostramos el diálogo
-                builder.show();
-
-                //dialog = new Dialog(InscribeCourseActivity.this);
-                // Para no mostrar titulo en el diálogo
-                //dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-                // Pone el layout en el diálogo
-                //dialog.setContentView(R.layout.input_dialog);
-                //final EditText et_pass = dialog.findViewById(R.id.et_password);
-                //Button buttonOK = dialog.findViewById(R.id.ok_button);
-                /*
-                TextView buttonOK = dialog.findViewById(R.id.ok_button);
-                buttonOK.setOnClickListener(new View.OnClickListener() {
+                AlertDialog dialog = builder.create();
+                dialog.show();
+                // Sobreescribimos el listener del botón Aceptar (si lo hacemos de esta manera evitamos que se cierre el Dialog al pulsar 'Aceptar')
+                dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        dialog.dismiss();
+                        // Obtenemos la contraseña que ha introducido el usuario
                         String pwd = et_pass.getText().toString();
                         if (pwd.equals("")) {
-                            // Creamos el AlertDialog
-                            AlertDialog alertDialog = new AlertDialog.Builder(InscribeCourseActivity.this).create();
-                            // Le ponemos el titulo
-                            alertDialog.setTitle(getString(R.string.alert_dialog_title));
-                            alertDialog.setCancelable(true);
-                            // Le añadimos el botón de aceptar
-                            alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, getString(R.string.dialogOK_button),
-                                    new DialogInterface.OnClickListener() {
-                                        @Override
-                                        public void onClick(DialogInterface dialogInterface, int which) {
-                                            dialogInterface.dismiss();
-                                            dialog.show();
-                                        }
-                                    });
+                            // Mostramos mensaje de error
+                            til.setError(getString(R.string.dialog3_error_msg1));
                         } else {
                             //TODO: Comprobar contraseña del curso
                         }
                     }
-                });*/
+                });
             }
         });
         // Creamos el array que tendrá los datos del ListView

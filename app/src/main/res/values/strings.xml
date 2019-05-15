@@ -12,6 +12,7 @@
     <string name="dialog1_txt1">Introduce tu mail y contraseña</string>
     <string name="dialog1_txt2">Credenciales incorrectas, introduce un mail y contraseña válidos!</string>
     <string name="dialogOK_button">Aceptar</string>
+    <string name="dialogCancel">Cancelar</string>
     <string name="toast1">Bienvenido</string>
 
     <!-- Textos SignUpActivity -->
@@ -52,6 +53,6 @@
     <!-- Textos InscribeCourseActivity -->
     <string name="titleInscribe">Inscribirse a un curso</string>
     <string name="searchCourse">Buscar un curso</string>
-    <string name="dialog_msg">Necesitamos la contraseña de este curso para que puedas inscribirte</string>
-    <string name="alert_dialog_title">Escribe una contraseña!</string>
+    <string name="dialog3_txt">Necesitamos la contraseña de este curso para que puedas inscribirte</string>
+    <string name="dialog3_error_msg1">Introduce una contraseña</string>
 </resources>
