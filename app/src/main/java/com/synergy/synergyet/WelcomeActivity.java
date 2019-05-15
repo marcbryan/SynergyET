@@ -43,8 +43,8 @@ public class WelcomeActivity extends AppCompatActivity {
 
         courses = new ArrayList<>();
         // TODO: Prueba, borrar al acabar
-        courses.add(new Course(1, "AMS2 M6 - Acceso a datos", "Informática", "CFGS", "99", "pwd", "2018-2019", false));
-        courses.add(new Course(2, "AMS2 M7 - Interficies", "Informática", "CFGS", "99", "pwd2", "2018-2019", false));
+        courses.add(new Course(1, "AMS2 M6 - Acceso a datos", "Informática", "CFGS", 99, "pwd", "2018-2019", false));
+        courses.add(new Course(2, "AMS2 M7 - Interficies", "Informática", "CFGS", 99, "pwd2", "2018-2019", false));
         /*
         courses.add(new Course(1, "AMS2 M6 - Acceso a datos", "Informática", "CFGS", "99", "pwd", "2018-2019", false));
         courses.add(new Course(2, "AMS2 M7 - Interficies", "Informática", "CFGS", "99", "pwd2", "2018-2019", false));

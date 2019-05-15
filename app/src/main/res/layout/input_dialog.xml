@@ -52,20 +52,4 @@
 
     </android.support.design.widget.TextInputLayout>
 
-    <!--
-    <EditText
-        android:id="@+id/et_password"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="107dp"
-        android:ems="10"
-        android:hint="@string/password"
-        android:textColor="@color/colorWhite"
-        android:textColorHint="@color/colorHint"
-        android:inputType="textPassword"
-        android:singleLine="false"
-        android:gravity="start" /> -->
-
 </RelativeLayout>

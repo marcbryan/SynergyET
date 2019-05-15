@@ -55,4 +55,7 @@
     <string name="searchCourse">Buscar un curso</string>
     <string name="dialog3_txt">Necesitamos la contraseña de este curso para que puedas inscribirte</string>
     <string name="dialog3_error_msg1">Introduce una contraseña</string>
+    <string name="dialog3_error_msg2">Contraseña incorrecta</string>
+    <string name="toast3">Te has inscrito correctamente!</string>
+    <string name="dialog4_txt">La inscripción al curso ha fallado, vuelve a intentalo</string>
 </resources>

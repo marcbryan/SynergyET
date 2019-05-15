@@ -4,6 +4,7 @@ import android.app.SearchManager;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.support.annotation.NonNull;
 import android.support.design.widget.TextInputEditText;
 import android.support.design.widget.TextInputLayout;
 import android.support.v7.app.AlertDialog;
@@ -11,6 +12,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -20,13 +23,28 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.FieldValue;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.synergy.synergyet.custom.CoursesListAdapater;
 import com.synergy.synergyet.model.Course;
+import com.synergy.synergyet.strings.FirebaseStrings;
 import com.synergy.synergyet.strings.IntentExtras;
 
 import java.util.ArrayList;
 
 public class InscribeCourseActivity extends AppCompatActivity {
+    private FirebaseUser user;
+    private FirebaseFirestore db;
+
     private Toolbar toolbar;
     private ListView listView;
     private ArrayList<Course> courses;
@@ -63,6 +81,15 @@ public class InscribeCourseActivity extends AppCompatActivity {
         String txt = group+" > "+category;
         tv_category.setText(txt);
 
+        // Obtener la instancia FirebaseFirestore (MUY IMPORTANTE!!)
+        db = FirebaseFirestore.getInstance();
+        // Para obtener el usuario actual
+        user = FirebaseAuth.getInstance().getCurrentUser();
+
+        // Creamos el array que tendrá los datos del ListView
+        courses = new ArrayList<>();
+        getCourses(category);
+
         // Obtenemos los textos 'Aceptar' y 'Cancelar' de strings.xml (para ponerlo en el Dialog)
         ok_text = getString(R.string.dialogOK_button);
         cancel_text = getString(R.string.dialogCancel);
@@ -73,7 +100,7 @@ public class InscribeCourseActivity extends AppCompatActivity {
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Course course = (Course) listView.getItemAtPosition(position);
+                final Course course = (Course) listView.getItemAtPosition(position);
                 // Creamos el InputDialog
                 builder = new AlertDialog.Builder(InscribeCourseActivity.this, R.style.CustomAlertDialog);
                 LayoutInflater inflater = getLayoutInflater();
@@ -82,8 +109,22 @@ public class InscribeCourseActivity extends AppCompatActivity {
                 builder.setCancelable(false);
                 builder.setView(dialogView);
                 // Obtenemos el TextInputEditText del InputDialog (para poder obtener el texto que introduce el usuario)
-                final TextInputEditText et_pass = dialogView.findViewById(R.id.input_password);
                 final TextInputLayout til = dialogView.findViewById(R.id.text_input_layout);
+                final TextInputEditText et_pass = dialogView.findViewById(R.id.input_password);
+                et_pass.addTextChangedListener(new TextWatcher() {
+                    @Override
+                    public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+
+                    @Override
+                    public void onTextChanged(CharSequence s, int start, int before, int count) {}
+
+                    @Override
+                    public void afterTextChanged(Editable s) {
+                        if (til.getError() != null) {
+                            til.setError(null);
+                        }
+                    }
+                });
                 // Creamos el listener del botón Aceptar vacío (más adelante lo sobreescribiremos)
                 builder.setPositiveButton(ok_text, new DialogInterface.OnClickListener() {
                     @Override
@@ -107,37 +148,36 @@ public class InscribeCourseActivity extends AppCompatActivity {
                         // Obtenemos la contraseña que ha introducido el usuario
                         String pwd = et_pass.getText().toString();
                         if (pwd.equals("")) {
-                            // Mostramos mensaje de error
+                            // Mostramos mensaje de error (no ha escrito contraseña)
                             til.setError(getString(R.string.dialog3_error_msg1));
                         } else {
-                            //TODO: Comprobar contraseña del curso
+                            if (pwd.equals(course.getPassword())) {
+                                //TODO: Comprobar si está inscrito en el curso
+                                //checkAlreadyInscribed(user.getUid(), course.getCourse_id());
+                            } else {
+                                // Mostramos mensaje de error (contraseña incorrecta)
+                                til.setError(getString(R.string.dialog3_error_msg2));
+                            }
                         }
                     }
                 });
             }
         });
-        // Creamos el array que tendrá los datos del ListView
-        courses = new ArrayList<>();
-        //TODO: Cambiar datos hardcodeados por datos de consulta
-        courses.add(new Course(1, "AMS2 M6 - Acceso a datos (1)", "Informática", "CFGS", "99", "pwd", "2018-2019", false));
-        courses.add(new Course(2, "AMS2 M7 - Interficies (1)", "Informática", "CFGS", "99", "pwd2", "2018-2019", false));
-        courses.add(new Course(3, "AMS2 M6 - Acceso a datos (2)", "Informática", "CFGS", "99", "pwd", "2018-2019", false));
-        courses.add(new Course(4, "AMS2 M7 - Interficies (2)", "Informática", "CFGS", "99", "pwd2", "2018-2019", false));
-        courses.add(new Course(5, "AMS2 M6 - Acceso a datos (3)", "Informática", "CFGS", "99", "pwd", "2018-2019", false));
-        courses.add(new Course(6, "AMS2 M7 - Interficies (3)", "Informática", "CFGS", "99", "pwd2", "2018-2019", false));
-        courses.add(new Course(7, "AMS2 M6 - Acceso a datos (4)", "Informática", "CFGS", "99", "pwd", "2018-2019", false));
-        courses.add(new Course(8, "AMS2 M7 - Interficies (4)", "Informática", "CFGS", "99", "pwd2", "2018-2019", false));
-        courses.add(new Course(9, "AMS2 M6 - Acceso a datos (5)", "Informática", "CFGS", "99", "pwd", "2018-2019", false));
-        courses.add(new Course(10, "AMS2 M7 - Interficies (5)", "Informática", "CFGS", "99", "pwd2", "2018-2019", false));
-        courses.add(new Course(11, "AMS2 M6 - Acceso a datos (6)", "Informática", "CFGS", "99", "pwd", "2018-2019", false));
-        courses.add(new Course(12, "AMS2 M7 - Interficies (6)", "Informática", "CFGS", "99", "pwd2", "2018-2019", false));
 
-        // Creamos el adapter
-        adapter = new CoursesListAdapater(courses, this);
-        // Se lo asignamos al ListView
-        listView.setAdapter(adapter);
-        // Activamos la filtración de datos para poder hacer búsquedas
-        listView.setTextFilterEnabled(true);
+        /*
+        //TODO: Cambiar datos hardcodeados por datos de consulta
+        courses.add(new Course(1, "AMS2 M6 - Acceso a datos (1)", "Informática", "CFGS", 99, "pwd", "2018-2019", false));
+        courses.add(new Course(2, "AMS2 M7 - Interficies (1)", "Informática", "CFGS", 99, "pwd2", "2018-2019", false));
+        courses.add(new Course(3, "AMS2 M6 - Acceso a datos (2)", "Informática", "CFGS", 99, "pwd", "2018-2019", false));
+        courses.add(new Course(4, "AMS2 M7 - Interficies (2)", "Informática", "CFGS", 99, "pwd2", "2018-2019", false));
+        courses.add(new Course(5, "AMS2 M6 - Acceso a datos (3)", "Informática", "CFGS", 99, "pwd", "2018-2019", false));
+        courses.add(new Course(6, "AMS2 M7 - Interficies (3)", "Informática", "CFGS", 99, "pwd2", "2018-2019", false));
+        courses.add(new Course(7, "AMS2 M6 - Acceso a datos (4)", "Informática", "CFGS", 99, "pwd", "2018-2019", false));
+        courses.add(new Course(8, "AMS2 M7 - Interficies (4)", "Informática", "CFGS", 99, "pwd2", "2018-2019", false));
+        courses.add(new Course(9, "AMS2 M6 - Acceso a datos (5)", "Informática", "CFGS", 99, "pwd", "2018-2019", false));
+        courses.add(new Course(10, "AMS2 M7 - Interficies (5)", "Informática", "CFGS", 99, "pwd2", "2018-2019", false));
+        courses.add(new Course(11, "AMS2 M6 - Acceso a datos (6)", "Informática", "CFGS", 99, "pwd", "2018-2019", false));
+        courses.add(new Course(12, "AMS2 M7 - Interficies (6)", "Informática", "CFGS", 99, "pwd2", "2018-2019", false));*/
     }
 
     @Override
@@ -165,6 +205,99 @@ public class InscribeCourseActivity extends AppCompatActivity {
         searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
 
         return super.onCreateOptionsMenu(menu);
+    }
+
+    /**
+     * Obtiene todos los cursos que sean de la categoria que le pasamos como parámetro
+     * @param category - La categoria de los cursos
+     */
+    public void getCourses(String category){
+        db.collection(FirebaseStrings.COLLECTION_2)
+                .whereEqualTo(FirebaseStrings.FIELD3_C2, category)
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        if (task.isSuccessful()) {
+                            for (QueryDocumentSnapshot documentSnapshot : task.getResult()) {
+                                Course course = documentSnapshot.toObject(Course.class);
+                                courses.add(course);
+                            }
+                            // Creamos el adapter
+                            adapter = new CoursesListAdapater(courses, InscribeCourseActivity.this);
+                            // Se lo asignamos al ListView
+                            listView.setAdapter(adapter);
+                            // Activamos la filtración de datos para poder hacer búsquedas
+                            listView.setTextFilterEnabled(true);
+                            //TODO: Eliminar Toast
+                            Toast.makeText(InscribeCourseActivity.this, "Cursos añadidos!", Toast.LENGTH_SHORT).show();
+                            //TODO: Finaliza ProgressBar
+                        } else {
+                            //TODO: Mostrar Dialog de error
+                            System.out.println("Error getting documents: "+task.getException());
+                        }
+                    }
+                });
+    }
+
+    /**
+     * Comprueba si el usuario está inscrito en un curso o no
+     * @param UID - El UID del usuario que se quiere inscribir a un curso
+     * @param course_id - El ID del curso del que queremos saber si está inscrito o no
+     */
+    public void checkAlreadyInscribed(final String UID, final int course_id) {
+        db.collection(FirebaseStrings.COLLECTION_1)
+                .whereEqualTo(FirebaseStrings.FIELD1_C1, UID)
+                .whereEqualTo(FirebaseStrings.FIELD1_C7+"."+course_id, true)
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        if (task.isSuccessful()) {
+                            if (!task.getResult().isEmpty()) {
+                                for (QueryDocumentSnapshot documentSnapshot : task.getResult()) {
+                                    Course course = documentSnapshot.toObject(Course.class);
+                                    System.out.println("curso -> " + course.toString());
+                                }
+                                //TODO: Hacer update de los cursos a los que el usuario esta inscrito
+                                updateUserCourses(UID, course_id);
+                            }
+                        } else {
+                            //TODO: Mostrar Dialog de error
+                            System.out.println("Error getting documents: "+task.getException());
+                        }
+                    }
+                });
+    }
+
+    /**
+     * Añade el ID del curso al que se inscribe el usuario a su array de cursos (En Cloud Firestore)
+     * @param UID - El UID del usuario que se quiere inscribir a un curso
+     * @param course_id - El ID del curso al que el usuario quiere inscribirse
+     */
+    public void updateUserCourses(String UID, int course_id) {
+        DocumentReference documentRef = db.collection(FirebaseStrings.COLLECTION_1).document(UID);
+        documentRef
+                .update(FirebaseStrings.FIELD1_C7, FieldValue.arrayUnion(course_id))
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        Toast.makeText(InscribeCourseActivity.this, getString(R.string.toast3), Toast.LENGTH_SHORT).show();
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        AlertDialog.Builder builder = new AlertDialog.Builder(InscribeCourseActivity.this);
+                        builder.setMessage(getString(R.string.dialog4_txt))
+                                .setCancelable(false)
+                                .setPositiveButton(ok_text, new DialogInterface.OnClickListener() {
+                                    public void onClick(DialogInterface dialog, int id) {}
+                                });
+                        AlertDialog alert = builder.create();
+                        alert.show();
+                    }
+                });
     }
 
 }
