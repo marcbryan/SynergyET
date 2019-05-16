@@ -1,5 +1,6 @@
 package com.synergy.synergyet;
 
+import android.content.Intent;
 import android.content.res.Resources;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -9,6 +10,7 @@ import android.widget.ExpandableListView;
 import android.widget.Toast;
 
 import com.synergy.synergyet.custom.CategoryExpandableListAdapter;
+import com.synergy.synergyet.strings.IntentExtras;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -62,7 +64,12 @@ public class CategoriesActivity extends AppCompatActivity {
                 //TODO: Pruebas, cambiar por implementación final
                 // Al hacer click en el elemento "Informática" (dentro de Ciclos Formativos), abrir Activity con los cursos de esa categoria
                 if (expandableListDetail.get(expandableListTitle.get(groupPosition)).get(childPosition).equals("Informática")) {
-                    Toast.makeText(v.getContext(), "Informática -> Abrir activity", Toast.LENGTH_SHORT).show();
+                    String group_name = expandableListTitle.get(groupPosition);
+                    String category_name = expandableListDetail.get(group_name).get(childPosition);
+                    Intent intent = new Intent(v.getContext(), InscribeCourseActivity.class);
+                    intent.putExtra(IntentExtras.EXTRA_GROUP_NAME, group_name);
+                    intent.putExtra(IntentExtras.EXTRA_CATEGORY_NAME, category_name);
+                    startActivity(intent);
                 } else {
                     Toast.makeText(v.getContext(), expandableListDetail.get(expandableListTitle.get(groupPosition)).get(childPosition), Toast.LENGTH_SHORT).show();
                 }
