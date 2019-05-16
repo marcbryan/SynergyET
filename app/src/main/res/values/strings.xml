@@ -1,17 +1,24 @@
 <resources xmlns:tools="http://schemas.android.com/tools" tools:ignore="MissingTranslation">
 
+    <!--Textos InputDialogue-->
+    <string name="titleForgotPassword">Recuperar Contraseña</string>
+
     <string name="app_name">SynergyET</string>
     <!-- Textos MainActivity -->
     <string name="email_address">Correo electrónico</string>
     <string name="password">Contraseña</string>
+    <string name="dialogCancel">Cancelar</string>
     <string name="login">Login</string>
     <string name="forgot_password"><u>Ha olvidado su contraseña?</u></string>
     <string name="create_user"><u>No tiene una cuenta de usuario?</u></string>
     <string name="or">o</string>
     <string name="desc_eye">Ver contraseña</string>
-    <string name="dialog1_txt1">Introduce tu mail y contraseña</string>
+    <string name="dialog1_txt1">Introduce un correo electrónico y contraseña</string>
     <string name="dialog1_txt2">Credenciales incorrectas, introduce un mail y contraseña válidos!</string>
     <string name="dialogOK_button">Aceptar</string>
+    <string name="dialog_empty_email">Introduce un correo electrónico</string>
+    <string name="dialog_wrong_email">Introduce un correo electrónico válido</string>
+
     <string name="toast1">Bienvenido</string>
 
     <!-- Textos SignUpActivity -->

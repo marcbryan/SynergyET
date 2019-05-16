@@ -4,13 +4,19 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.support.annotation.NonNull;
+import android.support.design.widget.TextInputEditText;
+import android.support.design.widget.TextInputLayout;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextUtils;
+import android.text.TextWatcher;
 import android.text.method.PasswordTransformationMethod;
 import android.util.Base64;
-import android.view.MotionEvent;
+import android.util.Patterns;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -42,11 +48,11 @@ public class MainActivity extends AppCompatActivity {
     private ImageView eye;
     private Drawable visible;
     private Drawable not_visible;
-
+    private AlertDialog dialog;
     private FirebaseAuth mAuth;
     private FirebaseUser user;
     private FirebaseFirestore db;
-
+    private AlertDialog.Builder builder;
     private String dialog_txt1;
     private String dialog_txt2;
     private String dialogOK;
@@ -125,6 +131,75 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         });
+
+        TextView recoverPassword = findViewById(R.id.lbl_forgot_password);
+        recoverPassword.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Creamos el InputDialog
+                builder = new AlertDialog.Builder(MainActivity.this, R.style.CustomAlertDialog);
+                LayoutInflater inflater = getLayoutInflater();
+                // Le ponemos la vista personalizada
+                View dialogView = inflater.inflate(R.layout.input_dialog_recoverpassword, null);
+                builder.setCancelable(false);
+                builder.setView(dialogView);
+                // Obtenemos el TextInputEditText del InputDialog (para poder obtener el texto que introduce el usuario)
+                final TextInputLayout til = dialogView.findViewById(R.id.text_input_layout);
+                final TextInputEditText et_dialogEmail = dialogView.findViewById(R.id.input_password);
+                et_dialogEmail.requestFocus();
+                et_dialogEmail.addTextChangedListener(new TextWatcher() {
+                    @Override
+                    public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+
+                    @Override
+                    public void onTextChanged(CharSequence s, int start, int before, int count) {}
+
+                    @Override
+                    public void afterTextChanged(Editable s) {
+                        if (til.getError() != null) {
+                            til.setError(null);
+                        }
+                    }
+                });
+                // Creamos el listener del botón Aceptar vacío (más adelante lo sobreescribiremos)
+                builder.setPositiveButton(getString(R.string.dialogOK_button), new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {}
+                });
+                // Listener del botón Cancelar
+                builder.setNegativeButton(getString(R.string.dialogCancel), new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        // Si pulsa Cancelar se cerrará el Dialog
+                        dialog.cancel();
+                    }
+                });
+
+                dialog = builder.create();
+                dialog.show();
+                // Sobreescribimos el listener del botón Aceptar (si lo hacemos de esta manera evitamos que se cierre el Dialog al pulsar 'Aceptar')
+                dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        // Obtenemos el email que ha introducido el usuario
+                        String pwd = et_dialogEmail.getText().toString();
+                        if (TextUtils.isEmpty(et_dialogEmail.getText())) {
+                            System.out.println("IS EMPTY");
+                            til.setError(getString(R.string.dialog_empty_email));
+                        } else {
+                            if (Patterns.EMAIL_ADDRESS.matcher(et_dialogEmail.getText()).matches()) {
+                                //ENVIAR EL EMAIL
+                            } else {
+                                til.setError(getString(R.string.dialog_wrong_email));
+
+                            }
+
+                        }
+                    }
+                });
+            }
+        });
+
         TextView signUp = findViewById(R.id.lbl_create_user);
         signUp.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -134,7 +209,9 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
-    }
+
+        }
+
 
     /**
      * Muesta un diálogo con un botón de ok y el texto que le pasamos como parámetro

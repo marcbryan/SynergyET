@@ -13,4 +13,11 @@
         <item name="colorControlNormal">@color/colorWhite</item>
     </style>
 
+    <!-- Style para el AlertDialog -->
+    <style name="CustomAlertDialog" parent="Theme.AppCompat.Light.Dialog.Alert">
+        <!-- Para cambiar el color de los botones (aceptar/cancelar) -->
+        <item name="colorAccent">@color/colorWhite</item>
+        <item name="android:background">@color/colorPrimary</item>
+    </style>
+
 </resources>
