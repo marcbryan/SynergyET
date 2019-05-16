@@ -30,6 +30,7 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.synergy.synergyet.model.User;
 import com.synergy.synergyet.strings.FirebaseStrings;
+import com.synergy.synergyet.strings.IntentExtras;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -125,7 +126,6 @@ public class MainActivity extends AppCompatActivity {
         signUp.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //TODO: Abrir el activity para crear una cuenta
                 Intent intent = new Intent(MainActivity.this, SignUpActivity.class);
                 startActivity(intent);
             }
@@ -193,6 +193,7 @@ public class MainActivity extends AppCompatActivity {
                 });
     }
 
+    //TODO: En pruebas, no definitivo (esta funcionalidad puede ir en el siguiente activity)
     /**
      * Busca los datos de un usuario en Cloud Firestore sabiendo su UID
      * @param UID - El UID del usuario del que queremos los datos
@@ -209,8 +210,8 @@ public class MainActivity extends AppCompatActivity {
                 Toast.LENGTH_SHORT).show();
                 // Creamos el intent de la pantalla de bienvenida
                 Intent intent = new Intent(MainActivity.this, WelcomeActivity.class);
-                //TODO: Pasarle sus datos (Clase User) al siguiente activity, para no volver a consultarlos
-                //intent.putExtra(IntentExtras.EXTRA_USER_DATA, (User) user);
+                // Pasamos los datos del usuario (Clase User) al siguiente activity, para no volver a consultarlos
+                intent.putExtra(IntentExtras.EXTRA_USER_DATA, user);
                 // Iniciamos el activity
                 startActivity(intent);
             }
@@ -218,6 +219,7 @@ public class MainActivity extends AppCompatActivity {
         .addOnFailureListener(new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception e) {
+                //TODO: Mostrar diálogo de error
                 System.out.println("Error -> " + e);
             }
         });

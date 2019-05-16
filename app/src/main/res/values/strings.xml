@@ -24,6 +24,7 @@
     <!-- Textos WelcomeActivity -->
     <string name="titleWelcome">Mis cursos</string>
     <string name="inscribe_course">Inscribirme a un curso</string>
+    <string name="no_courses">No estás inscrito en ningún curso, para inscribirte a uno, pulsa el libro de la barra superior</string>
 
     <!-- Textos CategoriesActivity -->
     <string name="titleCategories">Selecciona una categoría</string>
@@ -57,5 +58,7 @@
     <string name="dialog3_error_msg1">Introduce una contraseña</string>
     <string name="dialog3_error_msg2">Contraseña incorrecta</string>
     <string name="toast3">Te has inscrito correctamente!</string>
-    <string name="dialog4_txt">La inscripción al curso ha fallado, vuelve a intentalo</string>
+    <string name="dialog4_error">No se han podido cargar los cursos, vuelve a intentarlo más tarde</string>
+    <string name="dialog5_error">La inscripción al curso ha fallado, vuelve a intentalo</string>
+    <string name="dialog6_txt">Ya estás inscrito en este curso, no puedes volver a inscribirte!</string>
 </resources>

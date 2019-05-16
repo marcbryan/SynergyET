@@ -50,6 +50,7 @@ public class InscribeCourseActivity extends AppCompatActivity {
     private ArrayList<Course> courses;
     private CoursesListAdapater adapter;
     private AlertDialog.Builder builder;
+    private AlertDialog dialog;
 
     private String ok_text;
     private String cancel_text;
@@ -61,8 +62,6 @@ public class InscribeCourseActivity extends AppCompatActivity {
         Intent intent = getIntent();
         String category = intent.getStringExtra(IntentExtras.EXTRA_CATEGORY_NAME);
         String group = intent.getStringExtra(IntentExtras.EXTRA_GROUP_NAME);
-        //TODO: Borrar toast de pruebas
-        Toast.makeText(getApplicationContext(), "Categoria: "+category, Toast.LENGTH_SHORT).show();
 
         // Obtenemos el toolbar y lo añadimos al activity (para que se vean los iconos)
         toolbar = findViewById(R.id.toolbar);
@@ -139,7 +138,7 @@ public class InscribeCourseActivity extends AppCompatActivity {
                     }
                 });
 
-                AlertDialog dialog = builder.create();
+                dialog = builder.create();
                 dialog.show();
                 // Sobreescribimos el listener del botón Aceptar (si lo hacemos de esta manera evitamos que se cierre el Dialog al pulsar 'Aceptar')
                 dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(new View.OnClickListener() {
@@ -153,7 +152,7 @@ public class InscribeCourseActivity extends AppCompatActivity {
                         } else {
                             if (pwd.equals(course.getPassword())) {
                                 //TODO: Comprobar si está inscrito en el curso
-                                //checkAlreadyInscribed(user.getUid(), course.getCourse_id());
+                                checkAlreadyInscribed(user.getUid(), course.getCourse_id());
                             } else {
                                 // Mostramos mensaje de error (contraseña incorrecta)
                                 til.setError(getString(R.string.dialog3_error_msg2));
@@ -163,21 +162,6 @@ public class InscribeCourseActivity extends AppCompatActivity {
                 });
             }
         });
-
-        /*
-        //TODO: Cambiar datos hardcodeados por datos de consulta
-        courses.add(new Course(1, "AMS2 M6 - Acceso a datos (1)", "Informática", "CFGS", 99, "pwd", "2018-2019", false));
-        courses.add(new Course(2, "AMS2 M7 - Interficies (1)", "Informática", "CFGS", 99, "pwd2", "2018-2019", false));
-        courses.add(new Course(3, "AMS2 M6 - Acceso a datos (2)", "Informática", "CFGS", 99, "pwd", "2018-2019", false));
-        courses.add(new Course(4, "AMS2 M7 - Interficies (2)", "Informática", "CFGS", 99, "pwd2", "2018-2019", false));
-        courses.add(new Course(5, "AMS2 M6 - Acceso a datos (3)", "Informática", "CFGS", 99, "pwd", "2018-2019", false));
-        courses.add(new Course(6, "AMS2 M7 - Interficies (3)", "Informática", "CFGS", 99, "pwd2", "2018-2019", false));
-        courses.add(new Course(7, "AMS2 M6 - Acceso a datos (4)", "Informática", "CFGS", 99, "pwd", "2018-2019", false));
-        courses.add(new Course(8, "AMS2 M7 - Interficies (4)", "Informática", "CFGS", 99, "pwd2", "2018-2019", false));
-        courses.add(new Course(9, "AMS2 M6 - Acceso a datos (5)", "Informática", "CFGS", 99, "pwd", "2018-2019", false));
-        courses.add(new Course(10, "AMS2 M7 - Interficies (5)", "Informática", "CFGS", 99, "pwd2", "2018-2019", false));
-        courses.add(new Course(11, "AMS2 M6 - Acceso a datos (6)", "Informática", "CFGS", 99, "pwd", "2018-2019", false));
-        courses.add(new Course(12, "AMS2 M7 - Interficies (6)", "Informática", "CFGS", 99, "pwd2", "2018-2019", false));*/
     }
 
     @Override
@@ -208,10 +192,27 @@ public class InscribeCourseActivity extends AppCompatActivity {
     }
 
     /**
+     * Muesta un diálogo con un botón de ok y el texto que le pasamos como parámetro
+     * @param dialog_txt - El texto a mostrar en el diálogo
+     */
+    private void showDialog(String dialog_txt) {
+        // Creo un diálogo
+        AlertDialog.Builder builder = new AlertDialog.Builder(InscribeCourseActivity.this);
+        builder.setMessage(dialog_txt)
+                .setCancelable(false)
+                .setPositiveButton(ok_text, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {}
+                });
+        AlertDialog alert = builder.create();
+        // Lo muestro
+        alert.show();
+    }
+
+    /**
      * Obtiene todos los cursos que sean de la categoria que le pasamos como parámetro
      * @param category - La categoria de los cursos
      */
-    public void getCourses(String category){
+    private void getCourses(String category){
         db.collection(FirebaseStrings.COLLECTION_2)
                 .whereEqualTo(FirebaseStrings.FIELD3_C2, category)
                 .get()
@@ -233,8 +234,9 @@ public class InscribeCourseActivity extends AppCompatActivity {
                             Toast.makeText(InscribeCourseActivity.this, "Cursos añadidos!", Toast.LENGTH_SHORT).show();
                             //TODO: Finaliza ProgressBar
                         } else {
-                            //TODO: Mostrar Dialog de error
-                            System.out.println("Error getting documents: "+task.getException());
+                            // Muestro AlertDialog de error
+                            showDialog(getString(R.string.dialog4_error));
+                            //System.out.println("Error getting documents: "+task.getException());
                         }
                     }
                 });
@@ -245,26 +247,29 @@ public class InscribeCourseActivity extends AppCompatActivity {
      * @param UID - El UID del usuario que se quiere inscribir a un curso
      * @param course_id - El ID del curso del que queremos saber si está inscrito o no
      */
-    public void checkAlreadyInscribed(final String UID, final int course_id) {
+    private void checkAlreadyInscribed(final String UID, final int course_id) {
         db.collection(FirebaseStrings.COLLECTION_1)
                 .whereEqualTo(FirebaseStrings.FIELD1_C1, UID)
-                .whereEqualTo(FirebaseStrings.FIELD1_C7+"."+course_id, true)
+                // Este Where equivale a "El array contiene el id del curso?"
+                .whereArrayContains(FirebaseStrings.FIELD1_C7, course_id)
                 .get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                     @Override
                     public void onComplete(@NonNull Task<QuerySnapshot> task) {
                         if (task.isSuccessful()) {
                             if (!task.getResult().isEmpty()) {
-                                for (QueryDocumentSnapshot documentSnapshot : task.getResult()) {
-                                    Course course = documentSnapshot.toObject(Course.class);
-                                    System.out.println("curso -> " + course.toString());
-                                }
-                                //TODO: Hacer update de los cursos a los que el usuario esta inscrito
+                                // Cerramos el InputDialog
+                                dialog.dismiss();
+                                // Mostramos AlertDialog de error diciendo que ya está inscrito al curso
+                                showDialog(getString(R.string.dialog6_txt));
+                            } else {
+                                // Si el usuario no está inscrito, actualizar los cursos (añadimos el ID del curso al array de IDs de cursos del usuario en Cloud Firestore)
                                 updateUserCourses(UID, course_id);
                             }
                         } else {
-                            //TODO: Mostrar Dialog de error
-                            System.out.println("Error getting documents: "+task.getException());
+                            // Muestro AlertDialog de error
+                            showDialog(getString(R.string.dialog5_error));
+                            //System.out.println("Error getting documents: "+task.getException());
                         }
                     }
                 });
@@ -275,27 +280,27 @@ public class InscribeCourseActivity extends AppCompatActivity {
      * @param UID - El UID del usuario que se quiere inscribir a un curso
      * @param course_id - El ID del curso al que el usuario quiere inscribirse
      */
-    public void updateUserCourses(String UID, int course_id) {
+    private void updateUserCourses(String UID, int course_id) {
         DocumentReference documentRef = db.collection(FirebaseStrings.COLLECTION_1).document(UID);
         documentRef
                 .update(FirebaseStrings.FIELD1_C7, FieldValue.arrayUnion(course_id))
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void aVoid) {
+                        // Mostramos un toast diciendo que se ha inscrito correctamente
                         Toast.makeText(InscribeCourseActivity.this, getString(R.string.toast3), Toast.LENGTH_SHORT).show();
+                        Intent intent = new Intent(InscribeCourseActivity.this, WelcomeActivity.class);
+                        // Finaliza este Activity
+                        finish();
+                        // Volvemos al primero (llamada asíncrona)
+                        startActivity(intent);
                     }
                 })
                 .addOnFailureListener(new OnFailureListener() {
                     @Override
                     public void onFailure(@NonNull Exception e) {
-                        AlertDialog.Builder builder = new AlertDialog.Builder(InscribeCourseActivity.this);
-                        builder.setMessage(getString(R.string.dialog4_txt))
-                                .setCancelable(false)
-                                .setPositiveButton(ok_text, new DialogInterface.OnClickListener() {
-                                    public void onClick(DialogInterface dialog, int id) {}
-                                });
-                        AlertDialog alert = builder.create();
-                        alert.show();
+                        // Muestro AlertDialog de error
+                        showDialog(getString(R.string.dialog5_error));
                     }
                 });
     }
