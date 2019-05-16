@@ -1,7 +1,9 @@
 package com.synergy.synergyet;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.support.annotation.NonNull;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
@@ -19,15 +21,14 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.synergy.synergyet.custom.CoursesListAdapater;
 import com.synergy.synergyet.model.Course;
 import com.synergy.synergyet.model.Unit;
 import com.synergy.synergyet.model.User;
 import com.synergy.synergyet.strings.FirebaseStrings;
-import com.synergy.synergyet.strings.IntentExtras;
 
 import java.util.ArrayList;
 
@@ -40,6 +41,8 @@ public class WelcomeActivity extends AppCompatActivity {
     private CoursesListAdapater adapater;
     private ArrayList<Course> courses;
 
+    private String toast_txt1;
+
     private User user_data = null;
 
     @Override
@@ -47,13 +50,11 @@ public class WelcomeActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_welcome);
 
-        //TODO: Pruebas, no definitivo
-        // Obtenemos los datos del usuario (solo funcionará si hizo login)
-        user_data = (User) getIntent().getSerializableExtra(IntentExtras.EXTRA_USER_DATA);
-
         db = FirebaseFirestore.getInstance();
         user = FirebaseAuth.getInstance().getCurrentUser();
-        checkUserData(user.getUid());
+        getUserData(user.getUid());
+
+        toast_txt1 = getString(R.string.toast1);
 
         // Obtenemos el toolbar y lo añadimos al activity (para que se vean los iconos)
         toolbar = findViewById(R.id.toolbar);
@@ -94,49 +95,87 @@ public class WelcomeActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    //TODO: Comentar método (método no definitivo, puede cambiar)
-    private void checkUserData(String UID) {
-        if (user_data != null){
-            if (user_data.getCourses() != null) {
-                getUserCourses(user_data.getCourses());
-            } else {
-                // Mostramos en un TextView que el usuario no está inscrito en ningún curso
-                textView.setText(getString(R.string.no_courses));
-            }
-        } else {
-            //TODO: Obtener datos del usuario
-        }
+    /**
+     * Muesta un diálogo con un botón de ok y el texto que le pasamos como parámetro
+     * @param dialog_txt - El texto a mostrar en el diálogo
+     */
+    private void showDialog(String dialog_txt) {
+        // Creo un diálogo
+        AlertDialog.Builder builder = new AlertDialog.Builder(WelcomeActivity.this);
+        builder.setMessage(dialog_txt)
+                .setCancelable(false)
+                .setPositiveButton(getString(R.string.dialogOK_button), new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {}
+                });
+        AlertDialog alert = builder.create();
+        // Lo muestro
+        alert.show();
     }
 
-    //TODO: Comentar método
-    public void getUserCourses(ArrayList<Integer> courses_ids){
-        for (int course_id : courses_ids) {
-            db.collection(FirebaseStrings.COLLECTION_2)
-                    .whereEqualTo(FirebaseStrings.FIELD1_C2, course_id)
-                    // Lo ordenamos por el ID para poder aplicar el filtro limit()
-                    .orderBy(FirebaseStrings.FIELD1_C2)
-                    // La consulta devolverá 1 resultado
-                    .limit(1)
-                    .get()
-                    .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                        @Override
-                        public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                            if (task.isSuccessful()) {
-                                //TODO: Pruebas
-                                System.out.println("Curso -> " + task.getResult().getDocuments().get(0).toObject(Course.class).toString());
-                                for (QueryDocumentSnapshot document : task.getResult()) {
-                                    Course course = document.toObject(Course.class);
+    /**
+     * Busca los datos de un usuario en Cloud Firestore sabiendo su UID
+     * @param UID - El UID del usuario del que queremos los datos
+     */
+    private void getUserData(String UID){
+        final DocumentReference docRef = db.collection(FirebaseStrings.COLLECTION_1).document(UID);
+        docRef.get()
+            .addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                @Override
+                public void onSuccess(DocumentSnapshot documentSnapshot) {
+                    // Obtener los datos del usuario
+                    user_data = documentSnapshot.toObject(User.class);
+                    getUserCourses(user_data.getCourses(), user_data.getName());
+                }
+            }).addOnFailureListener(new OnFailureListener() {
+                 @Override
+                 public void onFailure(@NonNull Exception e) {
+                     showDialog(getString(R.string.dialog_error_userData));
+                     //System.out.println("Error -> " + e);
+                 }
+             });
+    }
+
+    /**
+     * Busca los cursos a los que está inscrito el usuario para poder mostrarlos en el ListView
+     * @param courses_ids - El array con los IDs de los cursos a los que está inscrito el usuario (podria ser nulo, lo comprueba este método)
+     * @param name - El nombre del usuario para enseñar un Toast de bienvenida al finalizar este método
+     */
+    private void getUserCourses(ArrayList<Integer> courses_ids, String name){
+        if (courses_ids != null) {
+            for (int course_id : courses_ids) {
+                db.collection(FirebaseStrings.COLLECTION_2)
+                        .whereEqualTo(FirebaseStrings.FIELD1_C2, course_id)
+                        // Aplicamos el filtro limit() para que la consulta devuelva 1 resultado
+                        .limit(1)
+                        .get()
+                        .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                            @Override
+                            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                                if (task.isSuccessful()) {
+                                    // Obtenemos el primer resultado de la consulta (no debería devolver más de 1, pero lo hago para evitar hacer un bucle)
+                                    Course course = task.getResult().getDocuments().get(0).toObject(Course.class);
                                     // Añadimos el curso al array
                                     courses.add(course);
                                     // Notificamos al adapter que se añadido un curso (para que se vea en el ListView)
                                     adapater.notifyDataSetChanged();
-                                    break;
+                                } else {
+                                    showDialog(getString(R.string.dialog_error_courses));
+                                    //System.out.println("Error writing document -> "+task.getException());
                                 }
-                            } else {
-                                //TODO: Mostrar AlertDialog de error
                             }
-                        }
-                    });
+                        });
+            }
+            //TODO: Finaliza ProgressBar
+
+            // Mostrar Toast de bienvienida
+            Toast.makeText(WelcomeActivity.this, toast_txt1 + " " + name + "!! :)",
+                    Toast.LENGTH_SHORT).show();
+        } else {
+            // Mostrar Toast de bienvienida
+            Toast.makeText(WelcomeActivity.this, toast_txt1 + " " + name + "!! :)",
+                    Toast.LENGTH_SHORT).show();
+            // Mostramos en un TextView que el usuario no está inscrito en ningún curso
+            textView.setText(getString(R.string.no_courses));
         }
     }
 

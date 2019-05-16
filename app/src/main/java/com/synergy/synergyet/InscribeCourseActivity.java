@@ -151,7 +151,6 @@ public class InscribeCourseActivity extends AppCompatActivity {
                             til.setError(getString(R.string.dialog3_error_msg1));
                         } else {
                             if (pwd.equals(course.getPassword())) {
-                                //TODO: Comprobar si está inscrito en el curso
                                 checkAlreadyInscribed(user.getUid(), course.getCourse_id());
                             } else {
                                 // Mostramos mensaje de error (contraseña incorrecta)

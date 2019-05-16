@@ -10,27 +10,17 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.method.PasswordTransformationMethod;
 import android.util.Base64;
-import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.firestore.DocumentReference;
-import com.google.firebase.firestore.DocumentSnapshot;
-import com.google.firebase.firestore.FirebaseFirestore;
-import com.synergy.synergyet.model.User;
-import com.synergy.synergyet.strings.FirebaseStrings;
-import com.synergy.synergyet.strings.IntentExtras;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -45,12 +35,10 @@ public class MainActivity extends AppCompatActivity {
 
     private FirebaseAuth mAuth;
     private FirebaseUser user;
-    private FirebaseFirestore db;
 
     private String dialog_txt1;
     private String dialog_txt2;
     private String dialogOK;
-    private String toast_txt1;
     private boolean showing_pass = false;
 
     @Override
@@ -71,7 +59,6 @@ public class MainActivity extends AppCompatActivity {
         dialog_txt1 = getString(R.string.dialog1_txt1);
         dialog_txt2 = getString(R.string.dialog1_txt2);
         dialogOK = getString(R.string.dialogOK_button);
-        toast_txt1 = getString(R.string.toast1);
 
         // Obtener los componentes del activity
         et_user = findViewById(R.id.et_username);
@@ -82,7 +69,6 @@ public class MainActivity extends AppCompatActivity {
         not_visible = ContextCompat.getDrawable(MainActivity.this, R.drawable.ic_visibility_off_white_24dp);
 
         mAuth = FirebaseAuth.getInstance();
-        db = FirebaseFirestore.getInstance();
 
         eye = findViewById(R.id.eye_icon);
         eye.setOnClickListener(new View.OnClickListener() {
@@ -90,15 +76,11 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 if (!et_pass.getText().toString().equals("")) {
                     if (!showing_pass) {
-                        //System.out.println("showing");
-                        //et_pass.setSelection(et_pass.getText().length());
                         // Muestra la contraseña
                         et_pass.setTransformationMethod(null);
                         eye.setImageDrawable(not_visible);
                         showing_pass = true;
                     } else {
-                        //System.out.println("hiding");
-                        //et_pass.setSelection(et_pass.getText().length());
                         // Oculta la contraseña
                         et_pass.setTransformationMethod(new PasswordTransformationMethod());
                         eye.setImageDrawable(visible);
@@ -171,7 +153,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     /**
-     * Hace login en Firebase
+     * Hace login en Firebase y inicia el siguiente activity si el usuario ha podido loguearse correctamente
      * @param email - El email con el que queremos acceder
      * @param password - La contraseña con la que queremos acceder
      */
@@ -183,46 +165,17 @@ public class MainActivity extends AppCompatActivity {
                         if (task.isSuccessful()) {
                             // Si el login se realiza con éxito, accederá a la aplicación
                             user = mAuth.getCurrentUser();
-                            getUserData(user.getUid());
+                            // Creamos el intent de la pantalla de bienvenida
+                            Intent intent = new Intent(MainActivity.this, WelcomeActivity.class);
+                            // Iniciamos el activity
+                            startActivity(intent);
                         } else {
                             // Si el login falla, se mostrará al usuario un diálogo con un mensaje de error
-                            //Log.w("FirebaseError", "signInWithEmail:failure", task.getException());
                             showDialog(dialog_txt2);
+                            //Log.w("FirebaseError", "signInWithEmail:failure", task.getException());
                         }
                     }
                 });
-    }
-
-    //TODO: En pruebas, no definitivo (esta funcionalidad puede ir en el siguiente activity)
-    /**
-     * Busca los datos de un usuario en Cloud Firestore sabiendo su UID
-     * @param UID - El UID del usuario del que queremos los datos
-     */
-    private void getUserData(String UID){
-        final DocumentReference docRef = db.collection(FirebaseStrings.COLLECTION_1).document(UID);
-        docRef.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
-            @Override
-            public void onSuccess(DocumentSnapshot documentSnapshot) {
-                // Obtener los datos del usuario
-                User user = documentSnapshot.toObject(User.class);
-                // Mostrar Toast de bienvienida
-                Toast.makeText(MainActivity.this, toast_txt1 + " " + user.getName() + "!! :)",
-                Toast.LENGTH_SHORT).show();
-                // Creamos el intent de la pantalla de bienvenida
-                Intent intent = new Intent(MainActivity.this, WelcomeActivity.class);
-                // Pasamos los datos del usuario (Clase User) al siguiente activity, para no volver a consultarlos
-                intent.putExtra(IntentExtras.EXTRA_USER_DATA, user);
-                // Iniciamos el activity
-                startActivity(intent);
-            }
-        })
-        .addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-                //TODO: Mostrar diálogo de error
-                System.out.println("Error -> " + e);
-            }
-        });
     }
 
 }

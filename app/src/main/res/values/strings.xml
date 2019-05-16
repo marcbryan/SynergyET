@@ -24,6 +24,8 @@
     <!-- Textos WelcomeActivity -->
     <string name="titleWelcome">Mis cursos</string>
     <string name="inscribe_course">Inscribirme a un curso</string>
+    <string name="dialog_error_userData">Se ha producido un error al intentar obtener tus datos, vuelve a intentarlo más tarde</string>
+    <string name="dialog_error_courses">Se ha producido un error al intentar obtener tus cursos, vuelve a intentarlo más tarde</string>
     <string name="no_courses">No estás inscrito en ningún curso, para inscribirte a uno, pulsa el libro de la barra superior</string>
 
     <!-- Textos CategoriesActivity -->
