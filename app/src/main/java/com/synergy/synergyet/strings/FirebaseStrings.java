@@ -17,8 +17,12 @@ public final class FirebaseStrings {
     public static final String FIELD1_C2 = "course_id";
     public static final String FIELD3_C2 = "category";
 
+    // Referencias RealtimeDatabase
+    public static final String REFERENCE_1 = "users";
+
     // Otros
     public static final String DEFAULT_USER_TYPE = "student";
+    public static final String DEFAULT_IMAGE_VALUE = "default";
 
     /**
      * Constructor privado
