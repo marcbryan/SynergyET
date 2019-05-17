@@ -1,5 +1,6 @@
 package com.synergy.synergyet;
 
+import android.app.Dialog;
 import android.app.SearchManager;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -51,6 +52,7 @@ public class InscribeCourseActivity extends AppCompatActivity {
     private CoursesListAdapater adapter;
     private AlertDialog.Builder builder;
     private AlertDialog dialog;
+    private Dialog progressDialog;
 
     private String ok_text;
     private String cancel_text;
@@ -87,6 +89,8 @@ public class InscribeCourseActivity extends AppCompatActivity {
 
         // Creamos el array que tendrá los datos del ListView
         courses = new ArrayList<>();
+        // Mostramos Dialog de espera
+        showProgressDialog(getString(R.string.loading_cg_courses));
         getCourses(category);
 
         // Obtenemos los textos 'Aceptar' y 'Cancelar' de strings.xml (para ponerlo en el Dialog)
@@ -151,6 +155,7 @@ public class InscribeCourseActivity extends AppCompatActivity {
                             til.setError(getString(R.string.dialog3_error_msg1));
                         } else {
                             if (pwd.equals(course.getPassword())) {
+                                //TODO: Mostrar ProgressDialog 2
                                 checkAlreadyInscribed(user.getUid(), course.getCourse_id());
                             } else {
                                 // Mostramos mensaje de error (contraseña incorrecta)
@@ -208,6 +213,26 @@ public class InscribeCourseActivity extends AppCompatActivity {
     }
 
     /**
+     * Muestra un AlertDialog que emula a un ProgressDialog (la clase ProgressDialog está deprecated, por eso usamos este)
+     * @param msg - El mensaje que se mostrará en el Dialog
+     */
+    private void showProgressDialog(String msg){
+        // Creamos el AlertDialog y le aplicamos un style personalizado
+        AlertDialog.Builder builder = new AlertDialog.Builder(this, R.style.CustomAlertDialog);
+        // Inflate de la vista
+        View view = getLayoutInflater().inflate(R.layout.custom_progress_dialog, null);
+        // Obtenemos el TextView de la vista para poder poner el texto
+        TextView tv_message = view.findViewById(R.id.loading_msg);
+        tv_message.setText(msg);
+        // Ponemos la vista y lo hacemos no cancelable (para hacerlo modal)
+        builder.setView(view)
+                .setCancelable(false);
+        progressDialog = builder.create();
+        // Mostramos el Dialog
+        progressDialog.show();
+    }
+
+    /**
      * Obtiene todos los cursos que sean de la categoria que le pasamos como parámetro
      * @param category - La categoria de los cursos
      */
@@ -229,10 +254,11 @@ public class InscribeCourseActivity extends AppCompatActivity {
                             listView.setAdapter(adapter);
                             // Activamos la filtración de datos para poder hacer búsquedas
                             listView.setTextFilterEnabled(true);
-                            //TODO: Eliminar Toast
-                            Toast.makeText(InscribeCourseActivity.this, "Cursos añadidos!", Toast.LENGTH_SHORT).show();
-                            //TODO: Finaliza ProgressBar
+                            // Finaliza ProgressDialog
+                            progressDialog.dismiss();
                         } else {
+                            // Finaliza ProgressDialog
+                            progressDialog.dismiss();
                             // Muestro AlertDialog de error
                             showDialog(getString(R.string.dialog4_error));
                             //System.out.println("Error getting documents: "+task.getException());
@@ -257,6 +283,7 @@ public class InscribeCourseActivity extends AppCompatActivity {
                     public void onComplete(@NonNull Task<QuerySnapshot> task) {
                         if (task.isSuccessful()) {
                             if (!task.getResult().isEmpty()) {
+                                //TODO: Finaliza ProgressDialog 2
                                 // Cerramos el InputDialog
                                 dialog.dismiss();
                                 // Mostramos AlertDialog de error diciendo que ya está inscrito al curso
@@ -266,6 +293,7 @@ public class InscribeCourseActivity extends AppCompatActivity {
                                 updateUserCourses(UID, course_id);
                             }
                         } else {
+                            //TODO: Finaliza ProgressDialog 2
                             // Muestro AlertDialog de error
                             showDialog(getString(R.string.dialog5_error));
                             //System.out.println("Error getting documents: "+task.getException());
@@ -286,6 +314,7 @@ public class InscribeCourseActivity extends AppCompatActivity {
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void aVoid) {
+                        //TODO: Finaliza ProgressDialog 2
                         // Mostramos un toast diciendo que se ha inscrito correctamente
                         Toast.makeText(InscribeCourseActivity.this, getString(R.string.toast3), Toast.LENGTH_SHORT).show();
                         Intent intent = new Intent(InscribeCourseActivity.this, WelcomeActivity.class);
@@ -298,6 +327,7 @@ public class InscribeCourseActivity extends AppCompatActivity {
                 .addOnFailureListener(new OnFailureListener() {
                     @Override
                     public void onFailure(@NonNull Exception e) {
+                        //TODO: Finaliza ProgressDialog 2
                         // Muestro AlertDialog de error
                         showDialog(getString(R.string.dialog5_error));
                     }

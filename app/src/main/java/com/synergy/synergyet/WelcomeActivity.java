@@ -1,5 +1,6 @@
 package com.synergy.synergyet;
 
+import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.support.annotation.NonNull;
@@ -10,6 +11,7 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -41,6 +43,7 @@ public class WelcomeActivity extends AppCompatActivity {
     private CoursesListAdapater adapater;
     private ArrayList<Course> courses;
 
+    private Dialog progressDialog;
     private String toast_txt1;
 
     private User user_data = null;
@@ -52,6 +55,8 @@ public class WelcomeActivity extends AppCompatActivity {
 
         db = FirebaseFirestore.getInstance();
         user = FirebaseAuth.getInstance().getCurrentUser();
+        // Mostramos el Dialog de espera antes de obtener los datos del usuario
+        showProgressDialog(getString(R.string.loading_user_courses));
         getUserData(user.getUid());
 
         toast_txt1 = getString(R.string.toast1);
@@ -95,6 +100,7 @@ public class WelcomeActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    // TODO: Cambiar style y textColor de los AlertDialog de todas las activitys
     /**
      * Muesta un diálogo con un botón de ok y el texto que le pasamos como parámetro
      * @param dialog_txt - El texto a mostrar en el diálogo
@@ -110,6 +116,26 @@ public class WelcomeActivity extends AppCompatActivity {
         AlertDialog alert = builder.create();
         // Lo muestro
         alert.show();
+    }
+
+    /**
+     * Muestra un AlertDialog que emula a un ProgressDialog (la clase ProgressDialog está deprecated, por eso usamos este)
+     * @param msg - El mensaje que se mostrará en el Dialog
+     */
+    private void showProgressDialog(String msg){
+        // Creamos el AlertDialog y le aplicamos un style personalizado
+        AlertDialog.Builder builder = new AlertDialog.Builder(this, R.style.CustomAlertDialog);
+        // Inflate de la vista
+        View view = getLayoutInflater().inflate(R.layout.custom_progress_dialog, null);
+        // Obtenemos el TextView de la vista para poder poner el texto
+        TextView tv_message = view.findViewById(R.id.loading_msg);
+        tv_message.setText(msg);
+        // Ponemos la vista y lo hacemos no cancelable (para hacerlo modal)
+        builder.setView(view)
+                .setCancelable(false);
+        progressDialog = builder.create();
+        // Mostramos el Dialog
+        progressDialog.show();
     }
 
     /**
@@ -129,6 +155,8 @@ public class WelcomeActivity extends AppCompatActivity {
             }).addOnFailureListener(new OnFailureListener() {
                  @Override
                  public void onFailure(@NonNull Exception e) {
+                     // Finaliza ProgressBar
+                     progressDialog.dismiss();
                      showDialog(getString(R.string.dialog_error_userData));
                      //System.out.println("Error -> " + e);
                  }
@@ -165,8 +193,6 @@ public class WelcomeActivity extends AppCompatActivity {
                             }
                         });
             }
-            //TODO: Finaliza ProgressBar
-
             // Mostrar Toast de bienvienida
             Toast.makeText(WelcomeActivity.this, toast_txt1 + " " + name + "!! :)",
                     Toast.LENGTH_SHORT).show();
@@ -177,6 +203,8 @@ public class WelcomeActivity extends AppCompatActivity {
             // Mostramos en un TextView que el usuario no está inscrito en ningún curso
             textView.setText(getString(R.string.no_courses));
         }
+        // Finaliza ProgressBar
+        progressDialog.dismiss();
     }
 
     //TODO: Cambiar de Activity los métodos para hacer inserts
