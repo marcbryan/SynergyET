@@ -67,7 +67,6 @@ public class MainActivity extends AppCompatActivity {
         if (user != null) {
             // Si el usuario ya ha iniciado sesión antes, se le mostrará la pantalla principal de la aplicación
             Intent intent = new Intent(MainActivity.this, WelcomeActivity.class);
-            //TODO: Pasarle sus datos al siguiente activity
             startActivity(intent);
         }
 
@@ -171,19 +170,14 @@ public class MainActivity extends AppCompatActivity {
                 dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        // Obtenemos el email que ha introducido el usuario
-                        String pwd = et_dialogEmail.getText().toString();
                         if (TextUtils.isEmpty(et_dialogEmail.getText())) {
-                            System.out.println("IS EMPTY");
                             til.setError(getString(R.string.dialog_empty_email));
                         } else {
                             if (Patterns.EMAIL_ADDRESS.matcher(et_dialogEmail.getText()).matches()) {
-                                //ENVIAR EL EMAIL
+                                //TODO: Enviar mail para cambiar contraseña
                             } else {
                                 til.setError(getString(R.string.dialog_wrong_email));
-
                             }
-
                         }
                     }
                 });
@@ -248,6 +242,8 @@ public class MainActivity extends AppCompatActivity {
                 .addOnCompleteListener(MainActivity.this, new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
+                        // Finaliza el ProgressDialog
+                        progressDialog.dismiss();
                         if (task.isSuccessful()) {
                             // Si el login se realiza con éxito, accederá a la aplicación
                             user = mAuth.getCurrentUser();

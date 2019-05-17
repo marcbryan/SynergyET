@@ -14,7 +14,7 @@
     <string name="or">o</string>
     <string name="desc_eye">Ver contraseña</string>
     <string name="dialog1_txt1">Introduce un correo electrónico y contraseña</string>
-    <string name="dialog1_txt2">Credenciales incorrectas, introduce un mail y contraseña válidos!</string>
+    <string name="dialog1_txt2">Esta combinación de correo electrónico y contraseña no es correcta. Vuelve a intentarlo</string>
     <string name="dialogOK_button">Aceptar</string>
     <string name="dialogCancel">Cancelar</string>
     <string name="dialog_empty_email">Introduce un correo electrónico</string>
