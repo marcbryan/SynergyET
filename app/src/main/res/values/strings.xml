@@ -1,24 +1,24 @@
 <resources xmlns:tools="http://schemas.android.com/tools" tools:ignore="MissingTranslation">
 
+    <string name="app_name">SynergyET</string>
+
     <!--Textos InputDialogue-->
     <string name="titleForgotPassword">Recuperar Contraseña</string>
 
-    <string name="app_name">SynergyET</string>
     <!-- Textos MainActivity -->
     <string name="email_address">Correo electrónico</string>
     <string name="password">Contraseña</string>
-    <string name="dialogCancel">Cancelar</string>
     <string name="login">Login</string>
     <string name="forgot_password"><u>Ha olvidado su contraseña?</u></string>
     <string name="create_user"><u>No tiene una cuenta de usuario?</u></string>
     <string name="or">o</string>
     <string name="desc_eye">Ver contraseña</string>
     <string name="dialog1_txt1">Introduce un correo electrónico y contraseña</string>
-    <string name="dialog1_txt2">Credenciales incorrectas, introduce un mail y contraseña válidos!</string>
+    <string name="dialog1_txt2">Esta combinación de correo electrónico y contraseña no es correcta. Vuelve a intentarlo</string>
     <string name="dialogOK_button">Aceptar</string>
+    <string name="dialogCancel">Cancelar</string>
     <string name="dialog_empty_email">Introduce un correo electrónico</string>
     <string name="dialog_wrong_email">Introduce un correo electrónico válido</string>
-
     <string name="toast1">Bienvenido</string>
 
     <!-- Textos SignUpActivity -->
@@ -30,6 +30,10 @@
     <!-- Textos WelcomeActivity -->
     <string name="titleWelcome">Mis cursos</string>
     <string name="inscribe_course">Inscribirme a un curso</string>
+    <string name="loading_user_courses">Cargando tus cursos…</string>
+    <string name="dialog_error_userData">Se ha producido un error al intentar obtener tus datos, vuelve a intentarlo más tarde</string>
+    <string name="dialog_error_courses">Se ha producido un error al intentar obtener tus cursos, vuelve a intentarlo más tarde</string>
+    <string name="no_courses">No estás inscrito en ningún curso, para inscribirte a uno, pulsa el libro de la barra superior</string>
 
     <!-- Textos CategoriesActivity -->
     <string name="titleCategories">Selecciona una categoría</string>
@@ -56,4 +60,15 @@
         <item>Fabricación mecánica</item>
     </string-array>
 
+    <!-- Textos InscribeCourseActivity -->
+    <string name="titleInscribe">Inscribirse a un curso</string>
+    <string name="searchCourse">Buscar un curso</string>
+    <string name="loading_cg_courses">Cargando cursos…</string>
+    <string name="dialog3_txt">Necesitamos la contraseña de este curso para que puedas inscribirte</string>
+    <string name="dialog3_error_msg1">Introduce una contraseña</string>
+    <string name="dialog3_error_msg2">Contraseña incorrecta</string>
+    <string name="toast3">Te has inscrito correctamente!</string>
+    <string name="dialog4_error">No se han podido cargar los cursos, vuelve a intentarlo más tarde</string>
+    <string name="dialog5_error">La inscripción al curso ha fallado, vuelve a intentalo</string>
+    <string name="dialog6_txt">Ya estás inscrito en este curso, no puedes volver a inscribirte!</string>
 </resources>

@@ -7,7 +7,7 @@ public class Course {
     private String name;
     private String category;
     private String level;
-    private String hours;
+    private int hours;
     private String password;
     private ArrayList<String> teachers;
     private ArrayList<String> students;
@@ -19,7 +19,7 @@ public class Course {
      */
     public Course(){}
 
-    public Course(int course_id, String name, String category, String level, String hours, String password, String course_year, boolean finished) {
+    public Course(int course_id, String name, String category, String level, int hours, String password, String course_year, boolean finished) {
         this.course_id = course_id;
         this.name = name;
         this.category = category;
@@ -46,7 +46,7 @@ public class Course {
         return level;
     }
 
-    public String getHours() {
+    public int getHours() {
         return hours;
     }
 
@@ -86,7 +86,7 @@ public class Course {
         this.level = level;
     }
 
-    public void setHours(String hours) {
+    public void setHours(int hours) {
         this.hours = hours;
     }
 

@@ -13,6 +13,9 @@ public final class FirebaseStrings {
 
     // Campos
     public static final String FIELD1_C1 = "uid";
+    public static final String FIELD1_C7 = "courses";
+    public static final String FIELD1_C2 = "course_id";
+    public static final String FIELD3_C2 = "category";
 
     // Otros
     public static final String DEFAULT_USER_TYPE = "student";

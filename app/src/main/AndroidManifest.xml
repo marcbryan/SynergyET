@@ -4,21 +4,20 @@
 
     <application
         android:allowBackup="true"
-        android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
+        android:icon="@mipmap/ic_launcher"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".CoverPageActivity"></activity>
-        <activity android:name=".CategoriesActivity" />
-        <activity android:name=".MainActivity">
-
+        <activity android:name=".CoverPageActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity android:name=".InscribeCourseActivity"></activity>
+        <activity android:name=".CategoriesActivity"></activity>
+        <activity android:name=".MainActivity"></activity>
         <activity android:name=".SignUpActivity">
 
             <!-- The meta-data tag is required if you support API level 15 and lower -->
