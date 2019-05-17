@@ -71,4 +71,12 @@
     <string name="dialog4_error">No se han podido cargar los cursos, vuelve a intentarlo más tarde</string>
     <string name="dialog5_error">La inscripción al curso ha fallado, vuelve a intentalo</string>
     <string name="dialog6_txt">Ya estás inscrito en este curso, no puedes volver a inscribirte!</string>
+
+    <!-- Textos ContactsActivity -->
+    <string name="titleContacts">Contactos</string>
+
+    <!-- Textos MessageActivity -->
+    <string name="hint_text_toSend">Escribe un mensaje</string>
+    <string name="toast_no_msg">No puedes mandar un mensaje vacío!</string>
+    <string name="desc_send_msg">Enviar mensaje</string>
 </resources>

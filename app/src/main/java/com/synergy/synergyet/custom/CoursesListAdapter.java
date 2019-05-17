@@ -17,7 +17,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
 
-public class CoursesListAdapater extends ArrayAdapter<Course> implements View.OnClickListener {
+public class CoursesListAdapter extends ArrayAdapter<Course> implements View.OnClickListener {
     private TextView course_name;
     private TextView teacher_name;
 
@@ -28,7 +28,7 @@ public class CoursesListAdapater extends ArrayAdapter<Course> implements View.On
     private Comparator<Course> comparator;
     Context context;
 
-    public CoursesListAdapater(ArrayList<Course> data, Context context) {
+    public CoursesListAdapter(ArrayList<Course> data, Context context) {
         super(context, R.layout.course_item, data);
         this.context = context;
         courses_list = data;

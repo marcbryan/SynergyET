@@ -35,7 +35,7 @@ import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
-import com.synergy.synergyet.custom.CoursesListAdapater;
+import com.synergy.synergyet.custom.CoursesListAdapter;
 import com.synergy.synergyet.model.Course;
 import com.synergy.synergyet.strings.FirebaseStrings;
 import com.synergy.synergyet.strings.IntentExtras;
@@ -49,7 +49,7 @@ public class InscribeCourseActivity extends AppCompatActivity {
     private Toolbar toolbar;
     private ListView listView;
     private ArrayList<Course> courses;
-    private CoursesListAdapater adapter;
+    private CoursesListAdapter adapter;
     private AlertDialog.Builder builder;
     private AlertDialog dialog;
     private Dialog progressDialog;
@@ -249,7 +249,7 @@ public class InscribeCourseActivity extends AppCompatActivity {
                                 courses.add(course);
                             }
                             // Creamos el adapter
-                            adapter = new CoursesListAdapater(courses, InscribeCourseActivity.this);
+                            adapter = new CoursesListAdapter(courses, InscribeCourseActivity.this);
                             // Se lo asignamos al ListView
                             listView.setAdapter(adapter);
                             // Activamos la filtración de datos para poder hacer búsquedas

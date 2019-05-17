@@ -19,6 +19,13 @@ public final class FirebaseStrings {
 
     // Referencias RealtimeDatabase
     public static final String REFERENCE_1 = "users";
+    public static final String REFERENCE_2 = "chats";
+
+    // Keys HashMap chat
+    public static final String KEY1 = "sender";
+    public static final String KEY2 = "receiver";
+    public static final String KEY3 = "message";
+    public static final String KEY4 = "date";
 
     // Otros
     public static final String DEFAULT_USER_TYPE = "student";

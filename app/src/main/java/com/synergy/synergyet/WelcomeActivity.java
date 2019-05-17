@@ -12,6 +12,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -26,7 +27,7 @@ import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
-import com.synergy.synergyet.custom.CoursesListAdapater;
+import com.synergy.synergyet.custom.CoursesListAdapter;
 import com.synergy.synergyet.model.Course;
 import com.synergy.synergyet.model.Unit;
 import com.synergy.synergyet.model.User;
@@ -40,11 +41,10 @@ public class WelcomeActivity extends AppCompatActivity {
     private Toolbar toolbar;
     private TextView textView;
     private ListView listView;
-    private CoursesListAdapater adapater;
+    private CoursesListAdapter adapater;
     private ArrayList<Course> courses;
 
     private Dialog progressDialog;
-    private String toast_txt1;
 
     private User user_data = null;
 
@@ -59,8 +59,6 @@ public class WelcomeActivity extends AppCompatActivity {
         showProgressDialog(getString(R.string.loading_user_courses));
         getUserData(user.getUid());
 
-        toast_txt1 = getString(R.string.toast1);
-
         // Obtenemos el toolbar y lo añadimos al activity (para que se vean los iconos)
         toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -68,10 +66,20 @@ public class WelcomeActivity extends AppCompatActivity {
         textView = findViewById(R.id.zero_courses);
 
         courses = new ArrayList<>();
-        adapater = new CoursesListAdapater(courses, this);
+        adapater = new CoursesListAdapter(courses, this);
         listView = findViewById(R.id.courses_list);
         // Añadimos el adapter al ListView
         listView.setAdapter(adapater);
+
+        //TODO: Pruebas, borrar botón
+        Button test = findViewById(R.id.testButton);
+        test.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(WelcomeActivity.this, ContactsActivity.class);
+                startActivity(intent);
+            }
+        });
     }
 
     @Override
@@ -194,11 +202,11 @@ public class WelcomeActivity extends AppCompatActivity {
                         });
             }
             // Mostrar Toast de bienvienida
-            Toast.makeText(WelcomeActivity.this, toast_txt1 + " " + name + "!! :)",
+            Toast.makeText(WelcomeActivity.this, getString(R.string.toast1) + " " + name + "!! :)",
                     Toast.LENGTH_SHORT).show();
         } else {
             // Mostrar Toast de bienvienida
-            Toast.makeText(WelcomeActivity.this, toast_txt1 + " " + name + "!! :)",
+            Toast.makeText(WelcomeActivity.this, getString(R.string.toast1) + " " + name + "!! :)",
                     Toast.LENGTH_SHORT).show();
             // Mostramos en un TextView que el usuario no está inscrito en ningún curso
             textView.setText(getString(R.string.no_courses));

@@ -18,7 +18,10 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.synergy.synergyet.model.ChatUser;
 import com.synergy.synergyet.model.User;
 import com.synergy.synergyet.strings.FirebaseStrings;
 
@@ -28,6 +31,7 @@ import java.security.NoSuchAlgorithmException;
 public class SignUpActivity extends AppCompatActivity {
     private FirebaseAuth mAuth;
     private FirebaseFirestore db;
+    private DatabaseReference reference;
 
     private EditText et_name;
     private EditText et_surname;
@@ -146,7 +150,7 @@ public class SignUpActivity extends AppCompatActivity {
         mAuth.getPendingAuthResult();
     }
 
-    private void addAccount(User user) {
+    private void addAccount(final User user) {
         db.collection(FirebaseStrings.COLLECTION_1)
                 // El ID del documento será el UID de Firebase del usuario que se registra (para luego buscar el documento por el ID)
                 .document(user.getUID())
@@ -154,16 +158,31 @@ public class SignUpActivity extends AppCompatActivity {
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void aVoid) {
-                        // Mostrar Toast de cuenta creada
-                        Toast.makeText(SignUpActivity.this, create_acc_ok,
-                                Toast.LENGTH_SHORT).show();
-                        //Cerrar el activity
-                        finish();
+                        reference = FirebaseDatabase.getInstance().getReference(FirebaseStrings.REFERENCE_1).child(user.getUID());
+                        // Datos a insertar en Realtime Database
+                        ChatUser chatUser = new ChatUser(user.getUID(), user.getName()+" "+user.getSurname(), FirebaseStrings.DEFAULT_IMAGE_VALUE);
+                        // Crea el usuario en Realtime Database (para usar el chat)
+                        reference.setValue(chatUser).addOnCompleteListener(new OnCompleteListener<Void>() {
+                            @Override
+                            public void onComplete(@NonNull Task<Void> task) {
+                                if (task.isSuccessful()) {
+                                    // Mostrar Toast de cuenta creada
+                                    Toast.makeText(SignUpActivity.this, create_acc_ok, Toast.LENGTH_SHORT).show();
+                                    //Cerrar el activity
+                                    finish();
+                                } else {
+                                    //TODO: Mostrar AlertDialog de error
+                                    System.err.println("Error: "+task.getException());
+                                }
+                            }
+                        });
+
                     }
                 })
                 .addOnFailureListener(new OnFailureListener() {
                     @Override
                     public void onFailure(@NonNull Exception e) {
+                        //TODO: Mostrar AlertDialog de error
                         Log.w(TAG, "Error writing document", e);
                     }
                 });
