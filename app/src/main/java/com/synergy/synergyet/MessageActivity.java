@@ -85,7 +85,6 @@ public class MessageActivity extends AppCompatActivity {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 ChatUser user = dataSnapshot.getValue(ChatUser.class);
-                System.out.println(user.toString());
                 display_name.setText(user.getDisplayName());
                 if (user.getImageURL().equals(FirebaseStrings.DEFAULT_IMAGE_VALUE)) {
                     // Si el usuario tiene como ImageURL el valor 'default', le pondremos la imagen de usuario por defecto
@@ -129,14 +128,15 @@ public class MessageActivity extends AppCompatActivity {
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference();
         // Creamos un HashMap que contendrá el nombre del usuario que envía el mensaje, el usuario que lo recibe y el mensaje
         HashMap <String, Object> hashMap = new HashMap<>();
-        hashMap.put(FirebaseStrings.KEY1, sender);
-        hashMap.put(FirebaseStrings.KEY2, receiver);
-        hashMap.put(FirebaseStrings.KEY3, msg);
-        hashMap.put(FirebaseStrings.KEY4, date);
+        hashMap.put(FirebaseStrings.KEY1_R2, sender);
+        hashMap.put(FirebaseStrings.KEY2_R2, receiver);
+        hashMap.put(FirebaseStrings.KEY3_R2, msg);
+        hashMap.put(FirebaseStrings.KEY4_R2, date);
         // Lo guardamos en la base de datos
         reference.child(FirebaseStrings.REFERENCE_2).push().setValue(hashMap);
     }
 
+    //TODO: Comentar método
     private void getMessages(final String sender, final String receiver, final String imageURL) {
         chatList = new ArrayList<>();
         reference = FirebaseDatabase.getInstance().getReference(FirebaseStrings.REFERENCE_2);

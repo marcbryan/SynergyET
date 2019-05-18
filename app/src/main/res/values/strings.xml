@@ -76,6 +76,7 @@
 
     <!-- Textos ContactsActivity -->
     <string name="titleContacts">Contactos</string>
+    <string name="you">Tú:</string>
 
     <!-- Textos MessageActivity -->
     <string name="hint_text_toSend">Escribe un mensaje</string>

@@ -41,10 +41,14 @@
                 android:layout_alignBottom="@+id/show_message"
                 android:layout_toEndOf="@id/show_message"
                 android:layout_toRightOf="@id/show_message"
-                android:padding="4dp"
+                android:paddingLeft="0dp"
+                android:paddingStart="0dp"
+                android:paddingRight="6dp"
+                android:paddingEnd="6dp"
+                android:paddingBottom="4dp"
                 android:text="12:00"
-                android:textSize="12sp"
-                android:textColor="@color/colorWhite"/>
+                android:textColor="@color/colorWhite"
+                android:textSize="12sp" />
 
         </RelativeLayout>
 
