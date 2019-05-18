@@ -24,6 +24,7 @@
     <!-- Textos SignUpActivity -->
     <string name="dialog2_txt1">Faltan campos por rellenar</string>
     <string name="dialog2_txt2">Las contraseñas no coinciden</string>
+    <string name="dialog_email_already_exists">Ese correo electrónico ya está en uso. Prueba con otro.</string>
     <string name="dialog2_txt3">El registro de la cuenta ha fallado, vuelve a intentarlo</string>
     <string name="toast2">Cuenta creada correctamente!</string>
 

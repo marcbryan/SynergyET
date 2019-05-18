@@ -111,8 +111,13 @@ public class InscribeCourseActivity extends AppCompatActivity {
                 View dialogView = inflater.inflate(R.layout.input_dialog, null);
                 builder.setCancelable(false);
                 builder.setView(dialogView);
-                // Obtenemos el TextInputEditText del InputDialog (para poder obtener el texto que introduce el usuario)
+
                 final TextInputLayout til = dialogView.findViewById(R.id.text_input_layout);
+                // Ponemos un contorno al TextInputLayout tipo Google (ejemplo -> https://i.stack.imgur.com/t2stI.png)
+                til.setBoxBackgroundMode(TextInputLayout.BOX_BACKGROUND_OUTLINE);
+                til.setBoxCornerRadii(5, 5, 5, 5);
+
+                // Obtenemos el TextInputEditText del InputDialog (para poder obtener el texto que introduce el usuario)
                 final TextInputEditText et_pass = dialogView.findViewById(R.id.input_password);
                 et_pass.addTextChangedListener(new TextWatcher() {
                     @Override

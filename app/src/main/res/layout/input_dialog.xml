@@ -46,6 +46,10 @@
             android:id="@+id/input_password"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:paddingLeft="10dp"
+            android:paddingStart="10dp"
+            android:paddingRight="10dp"
+            android:paddingEnd="10dp"
             android:hint="@string/password"
             android:textColor="@color/colorWhite"
             android:inputType="textPassword" />

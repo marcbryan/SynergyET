@@ -18,6 +18,7 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.SignInMethodQueryResult;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -86,7 +87,7 @@ public class SignUpActivity extends AppCompatActivity {
                         String hashed_pwd = encryptSHA256(pass_1);
                         User user = new User(name, surname, email, hashed_pwd, FirebaseStrings.DEFAULT_USER_TYPE);
                         //TODO: Mostrar ProgressDialog
-                        signUp(email, hashed_pwd, user);
+                        checkEmailAlreadyExists(email, user);
                     }
                 }
             }
@@ -121,7 +122,28 @@ public class SignUpActivity extends AppCompatActivity {
         return Base64.encodeToString(digest, Base64.DEFAULT);
     }
 
-    //TODO: Método para comprobar si el mail existe
+    //TODO: Comentar método
+    private void checkEmailAlreadyExists(final String email, final User user){
+        mAuth.fetchSignInMethodsForEmail(email).addOnCompleteListener(new OnCompleteListener<SignInMethodQueryResult>() {
+            @Override
+            public void onComplete(@NonNull Task<SignInMethodQueryResult> task) {
+                if (task.getResult().getSignInMethods().size() == 0){
+                    // No hay un usuario registrado con ese email
+                    signUp(email, user.getPassword(), user);
+                }else {
+                    //TODO: Finaliza ProgressDialog
+                    // Ya hay un usuario registrado con ese email
+                    showDialog(getString(R.string.dialog_email_already_exists));
+                }
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                //TODO: Mostrar AlertDialog de error
+                e.printStackTrace();
+            }
+        });
+    }
 
     private void signUp(String email, String password, final User user) {
         mAuth.createUserWithEmailAndPassword(email, password)
