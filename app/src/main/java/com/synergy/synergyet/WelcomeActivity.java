@@ -97,13 +97,23 @@ public class WelcomeActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+        Intent intent;
         // Obtenemos el id del item seleccionado
         int id = item.getItemId();
-        if (id == R.id.action_inscribeBook) {
-            // Si el id es igual al icono del libro se abrirá un activity con todos los cursos
-            Intent intent = new Intent(WelcomeActivity.this, CategoriesActivity.class);
-            startActivity(intent);
-            return true;
+        switch (id) {
+            case R.id.action_inscribeBook:
+                // Si el id es igual al icono del libro se abrirá un activity con todos los cursos
+                intent = new Intent(WelcomeActivity.this, CategoriesActivity.class);
+                startActivity(intent);
+                break;
+            case R.id.action_logout:
+                // Cerramos sesión
+                FirebaseAuth.getInstance().signOut();
+                // Volvemos al Activity de login
+                intent = new Intent(WelcomeActivity.this, MainActivity.class);
+                startActivity(intent);
+                finish();
+                break;
         }
         return super.onOptionsItemSelected(item);
     }

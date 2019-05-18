@@ -5,6 +5,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
+import android.view.View;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -29,6 +31,18 @@ public class ContactsActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_contacts);
+
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        // Flecha para volver atrás
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
+
         recyclerView = findViewById(R.id.recyclerView);
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(ContactsActivity.this));
@@ -48,12 +62,11 @@ public class ContactsActivity extends AppCompatActivity {
                     // Nos aseguramos que el usuario de la base datos y el de Firebase no son nulos
                     assert user != null;
                     assert firebaseUser != null;
-                    //TODO: Reemplazar por comprobación final (de momento añade todos los usuarios)
-                    if (!user.getUid().equals(firebaseUser)) {
+                    //TODO: Reemplazar por comprobación final (de momento añade todos los usuarios disponibles excepto el que está utilizando la aplicación)
+                    if (!user.getUid().equals(firebaseUser.getUid())) {
                         users.add(user);
                     }
                 }
-
                 adapter = new ChatUserAdapter(ContactsActivity.this, users);
                 recyclerView.setAdapter(adapter);
             }

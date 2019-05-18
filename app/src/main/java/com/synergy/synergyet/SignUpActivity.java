@@ -85,7 +85,7 @@ public class SignUpActivity extends AppCompatActivity {
                         // Crear cuenta
                         String hashed_pwd = encryptSHA256(pass_1);
                         User user = new User(name, surname, email, hashed_pwd, FirebaseStrings.DEFAULT_USER_TYPE);
-                        System.out.println("toString 1 -> "+user.toString());
+                        //TODO: Mostrar ProgressDialog
                         signUp(email, hashed_pwd, user);
                     }
                 }

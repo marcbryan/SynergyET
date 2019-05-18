@@ -194,6 +194,12 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+    @Override
+    public void onBackPressed() {
+        // Mostrar home screen de Android
+        moveTaskToBack(true);
+    }
+
     /**
      * Muesta un diálogo con un botón de ok y el texto que le pasamos como parámetro
      * @param dialog_txt - El texto a mostrar en el diálogo

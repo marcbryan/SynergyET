@@ -1,6 +1,5 @@
 package com.synergy.synergyet;
 
-import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -77,14 +76,16 @@ public class MessageActivity extends AppCompatActivity {
         btn_send = findViewById(R.id.btn_send);
         text_send = findViewById(R.id.text_toSend);
 
+        // UID del usuario al que enviaremos un mensaje
         final String receiver_uid = getIntent().getStringExtra(IntentExtras.EXTRA_UID);
 
         firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
-        reference = FirebaseDatabase.getInstance().getReference(FirebaseStrings.REFERENCE_1);
+        reference = FirebaseDatabase.getInstance().getReference(FirebaseStrings.REFERENCE_1).child(receiver_uid);
         reference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 ChatUser user = dataSnapshot.getValue(ChatUser.class);
+                System.out.println(user.toString());
                 display_name.setText(user.getDisplayName());
                 if (user.getImageURL().equals(FirebaseStrings.DEFAULT_IMAGE_VALUE)) {
                     // Si el usuario tiene como ImageURL el valor 'default', le pondremos la imagen de usuario por defecto
@@ -108,7 +109,8 @@ public class MessageActivity extends AppCompatActivity {
             public void onClick(View v) {
                 String msg = text_send.getText().toString();
                 if (!msg.equals("")) {
-                    SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/YYYY HH:mm:ss");
+                    // Ejemplo fecha -> 18/05/2019 13:30:45
+                    SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
                     String date = sdf.format(Calendar.getInstance().getTime());
                     sendMessage(firebaseUser.getUid(), receiver_uid, msg, date);
                 } else {
@@ -144,7 +146,7 @@ public class MessageActivity extends AppCompatActivity {
                 chatList.clear();
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                     Chat chat = snapshot.getValue(Chat.class);
-                    if (chat.getReceiver().equals(sender) && chat.getReceiver().equals(receiver)
+                    if (chat.getReceiver().equals(sender) && chat.getSender().equals(receiver)
                             || chat.getReceiver().equals(receiver) && chat.getSender().equals(sender)) {
                         chatList.add(chat);
                     }
