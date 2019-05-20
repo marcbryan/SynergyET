@@ -57,6 +57,7 @@ public class ContactsActivity extends AppCompatActivity {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 users.clear();
+                String imageURL = FirebaseStrings.DEFAULT_IMAGE_VALUE;
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                     ChatUser user = snapshot.getValue(ChatUser.class);
                     // Nos aseguramos que el usuario de la base datos y el de Firebase no son nulos
@@ -65,9 +66,12 @@ public class ContactsActivity extends AppCompatActivity {
                     //TODO: Reemplazar por comprobación final (de momento añade todos los usuarios disponibles excepto el que está utilizando la aplicación)
                     if (!user.getUid().equals(firebaseUser.getUid())) {
                         users.add(user);
+                    } else {
+                        // Obtenemos la URL de la foto del usuario actual
+                        imageURL = user.getImageURL();
                     }
                 }
-                adapter = new ChatUserAdapter(ContactsActivity.this, users);
+                adapter = new ChatUserAdapter(ContactsActivity.this, users, imageURL);
                 recyclerView.setAdapter(adapter);
             }
 

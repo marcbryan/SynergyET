@@ -6,6 +6,7 @@ public final class IntentExtras {
     public static final String EXTRA_CATEGORY_NAME = "EXTRA_CATEGORY_NAME";
     public static final String EXTRA_GROUP_NAME = "EXTRA_GROUP_NAME";
     public static final String EXTRA_UID = "EXTRA_UID";
+    public static final String EXTRA_CONVERSATION_ID = "EXTRA_CONVERSATION_ID";
 
     /**
      * Constructor privado

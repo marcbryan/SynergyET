@@ -10,7 +10,6 @@ public final class FirebaseStrings {
     public static final String COLLECTION_2 = "courses";
     public static final String COLLECTION_3 = "units";
 
-
     // Campos
     public static final String FIELD1_C1 = "uid";
     public static final String FIELD1_C7 = "courses";
@@ -19,13 +18,22 @@ public final class FirebaseStrings {
 
     // Referencias RealtimeDatabase
     public static final String REFERENCE_1 = "users";
-    public static final String REFERENCE_2 = "chats";
+    public static final String REFERENCE_2 = "conversations";
 
     // Nodos RealtimeDatabase
-    public static final String KEY1_R2 = "sender";
-    public static final String KEY2_R2 = "receiver";
-    public static final String KEY3_R2 = "message";
-    public static final String KEY4_R2 = "date";
+    public static final String KEY4_R1 = "conversations";
+
+    public static final String KEY1_R2 = "lastMessageInfo";
+    public static final String KEY2_R2 = "members";
+    public static final String KEY3_R2 = "messages";
+
+    public static final String K4_R1_CHILD1 = "unseenCount";
+    public static final String K4_R1_CHILD2 = "imageURL";
+
+    public static final String K1R2_CHILD1 = "lastMessage";
+    public static final String K1R2_CHILD2 = "lastMessageDate";
+    public static final String K1R2_CHILD3 = "lastMessageSender";
+
 
     // Otros
     public static final String DEFAULT_USER_TYPE = "student";

@@ -21,8 +21,8 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.synergy.synergyet.custom.MessageAdapter;
-import com.synergy.synergyet.model.Chat;
 import com.synergy.synergyet.model.ChatUser;
+import com.synergy.synergyet.model.Message;
 import com.synergy.synergyet.strings.FirebaseStrings;
 import com.synergy.synergyet.strings.IntentExtras;
 
@@ -46,7 +46,8 @@ public class MessageActivity extends AppCompatActivity {
     private RecyclerView recyclerView;
 
     private MessageAdapter adapter;
-    private List<Chat> chatList;
+    private List<Message> messages;
+    private String conversation_id;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -78,8 +79,11 @@ public class MessageActivity extends AppCompatActivity {
 
         // UID del usuario al que enviaremos un mensaje
         final String receiver_uid = getIntent().getStringExtra(IntentExtras.EXTRA_UID);
+        // ID de la conversación actual
+        conversation_id = getIntent().getStringExtra(IntentExtras.EXTRA_CONVERSATION_ID);
 
         firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
+        //TODO: Revisar esta parte
         reference = FirebaseDatabase.getInstance().getReference(FirebaseStrings.REFERENCE_1).child(receiver_uid);
         reference.addValueEventListener(new ValueEventListener() {
             @Override
@@ -93,7 +97,7 @@ public class MessageActivity extends AppCompatActivity {
                     // Pone la imagen del usuario en el CircleImageView
                     Glide.with(MessageActivity.this).load(user.getImageURL()).into(profile_picture);
                 }
-                getMessages(firebaseUser.getUid(), user.getUid(), user.getImageURL());
+                getMessages(user.getImageURL());
             }
 
             @Override
@@ -111,7 +115,12 @@ public class MessageActivity extends AppCompatActivity {
                     // Ejemplo fecha -> 18/05/2019 13:30:45
                     SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
                     String date = sdf.format(Calendar.getInstance().getTime());
-                    sendMessage(firebaseUser.getUid(), receiver_uid, msg, date);
+                    // Dividimos la fecha y la hora del mensaje enviado
+                    String spDate[] = date.split(" ");
+                    // La posición 0 de spDate[] es la fecha y la posición 1 la hora
+                    Message message = new Message(msg, spDate[0], spDate[1], firebaseUser.getUid());
+                    // Enviamos el mensaje
+                    sendMessage(message);
                 } else {
                     // Mostramos un toast diciendo que no se puede enviar mensajes vacíos
                     Toast.makeText(MessageActivity.this, getString(R.string.toast_no_msg), Toast.LENGTH_SHORT).show();
@@ -123,34 +132,42 @@ public class MessageActivity extends AppCompatActivity {
 
     }
 
-    //TODO: Comentar método
-    private void sendMessage(String sender, String receiver, String msg, String date) {
-        DatabaseReference reference = FirebaseDatabase.getInstance().getReference();
-        // Creamos un HashMap que contendrá el nombre del usuario que envía el mensaje, el usuario que lo recibe y el mensaje
-        HashMap <String, Object> hashMap = new HashMap<>();
-        hashMap.put(FirebaseStrings.KEY1_R2, sender);
-        hashMap.put(FirebaseStrings.KEY2_R2, receiver);
-        hashMap.put(FirebaseStrings.KEY3_R2, msg);
-        hashMap.put(FirebaseStrings.KEY4_R2, date);
-        // Lo guardamos en la base de datos
-        reference.child(FirebaseStrings.REFERENCE_2).push().setValue(hashMap);
+    /**
+     * Envía un mensaje y actualiza la información del último mensaje
+     * @param msg - El Objeto Message con la información del mensaje a enviar
+     */
+    private void sendMessage (Message msg) {
+        reference = FirebaseDatabase.getInstance().getReference(FirebaseStrings.REFERENCE_2).child(conversation_id);
+        // Guardamos el mensaje en Realtime Database
+        reference.child(FirebaseStrings.KEY3_R2).push().setValue(msg);
+
+        // Actualizamos la información del último mensaje
+        HashMap<String, Object> lastMsgInfo = new HashMap<>();
+        lastMsgInfo.put(FirebaseStrings.K1R2_CHILD1, msg.getMessage());
+        lastMsgInfo.put(FirebaseStrings.K1R2_CHILD2, msg.getDate()+" "+msg.getHour());
+        lastMsgInfo.put(FirebaseStrings.K1R2_CHILD3, msg.getSender());
+        reference.child(FirebaseStrings.KEY1_R2).updateChildren(lastMsgInfo);
+
+        //TODO: Actualizar el número de mensajes no leidos
     }
 
-    //TODO: Comentar método
-    private void getMessages(final String sender, final String receiver, final String imageURL) {
-        chatList = new ArrayList<>();
-        reference = FirebaseDatabase.getInstance().getReference(FirebaseStrings.REFERENCE_2);
+    /**
+     * Obtiene todos los mensajes de la conversación
+     * @param imageURL - La URL de la foto del usuario actual
+     */
+    private void getMessages(final String imageURL) {
+        messages = new ArrayList<>();
+        // Vamos al nodo messages
+        reference = FirebaseDatabase.getInstance().getReference(FirebaseStrings.REFERENCE_2).child(conversation_id).child(FirebaseStrings.KEY3_R2);
         reference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                chatList.clear();
+                messages.clear();
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                    Chat chat = snapshot.getValue(Chat.class);
-                    if (chat.getReceiver().equals(sender) && chat.getSender().equals(receiver)
-                            || chat.getReceiver().equals(receiver) && chat.getSender().equals(sender)) {
-                        chatList.add(chat);
-                    }
-                    adapter = new MessageAdapter(MessageActivity.this, chatList, imageURL);
+                    Message msg = snapshot.getValue(Message.class);
+                    messages.add(msg);
+                    // Creamos la vista de cada mensaje
+                    adapter = new MessageAdapter(MessageActivity.this, messages, imageURL);
                     recyclerView.setAdapter(adapter);
                 }
             }
