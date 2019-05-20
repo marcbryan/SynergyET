@@ -29,6 +29,27 @@
                 android:value=".MainActivity" />
         </activity>
         <activity android:name=".WelcomeActivity" />
+
+        <!-- Para poner un icono a la notificación que se envía -->
+        <meta-data
+            android:name="notification_icon"
+            android:resource="@drawable/ic_launcher_foreground"/>
+
+        <!-- Cambia el color que utiliza el LED de notificación al mostrarla -->
+        <meta-data
+            android:name="led_notification_color"
+            android:resource="@color/colorAccent" />
+        <!-- Canal de notificación (Android 8.0 o superior) -->
+        <meta-data
+            android:name="com.google.firebase.messaging.default.notification_channel_id"
+            android:value="@string/default_notification_channel_id"/>
+
+        <!-- Servicio para recibir y enviar notificaciones -->
+        <service android:name=".notifications.MyFirebaseMessagingService">
+            <intent-filter>
+                <action android:name="com.google.firebase.MESSAGING_EVENT" />
+            </intent-filter>
+        </service>
     </application>
 
 </manifest>

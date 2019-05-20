@@ -82,4 +82,12 @@
     <string name="hint_text_toSend">Escribe un mensaje</string>
     <string name="toast_no_msg">No puedes mandar un mensaje vacío!</string>
     <string name="desc_send_msg">Enviar mensaje</string>
+    <string name="new_message">Nuevo mensaje</string>
+
+    <string name="default_notification_channel_id" translatable="false">fcm_default_channel</string>
+    <!--
+        Este nombre será el que los usuarios vean cuando interactuan con este canal
+        Debería describir la categoria de notificaciones que se enviarán por este canal
+    -->
+    <string name="default_notification_channel_name" translatable="true">Mensajes</string>
 </resources>

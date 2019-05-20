@@ -19,10 +19,16 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.synergy.synergyet.custom.MessageAdapter;
 import com.synergy.synergyet.model.ChatUser;
 import com.synergy.synergyet.model.Message;
+import com.synergy.synergyet.notifications.APIService;
+import com.synergy.synergyet.notifications.Client;
+import com.synergy.synergyet.notifications.Data;
+import com.synergy.synergyet.notifications.Sender;
+import com.synergy.synergyet.notifications.Token;
 import com.synergy.synergyet.strings.FirebaseStrings;
 import com.synergy.synergyet.strings.IntentExtras;
 
@@ -48,6 +54,7 @@ public class MessageActivity extends AppCompatActivity {
     private MessageAdapter adapter;
     private List<Message> messages;
     private String conversation_id;
+    private APIService apiService;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,6 +72,8 @@ public class MessageActivity extends AppCompatActivity {
                 finish();
             }
         });
+
+        apiService = Client.getClient("https://fcm.googleapis.com/").create(APIService.class);
 
         recyclerView = findViewById(R.id.recyclerView);
         recyclerView.setHasFixedSize(true);
@@ -120,7 +129,7 @@ public class MessageActivity extends AppCompatActivity {
                     // La posición 0 de spDate[] es la fecha y la posición 1 la hora
                     Message message = new Message(msg, spDate[0], spDate[1], firebaseUser.getUid());
                     // Enviamos el mensaje
-                    sendMessage(message);
+                    sendMessage(message, receiver_uid);
                 } else {
                     // Mostramos un toast diciendo que no se puede enviar mensajes vacíos
                     Toast.makeText(MessageActivity.this, getString(R.string.toast_no_msg), Toast.LENGTH_SHORT).show();
@@ -135,8 +144,9 @@ public class MessageActivity extends AppCompatActivity {
     /**
      * Envía un mensaje y actualiza la información del último mensaje
      * @param msg - El Objeto Message con la información del mensaje a enviar
+     * @param receiver - El UID del que recibe el mensaje
      */
-    private void sendMessage (Message msg) {
+    private void sendMessage (final Message msg, final String receiver) {
         reference = FirebaseDatabase.getInstance().getReference(FirebaseStrings.REFERENCE_2).child(conversation_id);
         // Guardamos el mensaje en Realtime Database
         reference.child(FirebaseStrings.KEY3_R2).push().setValue(msg);
@@ -149,7 +159,45 @@ public class MessageActivity extends AppCompatActivity {
         reference.child(FirebaseStrings.KEY1_R2).updateChildren(lastMsgInfo);
 
         //TODO: Actualizar el número de mensajes no leidos
+
+
+        reference = FirebaseDatabase.getInstance().getReference(FirebaseStrings.REFERENCE_1).child(firebaseUser.getUid());
+        reference.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                ChatUser user = dataSnapshot.getValue(ChatUser.class);
+                // Llamamos al método que envía la notificación
+                sendNotification(receiver, user.getDisplayName(), msg.getMessage());
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                //TODO: Mostrar AlertDialog de error
+            }
+        });
     }
+
+    private void sendNotification(final String receiver, final String displayName, final String message) {
+        DatabaseReference tokens = FirebaseDatabase.getInstance().getReference(FirebaseStrings.REFERENCE_3);
+        Query query = tokens.orderByKey().equalTo(receiver);
+        query.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                    Token token = snapshot.getValue(Token.class);
+                    Data data = new Data(firebaseUser.getUid(), R.mipmap.ic_launcher, displayName+": "+message,
+                            getString(R.string.new_message), receiver);
+                    Sender sender = new Sender(data, token.getToken());
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+    }
+
 
     /**
      * Obtiene todos los mensajes de la conversación

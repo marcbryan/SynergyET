@@ -19,6 +19,7 @@ public final class FirebaseStrings {
     // Referencias RealtimeDatabase
     public static final String REFERENCE_1 = "users";
     public static final String REFERENCE_2 = "conversations";
+    public static final String REFERENCE_3 = "tokens";
 
     // Nodos RealtimeDatabase
     public static final String KEY4_R1 = "conversations";
@@ -34,6 +35,12 @@ public final class FirebaseStrings {
     public static final String K1R2_CHILD2 = "lastMessageDate";
     public static final String K1R2_CHILD3 = "lastMessageSender";
 
+    // Campos propiedades notificaciones (Remote Message)
+    public static final String REMOTE_MSG_KEY1 = "user";
+    public static final String REMOTE_MSG_KEY2 = "icon";
+    public static final String REMOTE_MSG_KEY3 = "body";
+    public static final String REMOTE_MSG_KEY4 = "title";
+    public static final String REMOTE_MSG_KEY5 = "sent";
 
     // Otros
     public static final String DEFAULT_USER_TYPE = "student";

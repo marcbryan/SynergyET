@@ -41,6 +41,11 @@ dependencies {
     implementation 'de.hdodenhof:circleimageview:3.0.0'
     // Glide - Link -> https://github.com/bumptech/glide
     implementation 'com.github.bumptech.glide:glide:4.9.0'
+    // Dependencias para el token de las notificaciones
+    implementation 'com.squareup.retrofit2:retrofit:2.5.0'
+    implementation 'com.squareup.retrofit2:converter-gson:2.5.0'
+    // Firebase Cloud Messaging
+    implementation 'com.google.firebase:firebase-messaging:17.4.0'
 
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'com.android.support.test:runner:1.0.2'
