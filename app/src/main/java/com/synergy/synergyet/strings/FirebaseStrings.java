@@ -37,11 +37,10 @@ public final class FirebaseStrings {
 
     // Campos propiedades notificaciones (Remote Message)
     public static final String REMOTE_MSG_KEY1 = "user";
-    public static final String REMOTE_MSG_KEY2 = "icon";
-    public static final String REMOTE_MSG_KEY3 = "largeIcon";
-    public static final String REMOTE_MSG_KEY4 = "body";
-    public static final String REMOTE_MSG_KEY5 = "title";
-    public static final String REMOTE_MSG_KEY6 = "sent";
+    public static final String REMOTE_MSG_KEY2 = "largeIcon";
+    public static final String REMOTE_MSG_KEY3 = "body";
+    public static final String REMOTE_MSG_KEY4 = "title";
+    public static final String REMOTE_MSG_KEY5 = "sent";
 
     // Otros
     public static final String DEFAULT_USER_TYPE = "student";

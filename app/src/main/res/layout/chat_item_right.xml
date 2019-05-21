@@ -3,7 +3,12 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:padding="8dp">
+    android:paddingLeft="8dp"
+    android:paddingStart="8dp"
+    android:paddingRight="8dp"
+    android:paddingEnd="8dp"
+    android:paddingTop="4dp"
+    android:paddingBottom="4dp">
 
     <RelativeLayout
         android:layout_width="300dp"
@@ -27,7 +32,6 @@
 
             <TextView
                 android:id="@+id/show_message"
-                android:text="Esto es una prueba"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:padding="8dp"
@@ -46,7 +50,6 @@
                 android:paddingRight="6dp"
                 android:paddingEnd="6dp"
                 android:paddingBottom="4dp"
-                android:text="12:00"
                 android:textColor="@color/colorWhite"
                 android:textSize="12sp" />
 

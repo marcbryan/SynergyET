@@ -2,7 +2,12 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="300dp"
     android:layout_height="wrap_content"
-    android:padding="8dp">
+    android:paddingLeft="8dp"
+    android:paddingStart="8dp"
+    android:paddingRight="8dp"
+    android:paddingEnd="8dp"
+    android:paddingTop="4dp"
+    android:paddingBottom="4dp">
 
     <de.hdodenhof.circleimageview.CircleImageView
         android:id="@+id/profile_image"
@@ -24,7 +29,6 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:padding="8dp"
-            android:text="Esto es una prueba"
             android:textColor="@android:color/black"
             android:textSize="18sp" />
 
@@ -32,7 +36,6 @@
             android:id="@+id/show_msg_hour"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="12:00"
             android:layout_alignBottom="@+id/show_message"
             android:layout_toEndOf="@id/show_message"
             android:layout_toRightOf="@id/show_message"
