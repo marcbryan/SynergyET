@@ -27,6 +27,7 @@ import com.synergy.synergyet.R;
 import com.synergy.synergyet.strings.FirebaseStrings;
 import com.synergy.synergyet.strings.IntentExtras;
 
+
 public class MyFirebaseMessagingService extends FirebaseMessagingService {
 
     // onNewToken() -> Sustituye a FirebaseIdService (está deprecated)
@@ -64,6 +65,8 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         }
     }
 
+    // Esto activa deprecated -> Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN
+    @SuppressWarnings("deprecation")
     private void sendNotification(RemoteMessage remoteMessage) {
         String user = remoteMessage.getData().get(FirebaseStrings.REMOTE_MSG_KEY1);
         String url = remoteMessage.getData().get(FirebaseStrings.REMOTE_MSG_KEY2);
