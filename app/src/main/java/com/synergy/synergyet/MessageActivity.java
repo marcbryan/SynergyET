@@ -27,6 +27,7 @@ import com.synergy.synergyet.model.Message;
 import com.synergy.synergyet.notifications.APIService;
 import com.synergy.synergyet.notifications.Client;
 import com.synergy.synergyet.notifications.Data;
+import com.synergy.synergyet.notifications.MyResponse;
 import com.synergy.synergyet.notifications.Sender;
 import com.synergy.synergyet.notifications.Token;
 import com.synergy.synergyet.strings.FirebaseStrings;
@@ -39,10 +40,14 @@ import java.util.HashMap;
 import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class MessageActivity extends AppCompatActivity {
     private CircleImageView profile_picture;
     private TextView display_name;
+    private String imageURL = FirebaseStrings.DEFAULT_IMAGE_VALUE;
 
     private FirebaseUser firebaseUser;
     private DatabaseReference reference;
@@ -55,6 +60,7 @@ public class MessageActivity extends AppCompatActivity {
     private List<Message> messages;
     private String conversation_id;
     private APIService apiService;
+    private boolean notify = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -105,6 +111,7 @@ public class MessageActivity extends AppCompatActivity {
                 } else {
                     // Pone la imagen del usuario en el CircleImageView
                     Glide.with(MessageActivity.this).load(user.getImageURL()).into(profile_picture);
+                    imageURL = user.getImageURL();
                 }
                 getMessages(user.getImageURL());
             }
@@ -119,8 +126,10 @@ public class MessageActivity extends AppCompatActivity {
         btn_send.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                // Obtenemos el texto del EditText
                 String msg = text_send.getText().toString();
                 if (!msg.equals("")) {
+
                     // Ejemplo fecha -> 18/05/2019 13:30:45
                     SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
                     String date = sdf.format(Calendar.getInstance().getTime());
@@ -128,6 +137,7 @@ public class MessageActivity extends AppCompatActivity {
                     String spDate[] = date.split(" ");
                     // La posición 0 de spDate[] es la fecha y la posición 1 la hora
                     Message message = new Message(msg, spDate[0], spDate[1], firebaseUser.getUid());
+                    notify = true;
                     // Enviamos el mensaje
                     sendMessage(message, receiver_uid);
                 } else {
@@ -167,7 +177,10 @@ public class MessageActivity extends AppCompatActivity {
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 ChatUser user = dataSnapshot.getValue(ChatUser.class);
                 // Llamamos al método que envía la notificación
-                sendNotification(receiver, user.getDisplayName(), msg.getMessage());
+                if (notify) {
+                    sendNotification(receiver, user.getDisplayName(), msg.getMessage());
+                }
+                notify = false;
             }
 
             @Override
@@ -185,15 +198,32 @@ public class MessageActivity extends AppCompatActivity {
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                     Token token = snapshot.getValue(Token.class);
-                    Data data = new Data(firebaseUser.getUid(), R.mipmap.ic_launcher, displayName+": "+message,
-                            getString(R.string.new_message), receiver);
+                    Data data = new Data(firebaseUser.getUid(), R.mipmap.ic_launcher, imageURL,
+                            message, displayName, receiver);
                     Sender sender = new Sender(data, token.getToken());
+                    apiService.sendNotification(sender)
+                            .enqueue(new Callback<MyResponse>() {
+                                @Override
+                                public void onResponse(Call<MyResponse> call, Response<MyResponse> response) {
+                                    if (response.code() == 200) {
+                                        if (response.body().success != 1) {
+                                            //TODO: Reemplazar texto hardcodeado
+                                            Toast.makeText(MessageActivity.this, "Fallo al enviar notificación", Toast.LENGTH_SHORT).show();
+                                        }
+                                    }
+                                }
+
+                                @Override
+                                public void onFailure(Call<MyResponse> call, Throwable t) {
+                                    //TODO: Mostrar AlertDialog o Toast de error
+                                }
+                            });
                 }
             }
 
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
-
+                //TODO: Mostrar AlertDialog o Toast de error
             }
         });
     }

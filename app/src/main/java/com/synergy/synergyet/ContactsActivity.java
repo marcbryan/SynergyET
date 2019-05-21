@@ -8,6 +8,7 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -15,8 +16,11 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.iid.FirebaseInstanceId;
+import com.google.firebase.iid.InstanceIdResult;
 import com.synergy.synergyet.custom.ChatUserAdapter;
 import com.synergy.synergyet.model.ChatUser;
+import com.synergy.synergyet.notifications.Token;
 import com.synergy.synergyet.strings.FirebaseStrings;
 
 import java.util.ArrayList;
@@ -26,6 +30,7 @@ public class ContactsActivity extends AppCompatActivity {
     private RecyclerView recyclerView;
     private ChatUserAdapter adapter;
     private List<ChatUser> users;
+    private FirebaseUser firebaseUser;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,11 +48,28 @@ public class ContactsActivity extends AppCompatActivity {
             }
         });
 
+        firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
+        FirebaseInstanceId.getInstance().getInstanceId().addOnSuccessListener(new OnSuccessListener<InstanceIdResult>() {
+            @Override
+            public void onSuccess(InstanceIdResult instanceIdResult) {
+                if (firebaseUser != null) {
+                    String refreshToken = instanceIdResult.getToken();
+                    updateToken(refreshToken);
+                }
+            }
+        });
+
         recyclerView = findViewById(R.id.recyclerView);
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(ContactsActivity.this));
         users = new ArrayList<>();
         getContacts();
+    }
+
+    private void updateToken(String token){
+        DatabaseReference reference = FirebaseDatabase.getInstance().getReference(FirebaseStrings.REFERENCE_3);
+        Token refreshToken = new Token(token);
+        reference.child(firebaseUser.getUid()).setValue(refreshToken);
     }
 
     private void getContacts() {
