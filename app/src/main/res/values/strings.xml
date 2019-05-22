@@ -31,11 +31,22 @@
     <!-- Textos WelcomeActivity -->
     <string name="titleWelcome">Mis cursos</string>
     <string name="inscribe_course">Inscribirme a un curso</string>
-    <string name="logout_txt">Cerrar sesión</string>
+    <string name="logout_txt">Salir</string>
     <string name="loading_user_courses">Cargando tus cursos…</string>
     <string name="dialog_error_userData">Se ha producido un error al intentar obtener tus datos, vuelve a intentarlo más tarde</string>
     <string name="dialog_error_courses">Se ha producido un error al intentar obtener tus cursos, vuelve a intentarlo más tarde</string>
     <string name="no_courses">No estás inscrito en ningún curso, para inscribirte a uno, pulsa el libro de la barra superior</string>
+
+    <!-- Textos Navigation Drawer -->
+    <string name="navigation_drawer_open">Abrir barra de navegación horizontal</string>
+    <string name="navigation_drawer_close">Cerrar barra de navegación horizontal</string>
+    <string name="my_profile">Mi perfil</string>
+    <string name="nav_messages">Mensajes</string>
+    <string name="nav_chat">Chat</string>
+    <string name="nav_comunication">Comunicación</string>
+    <string name="nav_school_name">Esteve Terradas</string>
+    <string name="nav_facebook">Facebook</string>
+    <string name="nav_twitter">Twitter</string>
 
     <!-- Textos CategoriesActivity -->
     <string name="titleCategories">Selecciona una categoría</string>

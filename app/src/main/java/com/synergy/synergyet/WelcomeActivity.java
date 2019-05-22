@@ -4,6 +4,10 @@ import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.support.annotation.NonNull;
+import android.support.design.widget.NavigationView;
+import android.support.v4.view.GravityCompat;
+import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -13,7 +17,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -29,6 +33,7 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.synergy.synergyet.custom.CoursesListAdapter;
+import com.synergy.synergyet.fragments.ContactsFragment;
 import com.synergy.synergyet.model.Course;
 import com.synergy.synergyet.model.Unit;
 import com.synergy.synergyet.model.User;
@@ -42,10 +47,15 @@ public class WelcomeActivity extends AppCompatActivity {
     private FirebaseFirestore db;
     private Toolbar toolbar;
     private TextView textView;
+    private TextView displayName;
+    private TextView email;
+    private ImageView profile_image;
+
     private CoursesListAdapter adapter;
     private ArrayList<Course> courses;
 
     private Dialog progressDialog;
+    private DrawerLayout drawer;
 
     private User user_data = null;
 
@@ -64,6 +74,53 @@ public class WelcomeActivity extends AppCompatActivity {
         toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+        drawer = findViewById(R.id.drawer_layout);
+        NavigationView navigationView = findViewById(R.id.nav_view);
+        View nav_header = navigationView.getHeaderView(0);
+        displayName = nav_header.findViewById(R.id.user_displayName);
+        email = nav_header.findViewById(R.id.user_email);
+        profile_image = nav_header.findViewById(R.id.profile_image);
+        navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
+            @Override
+            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+                Intent intent = null;
+                switch (item.getItemId()) {
+                    case R.id.nav_message:
+                        //getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,
+                                //new MessageFragment()).commit();
+                        break;
+                    case R.id.nav_chat:
+                        getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,
+                                new ContactsFragment()).commit();
+                        //intent = new Intent(WelcomeActivity.this, ContactsActivity.class);
+                        //startActivity(intent);
+                        break;
+                    case R.id.nav_profile:
+                        //getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,
+                                //new ProfileFragment()).commit();
+                        break;
+
+                    case R.id.nav_logout:
+                        // Cerramos sesión
+                        FirebaseAuth.getInstance().signOut();
+                        // Volvemos al Activity de login
+                        intent = new Intent(WelcomeActivity.this, MainActivity.class);
+                        startActivity(intent);
+                        finish();
+                        break;
+
+                }
+
+                drawer.closeDrawer(GravityCompat.START);
+                return true;
+            }
+        });
+
+        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawer, toolbar,
+                R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+        drawer.addDrawerListener(toggle);
+        toggle.syncState();
+
         textView = findViewById(R.id.zero_courses);
 
         courses = new ArrayList<>();
@@ -81,22 +138,16 @@ public class WelcomeActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
-
-        //TODO: Pruebas, borrar botón
-        Button test = findViewById(R.id.testButton);
-        test.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(WelcomeActivity.this, ContactsActivity.class);
-                startActivity(intent);
-            }
-        });
     }
 
     @Override
     public void onBackPressed() {
-        // Mostrar home screen de Android
-        moveTaskToBack(true);
+        if (drawer.isDrawerOpen(GravityCompat.START)) {
+            drawer.closeDrawer(GravityCompat.START);
+        } else {
+            // Mostrar home screen de Android
+            moveTaskToBack(true);
+        }
     }
 
     @Override
@@ -108,22 +159,13 @@ public class WelcomeActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        Intent intent;
         // Obtenemos el id del item seleccionado
         int id = item.getItemId();
         switch (id) {
             case R.id.action_inscribeBook:
                 // Si el id es igual al icono del libro se abrirá un activity con todos los cursos
-                intent = new Intent(WelcomeActivity.this, CategoriesActivity.class);
+                Intent intent = new Intent(WelcomeActivity.this, CategoriesActivity.class);
                 startActivity(intent);
-                break;
-            case R.id.action_logout:
-                // Cerramos sesión
-                FirebaseAuth.getInstance().signOut();
-                // Volvemos al Activity de login
-                intent = new Intent(WelcomeActivity.this, MainActivity.class);
-                startActivity(intent);
-                finish();
                 break;
         }
         return super.onOptionsItemSelected(item);
@@ -179,6 +221,9 @@ public class WelcomeActivity extends AppCompatActivity {
                 public void onSuccess(DocumentSnapshot documentSnapshot) {
                     // Obtener los datos del usuario
                     user_data = documentSnapshot.toObject(User.class);
+                    // Mostramos el nombre y el email del usuario
+                    displayName.setText(user_data.getName());
+                    email.setText(user_data.getUsername());
                     getUserCourses(user_data.getCourses(), user_data.getName());
                 }
             }).addOnFailureListener(new OnFailureListener() {

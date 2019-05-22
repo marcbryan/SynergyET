@@ -8,9 +8,4 @@
         android:title="@string/inscribe_course"
         android:icon="@drawable/book_icon"
         app:showAsAction="ifRoom"/>
-    <item
-        android:id="@+id/action_logout"
-        android:title="@string/logout_txt"
-        android:icon="@drawable/ic_exit_to_app_white_24dp"
-        app:showAsAction="ifRoom"/>
 </menu>
