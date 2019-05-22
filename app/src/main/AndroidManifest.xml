@@ -10,7 +10,6 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity android:name=".MessageActivity" />
-        <activity android:name=".ContactsActivity" />
         <activity android:name=".CoverPageActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

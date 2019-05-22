@@ -16,9 +16,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.AdapterView;
 import android.widget.ImageView;
-import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -34,6 +32,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.synergy.synergyet.custom.CoursesListAdapter;
 import com.synergy.synergyet.fragments.ContactsFragment;
+import com.synergy.synergyet.fragments.MyCoursesFragment;
 import com.synergy.synergyet.model.Course;
 import com.synergy.synergyet.model.Unit;
 import com.synergy.synergyet.model.User;
@@ -66,9 +65,10 @@ public class WelcomeActivity extends AppCompatActivity {
 
         db = FirebaseFirestore.getInstance();
         user = FirebaseAuth.getInstance().getCurrentUser();
+        /*
         // Mostramos el Dialog de espera antes de obtener los datos del usuario
         showProgressDialog(getString(R.string.loading_user_courses));
-        getUserData(user.getUid());
+        getUserData(user.getUid());*/
 
         // Obtenemos el toolbar y lo añadimos al activity (para que se vean los iconos)
         toolbar = findViewById(R.id.toolbar);
@@ -83,28 +83,42 @@ public class WelcomeActivity extends AppCompatActivity {
         navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-                Intent intent = null;
                 switch (item.getItemId()) {
+                    case R.id.nav_courses:
+                        // Primero cambiamos el título
+                        toolbar.setTitle(getString(R.string.titleWelcome));
+                        // Reemplazamos el fragment por el de bienvenida (el de los cursos)
+                        MyCoursesFragment myCoursesFragment = new MyCoursesFragment();
+                        getSupportFragmentManager().beginTransaction()
+                                .replace(R.id.fragment_container, myCoursesFragment).addToBackStack(null)
+                                .commit();
+                        break;
+
+                    case R.id.nav_profile:
+                        //getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,
+                        //new ProfileFragment()).commit();
+                        break;
+
                     case R.id.nav_message:
                         //getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,
                                 //new MessageFragment()).commit();
                         break;
+
                     case R.id.nav_chat:
-                        getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,
-                                new ContactsFragment()).commit();
-                        //intent = new Intent(WelcomeActivity.this, ContactsActivity.class);
-                        //startActivity(intent);
-                        break;
-                    case R.id.nav_profile:
-                        //getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,
-                                //new ProfileFragment()).commit();
+                        // Primero cambiamos el título
+                        toolbar.setTitle(getString(R.string.titleContacts));
+                        // Reemplazamos el fragment por el de contactos
+                        ContactsFragment contactsFragment = new ContactsFragment();
+                        getSupportFragmentManager().beginTransaction()
+                                .replace(R.id.fragment_container, contactsFragment).addToBackStack(null)
+                                .commit();
                         break;
 
                     case R.id.nav_logout:
                         // Cerramos sesión
                         FirebaseAuth.getInstance().signOut();
                         // Volvemos al Activity de login
-                        intent = new Intent(WelcomeActivity.this, MainActivity.class);
+                        Intent intent = new Intent(WelcomeActivity.this, MainActivity.class);
                         startActivity(intent);
                         finish();
                         break;
@@ -121,23 +135,7 @@ public class WelcomeActivity extends AppCompatActivity {
         drawer.addDrawerListener(toggle);
         toggle.syncState();
 
-        textView = findViewById(R.id.zero_courses);
-
-        courses = new ArrayList<>();
-        adapter = new CoursesListAdapter(courses, this);
-        final ListView listView = findViewById(R.id.courses_list);
-        // Añadimos el adapter al ListView
-        listView.setAdapter(adapter);
-        // Añadimos un listener (al pulsar un elemento del ListView)
-        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                final Course course = (Course) listView.getItemAtPosition(position);
-                Intent intent = new Intent(WelcomeActivity.this, CourseActivity.class);
-                intent.putExtra(IntentExtras.EXTRA_COURSE_DATA, course);
-                startActivity(intent);
-            }
-        });
+        getUserData(user.getUid());
     }
 
     @Override
@@ -224,15 +222,18 @@ public class WelcomeActivity extends AppCompatActivity {
                     // Mostramos el nombre y el email del usuario
                     displayName.setText(user_data.getName());
                     email.setText(user_data.getUsername());
-                    getUserCourses(user_data.getCourses(), user_data.getName());
+                    // Ponemos los datos del usuario en el Intent de este activity
+                    getIntent().putExtra(IntentExtras.EXTRA_USER_DATA, user_data);
+                    // Creamos el fragment principal
+                    MyCoursesFragment fragment = new MyCoursesFragment();
+                    getSupportFragmentManager().beginTransaction()
+                            .replace(R.id.fragment_container, fragment)
+                            .commit();
                 }
             }).addOnFailureListener(new OnFailureListener() {
                  @Override
                  public void onFailure(@NonNull Exception e) {
-                     // Finaliza ProgressBar
-                     progressDialog.dismiss();
-                     showDialog(getString(R.string.dialog_error_userData));
-                     //System.out.println("Error -> " + e);
+                     e.printStackTrace();
                  }
              });
     }
