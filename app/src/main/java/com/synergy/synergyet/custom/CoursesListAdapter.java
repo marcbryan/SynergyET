@@ -33,7 +33,7 @@ public class CoursesListAdapter extends ArrayAdapter<Course> implements View.OnC
         this.context = context;
         courses_list = data;
         filtered_courses = data;
-
+        // TODO: Revisar Ordenación
         comparator = new Comparator<Course>() {
             @Override
             public int compare(Course c1, Course c2) {
@@ -48,12 +48,7 @@ public class CoursesListAdapter extends ArrayAdapter<Course> implements View.OnC
     }
 
     @Override
-    public void onClick(View v) {
-        int position = (Integer) v.getTag();
-        Object object = getItem(position);
-        Course course = (Course) object;
-        //TODO: Abrir Activity del curso
-    }
+    public void onClick(View v) {}
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {

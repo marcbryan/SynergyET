@@ -1,8 +1,10 @@
 package com.synergy.synergyet.model;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
-public class Course {
+// Debe implementar la interfaz Serializable para poder pasar este objeto de un activity a otro con el método putExtra()
+public class Course implements Serializable {
     private int course_id;
     private String name;
     private String category;

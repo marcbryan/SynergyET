@@ -1,4 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
+<resources tools:ignore="MissingDefaultResource" xmlns:tools="http://schemas.android.com/tools">
     <color name="ic_synergy_background">#3F51B5</color>
 </resources>

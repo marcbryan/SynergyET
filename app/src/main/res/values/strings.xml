@@ -84,6 +84,8 @@
     <string name="desc_send_msg">Enviar mensaje</string>
     <string name="new_message">Nuevo mensaje</string>
 
+    <!-- Textos CourseActivity -->
+
     <string name="default_notification_channel_id" translatable="false">fcm_default_channel</string>
     <!--
         Este nombre será el que los usuarios vean cuando interactuan con este canal

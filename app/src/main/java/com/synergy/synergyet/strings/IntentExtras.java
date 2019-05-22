@@ -7,6 +7,7 @@ public final class IntentExtras {
     public static final String EXTRA_GROUP_NAME = "EXTRA_GROUP_NAME";
     public static final String EXTRA_UID = "EXTRA_UID";
     public static final String EXTRA_CONVERSATION_ID = "EXTRA_CONVERSATION_ID";
+    public static final String EXTRA_COURSE_DATA = "EXTRA_COURSE_DATA";
 
     // Notification Intent Bundle ExtraString
     public static final String NOTIF_BUNDLE_STRING1 = "USER_ID";

@@ -9,7 +9,7 @@
         android:roundIcon="@mipmap/ic_synergy_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".MessageActivity"></activity>
+        <activity android:name=".MessageActivity" />
         <activity android:name=".ContactsActivity" />
         <activity android:name=".CoverPageActivity">
             <intent-filter>
@@ -33,7 +33,7 @@
         <!-- Para poner un icono a la notificación que se envía -->
         <meta-data
             android:name="notification_icon"
-            android:resource="@drawable/synergy_logo_white"/>
+            android:resource="@drawable/synergy_logo_white" />
 
         <!-- Cambia el color que utiliza el LED de notificación al mostrarla -->
         <meta-data
@@ -42,7 +42,7 @@
         <!-- Canal de notificación (Android 8.0 o superior) -->
         <meta-data
             android:name="com.google.firebase.messaging.default.notification_channel_id"
-            android:value="@string/default_notification_channel_id"/>
+            android:value="@string/default_notification_channel_id" />
 
         <!-- Servicio para recibir y enviar notificaciones -->
         <service
@@ -52,6 +52,8 @@
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>
         </service>
+
+        <activity android:name=".CourseActivity"></activity>
     </application>
 
 </manifest>

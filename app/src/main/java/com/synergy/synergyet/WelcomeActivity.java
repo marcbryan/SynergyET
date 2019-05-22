@@ -12,6 +12,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -32,6 +33,7 @@ import com.synergy.synergyet.model.Course;
 import com.synergy.synergyet.model.Unit;
 import com.synergy.synergyet.model.User;
 import com.synergy.synergyet.strings.FirebaseStrings;
+import com.synergy.synergyet.strings.IntentExtras;
 
 import java.util.ArrayList;
 
@@ -40,8 +42,7 @@ public class WelcomeActivity extends AppCompatActivity {
     private FirebaseFirestore db;
     private Toolbar toolbar;
     private TextView textView;
-    private ListView listView;
-    private CoursesListAdapter adapater;
+    private CoursesListAdapter adapter;
     private ArrayList<Course> courses;
 
     private Dialog progressDialog;
@@ -66,10 +67,20 @@ public class WelcomeActivity extends AppCompatActivity {
         textView = findViewById(R.id.zero_courses);
 
         courses = new ArrayList<>();
-        adapater = new CoursesListAdapter(courses, this);
-        listView = findViewById(R.id.courses_list);
+        adapter = new CoursesListAdapter(courses, this);
+        final ListView listView = findViewById(R.id.courses_list);
         // Añadimos el adapter al ListView
-        listView.setAdapter(adapater);
+        listView.setAdapter(adapter);
+        // Añadimos un listener (al pulsar un elemento del ListView)
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                final Course course = (Course) listView.getItemAtPosition(position);
+                Intent intent = new Intent(WelcomeActivity.this, CourseActivity.class);
+                intent.putExtra(IntentExtras.EXTRA_COURSE_DATA, course);
+                startActivity(intent);
+            }
+        });
 
         //TODO: Pruebas, borrar botón
         Button test = findViewById(R.id.testButton);
@@ -203,7 +214,7 @@ public class WelcomeActivity extends AppCompatActivity {
                                     // Añadimos el curso al array
                                     courses.add(course);
                                     // Notificamos al adapter que se añadido un curso (para que se vea en el ListView)
-                                    adapater.notifyDataSetChanged();
+                                    adapter.notifyDataSetChanged();
                                 } else {
                                     showDialog(getString(R.string.dialog_error_courses));
                                     //System.out.println("Error writing document -> "+task.getException());
