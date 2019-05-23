@@ -43,7 +43,7 @@ public class MyCoursesFragment extends Fragment {
 
         db = FirebaseFirestore.getInstance();
         // Obtenemos los datos del usuario con getSerializableExtra()
-        User user = (User) getActivity().getIntent().getSerializableExtra(IntentExtras.EXTRA_USER_DATA);
+        final User user = (User) getActivity().getIntent().getSerializableExtra(IntentExtras.EXTRA_USER_DATA);
         getUserCourses(user.getCourses());
 
         textView = view.findViewById(R.id.zero_courses);
@@ -60,6 +60,7 @@ public class MyCoursesFragment extends Fragment {
                 final Course course = (Course) listView.getItemAtPosition(position);
                 Intent intent = new Intent(view.getContext(), CourseActivity.class);
                 intent.putExtra(IntentExtras.EXTRA_COURSE_DATA, course);
+                intent.putExtra(IntentExtras.EXTRA_USER_DATA, user);
                 startActivity(intent);
             }
         });

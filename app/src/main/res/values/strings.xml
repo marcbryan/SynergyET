@@ -99,6 +99,8 @@
 
     <!-- Textos CourseActivity -->
     <string name="task_created">Tarea creada correctamente</string>
+    <string name="upload_task">Subir archivo</string>
+    <string name="task_dead_line_passed">Ya no puedes entregar esta tarea, habla con el profesor para ver si puedes entregarsela personalmente</string>
 
     <!-- Textos ProfileFragment -->
     <string name="profile_title">Perfil</string>

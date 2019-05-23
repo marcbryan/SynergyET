@@ -1,7 +1,9 @@
 package com.synergy.synergyet;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.support.annotation.NonNull;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
@@ -24,23 +26,29 @@ import com.synergy.synergyet.custom.UnitExpandableListAdapter;
 import com.synergy.synergyet.model.Course;
 import com.synergy.synergyet.model.UnitTask;
 import com.synergy.synergyet.model.Unit;
+import com.synergy.synergyet.model.User;
 import com.synergy.synergyet.strings.FirebaseStrings;
 import com.synergy.synergyet.strings.IntentExtras;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
 public class CourseActivity extends AppCompatActivity {
-
     private FirebaseFirestore db;
+    private User user;
     private ExpandableListView expandableListView;
     private UnitExpandableListAdapter expandableListAdapter;
     private Map<String, List<UnitTask>> expandableListDetail = new LinkedHashMap<>();
     private List<String> expandableListTitle;
+    private SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm");
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,6 +56,7 @@ public class CourseActivity extends AppCompatActivity {
         setContentView(R.layout.activity_course);
         Intent intent = getIntent();
         Course course = (Course) intent.getSerializableExtra(IntentExtras.EXTRA_COURSE_DATA);
+        user = (User) intent.getSerializableExtra(IntentExtras.EXTRA_USER_DATA);
 
         // Obtenemos el toolbar y lo añadimos al activity (para que se vean los iconos)
         Toolbar toolbar = findViewById(R.id.toolbar);
@@ -66,6 +75,9 @@ public class CourseActivity extends AppCompatActivity {
             }
         });
 
+        // Tipos de entrega
+        //final String type1 = "DELIVER";
+
         // Instancia de Firebase Firestore
         db = FirebaseFirestore.getInstance();
         // Buscamos el ExpandableListView en activity_course.xml
@@ -75,12 +87,49 @@ public class CourseActivity extends AppCompatActivity {
             @Override
             public boolean onChildClick(ExpandableListView parent, View v, int groupPosition, int childPosition, long id) {
                 //TODO: Quitar toast de prueba
+                UnitTask task = expandableListDetail.get(expandableListTitle.get(groupPosition)).get(childPosition);
+                // Si la tarea es una entrega y el usuario es un estudiante
+                if (task.getType().equals(FirebaseStrings.TASK_TYPE1) && user.getType().equals(FirebaseStrings.DEFAULT_USER_TYPE)) {
+                    try {
+                        // Fecha de entrega
+                        Date deadLine = sdf.parse(task.getDead_line());
+                        // Fecha de hoy
+                        Date now = Calendar.getInstance().getTime();
+                        if (deadLine.compareTo(now) > 0) {
+                            // Todavía se puede entregar (la fecha de entrega es posterior a la de ahora)
+
+                        } else {
+                            // Ya no se puede entregar la tarea
+                            showDialog(getString(R.string.task_dead_line_passed));
+                        }
+                    } catch (ParseException e) {
+                        e.printStackTrace();
+                    }
+                }
                 Toast.makeText(v.getContext(), expandableListDetail.get(expandableListTitle.get(groupPosition)).get(childPosition).getTaskName(), Toast.LENGTH_SHORT).show();
                 return false;
             }
         });
     }
 
+    /**
+     * Muesta un diálogo con un botón de ok y el texto que le pasamos como parámetro
+     * @param dialog_txt - El texto a mostrar en el diálogo
+     */
+    private void showDialog(String dialog_txt) {
+        // Creo un diálogo
+        AlertDialog.Builder builder = new AlertDialog.Builder(CourseActivity.this, R.style.CustomAlertDialog);
+        builder.setMessage(dialog_txt)
+                .setCancelable(false)
+                .setPositiveButton(getString(R.string.dialogOK_button), new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {}
+                });
+        AlertDialog alert = builder.create();
+        // Lo muestro
+        alert.show();
+    }
+
+    //TODO: Comentar método
     private void getUnits(int course_id) {
         db.collection(FirebaseStrings.COLLECTION_3)
                 .whereEqualTo(FirebaseStrings.FIELD6_C3, course_id)
@@ -101,7 +150,17 @@ public class CourseActivity extends AppCompatActivity {
                             }
                         });
                         for (Unit unit : units) {
-                            //TODO: Query para obtener los trabajos
+                            // Añadimos las unidades al HashMap
+                            expandableListDetail.put(unit.getName(), new ArrayList<UnitTask>());
+                        }
+                        // Creamos un ArrayList con los elementos padre (las UFs)
+                        expandableListTitle = new ArrayList<>(expandableListDetail.keySet());
+                        // Creamos el adapter para el ExpandableListView
+                        expandableListAdapter = new UnitExpandableListAdapter(CourseActivity.this, expandableListTitle, expandableListDetail, user.getType());
+                        // Ponemos el adapter en el ExpandableListView
+                        expandableListView.setAdapter(expandableListAdapter);
+                        // Después de añadir las unidades (las UFs), añadimos los hijos (las tareas) de cada unidad
+                        for (Unit unit : units) {
                             getTasks(unit.getUnit_id(), unit.getName());
                         }
 
@@ -115,6 +174,7 @@ public class CourseActivity extends AppCompatActivity {
                 });
     }
 
+    //TODO: Comentar método
     private void getTasks(int unit_id, final String unit_name) {
         db.collection(FirebaseStrings.COLLECTION_4)
                 .whereEqualTo(FirebaseStrings.FIELD3_C4, unit_id)
@@ -127,19 +187,16 @@ public class CourseActivity extends AppCompatActivity {
                             UnitTask unitTask = documentSnapshot.toObject(UnitTask.class);
                             tasks.add(unitTask);
                         }
-                        // Guardamos los datos en el LinkedHashMap (muy importante utilizar LinkedHashMap, si no el orden del HashMap será diferente)
+                        // Cambiamos el valor del HashMap
                         expandableListDetail.put(unit_name, tasks);
-                        // Creamos un ArrayList con los elementos padre (las UFs)
-                        expandableListTitle = new ArrayList<>(expandableListDetail.keySet());
-                        // Creamos el adapter para el ExpandableListView
-                        expandableListAdapter = new UnitExpandableListAdapter(CourseActivity.this, expandableListTitle, expandableListDetail);
-                        // Ponemos el adapter en el ExpandableListView
-                        expandableListView.setAdapter(expandableListAdapter);
+                        // Notificamos el cambio
+                        expandableListAdapter.notifyDataSetChanged();
                     }
                 });
 
     }
 
+    //TODO: Comentar método
     private void getLastTaskID(final UnitTask unitTask) {
         db.collection(FirebaseStrings.COLLECTION_4)
                 .orderBy(FirebaseStrings.FIELD1_C4, Query.Direction.ASCENDING)
@@ -164,6 +221,7 @@ public class CourseActivity extends AppCompatActivity {
 
     }
 
+    //TODO: Comentar método
     private void addTask(UnitTask unitTask) {
         db.collection(FirebaseStrings.COLLECTION_4)
                 .add(unitTask)

@@ -13,6 +13,7 @@ import android.widget.TextView;
 
 import com.synergy.synergyet.R;
 import com.synergy.synergyet.model.UnitTask;
+import com.synergy.synergyet.strings.FirebaseStrings;
 
 import java.util.List;
 import java.util.Map;
@@ -21,15 +22,17 @@ public class UnitExpandableListAdapter extends BaseExpandableListAdapter {
     private Context context;
     private List<String> expandableListTitle;
     private Map<String, List<UnitTask>> expandableListDetail;
+    private String userType;
 
     private Drawable expand_more;
     private Drawable expand_less;
 
     public UnitExpandableListAdapter(Context context, List<String> expandableListTitle,
-                                         Map<String, List<UnitTask>> expandableListDetail) {
+                                         Map<String, List<UnitTask>> expandableListDetail, String userType) {
         this.context = context;
         this.expandableListTitle = expandableListTitle;
         this.expandableListDetail = expandableListDetail;
+        this.userType = userType;
         // Las imagenes de las flechas del ExpandableListView
         expand_less = ContextCompat.getDrawable(context, R.drawable.ic_expand_less_gray_24dp);
         expand_more = ContextCompat.getDrawable(context, R.drawable.ic_expand_more_gray_24dp);
@@ -52,10 +55,18 @@ public class UnitExpandableListAdapter extends BaseExpandableListAdapter {
         if (convertView == null) {
             LayoutInflater layoutInflater = (LayoutInflater) this.context
                     .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            convertView = layoutInflater.inflate(R.layout.category_expandable_item, null);
+            convertView = layoutInflater.inflate(R.layout.expandable_item, null);
         }
         TextView expandedListTextView = convertView.findViewById(R.id.itemTitle);
         expandedListTextView.setText(expandedListText);
+        ImageView actionIcon = convertView.findViewById(R.id.actionIcon);
+        String type = getChild(listPosition, expandedListPosition).getType();
+        // Si es una entrega y el usuario es un alumno
+        if (type.equals(FirebaseStrings.TASK_TYPE1) && userType.equals(FirebaseStrings.DEFAULT_USER_TYPE)) {
+            // Pondremos un icono de subida de archivo
+            actionIcon.setImageResource(R.drawable.ic_file_upload_gray_24dp);
+            actionIcon.setContentDescription(convertView.getContext().getString(R.string.upload_task));
+        }
         return convertView;
     }
 
@@ -87,7 +98,7 @@ public class UnitExpandableListAdapter extends BaseExpandableListAdapter {
         if (convertView == null) {
             LayoutInflater layoutInflater = (LayoutInflater) this.context.
                     getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            convertView = layoutInflater.inflate(R.layout.category_expandable_list, null);
+            convertView = layoutInflater.inflate(R.layout.expandable_list, null);
         }
         TextView listTitleTextView = convertView.findViewById(R.id.listTitle);
         listTitleTextView.setTypeface(null, Typeface.BOLD);
