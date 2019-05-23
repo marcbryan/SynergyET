@@ -8,7 +8,7 @@
     android:padding="16dp"
     android:theme="@style/ThemeOverlay.AppCompat.Dark">
 
-    <ImageView
+    <de.hdodenhof.circleimageview.CircleImageView
         android:id="@+id/user_profile_image"
         android:layout_width="48dp"
         android:layout_height="48dp"
@@ -19,13 +19,11 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:paddingTop="8dp"
-        android:text="Coding in Flow"
         android:textAppearance="@style/TextAppearance.AppCompat.Body1" />
 
     <TextView
         android:id="@+id/user_email"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="info@codinginflow.com" />
+        android:layout_height="wrap_content" />
 
 </LinearLayout>

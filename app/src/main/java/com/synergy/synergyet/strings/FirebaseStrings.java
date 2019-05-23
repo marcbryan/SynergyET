@@ -18,12 +18,15 @@ public final class FirebaseStrings {
     public static final String FIELD6_C3 = "course_id";
     public static final String FIELD7_C3 = "order";
 
-    // Referencias RealtimeDatabase
+    // Referencias Realtime Database
     public static final String REFERENCE_1 = "users";
     public static final String REFERENCE_2 = "conversations";
     public static final String REFERENCE_3 = "tokens";
 
-    // Nodos RealtimeDatabase
+    // Referencias Cloud Storage
+    public static final String CLOUD_REFERENCE_1 = "profile_images";
+
+    // Nodos Realtime Database
     public static final String KEY4_R1 = "conversations";
 
     public static final String KEY1_R2 = "lastMessageInfo";

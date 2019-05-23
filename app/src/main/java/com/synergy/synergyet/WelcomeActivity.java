@@ -16,16 +16,21 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -33,6 +38,8 @@ import com.google.firebase.firestore.QuerySnapshot;
 import com.synergy.synergyet.custom.CoursesListAdapter;
 import com.synergy.synergyet.fragments.ContactsFragment;
 import com.synergy.synergyet.fragments.MyCoursesFragment;
+import com.synergy.synergyet.fragments.ProfileFragment;
+import com.synergy.synergyet.model.ChatUser;
 import com.synergy.synergyet.model.Course;
 import com.synergy.synergyet.model.Unit;
 import com.synergy.synergyet.model.User;
@@ -41,14 +48,17 @@ import com.synergy.synergyet.strings.IntentExtras;
 
 import java.util.ArrayList;
 
+import de.hdodenhof.circleimageview.CircleImageView;
+
 public class WelcomeActivity extends AppCompatActivity {
     private FirebaseUser user;
     private FirebaseFirestore db;
+    private DatabaseReference reference;
     private Toolbar toolbar;
     private TextView textView;
     private TextView displayName;
     private TextView email;
-    private ImageView profile_image;
+    private CircleImageView profile_image;
 
     private CoursesListAdapter adapter;
     private ArrayList<Course> courses;
@@ -79,7 +89,7 @@ public class WelcomeActivity extends AppCompatActivity {
         View nav_header = navigationView.getHeaderView(0);
         displayName = nav_header.findViewById(R.id.user_displayName);
         email = nav_header.findViewById(R.id.user_email);
-        profile_image = nav_header.findViewById(R.id.profile_image);
+        profile_image = nav_header.findViewById(R.id.user_profile_image);
         navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
@@ -95,13 +105,13 @@ public class WelcomeActivity extends AppCompatActivity {
                         break;
 
                     case R.id.nav_profile:
-                        //getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,
-                        //new ProfileFragment()).commit();
-                        break;
-
-                    case R.id.nav_message:
-                        //getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,
-                                //new MessageFragment()).commit();
+                        // Primero cambiamos el título
+                        toolbar.setTitle(getString(R.string.my_profile));
+                        // Reemplazamos el fragment por el del perfil del usuario
+                        ProfileFragment profileFragment = new ProfileFragment();
+                        getSupportFragmentManager().beginTransaction()
+                                .replace(R.id.fragment_container, profileFragment).addToBackStack(null)
+                                .commit();
                         break;
 
                     case R.id.nav_chat:
@@ -135,6 +145,7 @@ public class WelcomeActivity extends AppCompatActivity {
         drawer.addDrawerListener(toggle);
         toggle.syncState();
 
+        getProfile(user.getUid());
         getUserData(user.getUid());
     }
 
@@ -219,8 +230,7 @@ public class WelcomeActivity extends AppCompatActivity {
                 public void onSuccess(DocumentSnapshot documentSnapshot) {
                     // Obtener los datos del usuario
                     user_data = documentSnapshot.toObject(User.class);
-                    // Mostramos el nombre y el email del usuario
-                    displayName.setText(user_data.getName());
+                    // Mostramos el email del usuario
                     email.setText(user_data.getUsername());
                     // Ponemos los datos del usuario en el Intent de este activity
                     getIntent().putExtra(IntentExtras.EXTRA_USER_DATA, user_data);
@@ -236,6 +246,36 @@ public class WelcomeActivity extends AppCompatActivity {
                      e.printStackTrace();
                  }
              });
+    }
+
+    /**
+     * Busca los datos del usuario en Realtime Database sabiendo su ID
+     * @param UID - El UID del usuario del que queremos los datos
+     */
+    private void getProfile(String UID) {
+        reference = FirebaseDatabase.getInstance().getReference(FirebaseStrings.REFERENCE_1).child(UID);
+        reference.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                ChatUser user = dataSnapshot.getValue(ChatUser.class);
+                // Ponemos el nombre que utiliza el usuario en el chat en el navigation header
+                displayName.setText(user.getDisplayName());
+                if (user.getImageURL().equals(FirebaseStrings.DEFAULT_IMAGE_VALUE)) {
+                    // Si el usuario tiene como ImageURL el valor 'default', le pondremos la imagen de usuario por defecto
+                    profile_image.setImageResource(R.drawable.google_user_icon);
+                } else {
+                    // Pone la imagen del usuario en el CircleImageView
+                    if (user.getImageURL() != null) {
+                        Glide.with(WelcomeActivity.this).load(user.getImageURL()).into(profile_image);
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                Log.e("Error", databaseError.getMessage());
+            }
+        });
     }
 
     /**
