@@ -3,6 +3,7 @@ package com.synergy.synergyet;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -133,6 +134,24 @@ public class WelcomeActivity extends AppCompatActivity {
                         finish();
                         break;
 
+                    case R.id.nav_website:
+                        // Abre la página del Esteve Terradas
+                        Intent web = new Intent(Intent.ACTION_VIEW);
+                        web.setData(Uri.parse("http://www.iesesteveterradas.cat/"));
+                        startActivity(web);
+                        break;
+
+                    case R.id.nav_facebook:
+                        Intent fb = new Intent(Intent.ACTION_VIEW);
+                        fb.setData(Uri.parse("https://www.facebook.com/pages/IES-Esteve-Terradas-i-Illa/123296617686766"));
+                        startActivity(fb);
+                        break;
+
+                    case R.id.nav_twitter:
+                        Intent tw = new Intent(Intent.ACTION_VIEW);
+                        tw.setData(Uri.parse("https://twitter.com/iesteveterradas?lang=ca"));
+                        startActivity(tw);
+                        break;
                 }
 
                 drawer.closeDrawer(GravityCompat.START);

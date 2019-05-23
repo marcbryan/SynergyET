@@ -5,18 +5,24 @@ import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.View;
 import android.widget.ExpandableListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.Query;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.synergy.synergyet.custom.UnitExpandableListAdapter;
 import com.synergy.synergyet.model.Course;
-import com.synergy.synergyet.model.Task;
+import com.synergy.synergyet.model.UnitTask;
 import com.synergy.synergyet.model.Unit;
 import com.synergy.synergyet.strings.FirebaseStrings;
 import com.synergy.synergyet.strings.IntentExtras;
@@ -33,7 +39,7 @@ public class CourseActivity extends AppCompatActivity {
     private FirebaseFirestore db;
     private ExpandableListView expandableListView;
     private UnitExpandableListAdapter expandableListAdapter;
-    private Map<String, List<Task>> expandableListDetail = new LinkedHashMap<>();
+    private Map<String, List<UnitTask>> expandableListDetail = new LinkedHashMap<>();
     private List<String> expandableListTitle;
 
     @Override
@@ -73,8 +79,6 @@ public class CourseActivity extends AppCompatActivity {
                 return false;
             }
         });
-
-
     }
 
     private void getUnits(int course_id) {
@@ -97,20 +101,10 @@ public class CourseActivity extends AppCompatActivity {
                             }
                         });
                         for (Unit unit : units) {
-                            // Añadimos los nombres de los trabajos en un array
-                            List <Task> tasks = new ArrayList<>();
-                            if (unit.getTasks() != null) {
-                                tasks = unit.getTasks();
-                            }
-                            // Guardamos los datos en el LinkedHashMap (muy importante utilizar LinkedHashMap, si no el orden del HashMap será diferente)
-                            expandableListDetail.put(unit.getName(), tasks);
+                            //TODO: Query para obtener los trabajos
+                            getTasks(unit.getUnit_id(), unit.getName());
                         }
-                        // Creamos un ArrayList con los elementos padre (las UFs)
-                        expandableListTitle = new ArrayList<>(expandableListDetail.keySet());
-                        // Creamos el adapter para el ExpandableListView
-                        expandableListAdapter = new UnitExpandableListAdapter(CourseActivity.this, expandableListTitle, expandableListDetail);
-                        // Ponemos el adapter en el ExpandableListView
-                        expandableListView.setAdapter(expandableListAdapter);
+
                     }
                 })
                 .addOnFailureListener(new OnFailureListener() {
@@ -120,4 +114,69 @@ public class CourseActivity extends AppCompatActivity {
                     }
                 });
     }
+
+    private void getTasks(int unit_id, final String unit_name) {
+        db.collection(FirebaseStrings.COLLECTION_4)
+                .whereEqualTo(FirebaseStrings.FIELD3_C4, unit_id)
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        List <UnitTask> tasks = new ArrayList<>();
+                        for (QueryDocumentSnapshot documentSnapshot : task.getResult()) {
+                            UnitTask unitTask = documentSnapshot.toObject(UnitTask.class);
+                            tasks.add(unitTask);
+                        }
+                        // Guardamos los datos en el LinkedHashMap (muy importante utilizar LinkedHashMap, si no el orden del HashMap será diferente)
+                        expandableListDetail.put(unit_name, tasks);
+                        // Creamos un ArrayList con los elementos padre (las UFs)
+                        expandableListTitle = new ArrayList<>(expandableListDetail.keySet());
+                        // Creamos el adapter para el ExpandableListView
+                        expandableListAdapter = new UnitExpandableListAdapter(CourseActivity.this, expandableListTitle, expandableListDetail);
+                        // Ponemos el adapter en el ExpandableListView
+                        expandableListView.setAdapter(expandableListAdapter);
+                    }
+                });
+
+    }
+
+    private void getLastTaskID(final UnitTask unitTask) {
+        db.collection(FirebaseStrings.COLLECTION_4)
+                .orderBy(FirebaseStrings.FIELD1_C4, Query.Direction.ASCENDING)
+                .limit(1)
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        if (task.isSuccessful()) {
+                            int id = 1;
+                            for (QueryDocumentSnapshot documentSnapshot : task.getResult()) {
+                                UnitTask unitTask = documentSnapshot.toObject(UnitTask.class);
+                                id = unitTask.getTask_id();
+                            }
+                            unitTask.setTask_id(id);
+                            addTask(unitTask);
+                        } else {
+                            Log.e("ERROR: ", task.getException() + "");
+                        }
+                    }
+                });
+
+    }
+
+    private void addTask(UnitTask unitTask) {
+        db.collection(FirebaseStrings.COLLECTION_4)
+                .add(unitTask)
+                .addOnCompleteListener(new OnCompleteListener<DocumentReference>() {
+                    @Override
+                    public void onComplete(@NonNull Task<DocumentReference> task) {
+                        if (task.isSuccessful()) {
+                            Toast.makeText(CourseActivity.this, getString(R.string.task_created), Toast.LENGTH_SHORT).show();
+                        } else {
+                            Log.e("ERROR: ", task.getException() + "");
+                        }
+                    }
+                });
+    }
+
 }

@@ -12,7 +12,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.synergy.synergyet.R;
-import com.synergy.synergyet.model.Task;
+import com.synergy.synergyet.model.UnitTask;
 
 import java.util.List;
 import java.util.Map;
@@ -20,13 +20,13 @@ import java.util.Map;
 public class UnitExpandableListAdapter extends BaseExpandableListAdapter {
     private Context context;
     private List<String> expandableListTitle;
-    private Map<String, List<Task>> expandableListDetail;
+    private Map<String, List<UnitTask>> expandableListDetail;
 
     private Drawable expand_more;
     private Drawable expand_less;
 
     public UnitExpandableListAdapter(Context context, List<String> expandableListTitle,
-                                         Map<String, List<Task>> expandableListDetail) {
+                                         Map<String, List<UnitTask>> expandableListDetail) {
         this.context = context;
         this.expandableListTitle = expandableListTitle;
         this.expandableListDetail = expandableListDetail;
@@ -36,7 +36,7 @@ public class UnitExpandableListAdapter extends BaseExpandableListAdapter {
     }
 
     @Override
-    public Task getChild(int listPosition, int expandedListPosition) {
+    public UnitTask getChild(int listPosition, int expandedListPosition) {
         return this.expandableListDetail.get(this.expandableListTitle.get(listPosition)).get(expandedListPosition);
     }
 

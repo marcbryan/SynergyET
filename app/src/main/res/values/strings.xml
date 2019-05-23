@@ -95,8 +95,10 @@
     <string name="toast_no_msg">No puedes mandar un mensaje vacío!</string>
     <string name="desc_send_msg">Enviar mensaje</string>
     <string name="new_message">Nuevo mensaje</string>
+    <string name="msg_copied_clipboard">Copiado al portapapeles</string>
 
     <!-- Textos CourseActivity -->
+    <string name="task_created">Tarea creada correctamente</string>
 
     <!-- Textos ProfileFragment -->
     <string name="profile_title">Perfil</string>

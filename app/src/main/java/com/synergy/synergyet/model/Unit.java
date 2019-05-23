@@ -7,7 +7,7 @@ public class Unit {
     private int unit_id;
     private String name;
     private int hours;
-    private List<Task> tasks;
+    private List<UnitTask> tasks;
     private ArrayList<Object[]> assistance;
     private int course_id;
     private int order;
@@ -29,7 +29,7 @@ public class Unit {
         return hours;
     }
 
-    public List<Task> getTasks() {
+    public List<UnitTask> getTasks() {
         return tasks;
     }
 
@@ -57,8 +57,8 @@ public class Unit {
         this.hours = hours;
     }
 
-    public void setTasks(List<Task> tasks) {
-        this.tasks = tasks;
+    public void setTasks(List<UnitTask> unitTasks) {
+        this.tasks = unitTasks;
     }
 
     public void setAssistance(ArrayList<Object[]> assistance) {

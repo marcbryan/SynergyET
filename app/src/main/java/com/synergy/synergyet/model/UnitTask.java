@@ -1,11 +1,8 @@
 package com.synergy.synergyet.model;
 
-import java.util.ArrayList;
-
-public class Task {
+public class UnitTask {
     private int task_id;
     private String taskName;
-    private ArrayList<String> teachers_uid;
     private int unit_id;
     private String type;
     private String dead_line;
@@ -13,12 +10,18 @@ public class Task {
     /**
      * Para poder insertar los datos de una clase personalizada en Cloud Firestore, se necesita un constructor público sin parámetros
      */
-    private Task() {}
+    private UnitTask() {}
 
-    public Task(int task_id, String taskName, ArrayList<String> teachers_uid, int unit_id, String type, String dead_line) {
+    public UnitTask(int task_id, String taskName, int unit_id, String type, String dead_line) {
         this.task_id = task_id;
         this.taskName = taskName;
-        this.teachers_uid = teachers_uid;
+        this.unit_id = unit_id;
+        this.type = type;
+        this.dead_line = dead_line;
+    }
+
+    public UnitTask(String taskName, int unit_id, String type, String dead_line) {
+        this.taskName = taskName;
         this.unit_id = unit_id;
         this.type = type;
         this.dead_line = dead_line;
@@ -30,10 +33,6 @@ public class Task {
 
     public String getTaskName() {
         return taskName;
-    }
-
-    public ArrayList<String> getTeachers_uid() {
-        return teachers_uid;
     }
 
     public int getUnit_id() {
@@ -54,10 +53,6 @@ public class Task {
 
     public void setTaskName(String taskName) {
         this.taskName = taskName;
-    }
-
-    public void setTeachers_uid(ArrayList<String> teachers_uid) {
-        this.teachers_uid = teachers_uid;
     }
 
     public void setUnit_id(int unit_id) {

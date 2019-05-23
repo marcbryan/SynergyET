@@ -9,6 +9,7 @@ public final class FirebaseStrings {
     public static final String COLLECTION_1 = "users";
     public static final String COLLECTION_2 = "courses";
     public static final String COLLECTION_3 = "units";
+    public static final String COLLECTION_4 = "tasks";
 
     // Campos
     public static final String FIELD1_C1 = "uid";
@@ -17,6 +18,8 @@ public final class FirebaseStrings {
     public static final String FIELD3_C2 = "category";
     public static final String FIELD6_C3 = "course_id";
     public static final String FIELD7_C3 = "order";
+    public static final String FIELD1_C4 = "task_id";
+    public static final String FIELD3_C4 = "unit_id";
 
     // Referencias Realtime Database
     public static final String REFERENCE_1 = "users";
