@@ -45,7 +45,7 @@
                 android:layout_height="wrap_content"
                 android:text="@string/title_taskName"
                 android:textColor="@android:color/black"
-                android:textSize="14sp" />
+                android:textSize="16sp" />
 
             <EditText
                 android:id="@+id/et_taskName"
@@ -72,14 +72,17 @@
                 android:layout_height="wrap_content"
                 android:text="@string/title_taskType"
                 android:textColor="@android:color/black"
-                android:textSize="14sp" />
+                android:textSize="16sp" />
 
             <Spinner
                 android:id="@+id/type_spinner"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="5dp"
-                android:layout_marginStart="5dp" />
+                android:layout_marginStart="5dp"
+                android:background="#e8e8e8"
+                android:theme="@style/ThemeOverlay.AppCompat.Light"
+                android:spinnerMode="dropdown"/>
 
         </LinearLayout>
 
@@ -96,14 +99,17 @@
                 android:layout_height="wrap_content"
                 android:text="@string/title_unit"
                 android:textColor="@android:color/black"
-                android:textSize="14sp" />
+                android:textSize="16sp" />
 
             <Spinner
                 android:id="@+id/unit_spinner"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="5dp"
-                android:layout_marginStart="5dp" />
+                android:layout_marginStart="5dp"
+                android:background="#e8e8e8"
+                android:theme="@style/ThemeOverlay.AppCompat.Light"
+                android:spinnerMode="dropdown"/>
 
         </LinearLayout>
 
@@ -120,7 +126,7 @@
                 android:layout_height="wrap_content"
                 android:text="@string/title_taskDeadLine"
                 android:textColor="@android:color/black"
-                android:textSize="14sp" />
+                android:textSize="16sp" />
 
             <TextView
                 android:id="@+id/tv_date"
@@ -153,7 +159,7 @@
                 android:layout_height="wrap_content"
                 android:text="@string/title_taskHour"
                 android:textColor="@android:color/black"
-                android:textSize="14sp" />
+                android:textSize="16sp" />
 
             <TextView
                 android:id="@+id/tv_hour"
@@ -188,7 +194,7 @@
                 android:layout_height="wrap_content"
                 android:text="@string/title_taskHour"
                 android:textColor="@android:color/black"
-                android:textSize="14sp" />
+                android:textSize="16sp" />
 
             <TextView
                 android:id="@+id/tv_file_name"

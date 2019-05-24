@@ -55,12 +55,14 @@ public class AddTaskDialogFragment extends DialogFragment {
         });
         // Ponemos los tipos de tarea disponibles en el spinner
         Spinner spinner = view.findViewById(R.id.type_spinner);
-        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(view.getContext(), R.array.task_types, android.R.layout.simple_spinner_item);
+        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(view.getContext(), R.array.task_types, R.layout.spinner_item);
+        adapter.setDropDownViewResource(R.layout.spinner_dropdown_item);
         // Ponemos el adapter al spinner
         spinner.setAdapter(adapter);
         // Ponemos las unidades en el spinner
         Spinner spinner2 = view.findViewById(R.id.unit_spinner);
-        ArrayAdapter<String> adapter2 = new ArrayAdapter<>(view.getContext(), android.R.layout.simple_spinner_item, unitNames);
+        ArrayAdapter<String> adapter2 = new ArrayAdapter<>(view.getContext(), R.layout.spinner_item, unitNames);
+        adapter2.setDropDownViewResource(R.layout.spinner_dropdown_item);
         // Ponemos el adapter al spinner
         spinner2.setAdapter(adapter2);
         // TextView donde se verá la fecha que selecciona el usuario
@@ -120,8 +122,8 @@ public class AddTaskDialogFragment extends DialogFragment {
                         if (minute < 10) {
                             min = 0 + "" + minute;
                         }
-                        String strHour = hr + ":" + min;
-                        show_hour.setText(strHour);
+                        hour = hr + ":" + min;
+                        show_hour.setText(hour);
                     }
                 }, Calendar.getInstance().get(Calendar.HOUR_OF_DAY), Calendar.getInstance().get(Calendar.MINUTE), true);
                 timePicker.show();
