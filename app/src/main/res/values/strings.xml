@@ -115,6 +115,25 @@
     <string name="title_dateDelivered">Fecha de entrega</string>
     <string name="title_fileDelivered">Archivo entregado</string>
 
+    <!-- Textos AddTaskDialogFragment -->
+    <string name="title_AddTaskDialogFragment">Añadir una nueva tarea</string>
+    <string name="title_taskName">Nombre de la tarea:</string>
+    <string name="title_taskType">Tipo de tarea:</string>
+    <string name="title_unit">Unidad:</string>
+    <string name="title_taskDeadLine">Fecha límite:</string>
+    <string name="title_taskHour">Hora:</string>
+    <string name="title_uploadFile">Subir archivo</string>
+    <string name="select_date">Elige una fecha</string>
+    <string name="select_hour">Elige una hora</string>
+    <string name="without_date">Sin fecha</string>
+    <string name="without_hour">Sin hora</string>
+    <string-array name="task_types">
+        <item>Entrega</item>
+        <item>Documento para alumnos</item>
+        <item>Examen</item>
+    </string-array>
+
+
     <string name="default_notification_channel_id" translatable="false">fcm_default_channel</string>
     <!--
         Este nombre será el que los usuarios vean cuando interactuan con este canal

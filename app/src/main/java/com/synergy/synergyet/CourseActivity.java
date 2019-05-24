@@ -3,6 +3,8 @@ package com.synergy.synergyet;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.support.annotation.NonNull;
+import android.support.design.widget.FloatingActionButton;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -22,6 +24,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.synergy.synergyet.custom.AddTaskDialogFragment;
 import com.synergy.synergyet.custom.UnitExpandableListAdapter;
 import com.synergy.synergyet.model.Course;
 import com.synergy.synergyet.model.UnitTask;
@@ -53,6 +56,28 @@ public class CourseActivity extends AppCompatActivity {
         Course course = (Course) intent.getSerializableExtra(IntentExtras.EXTRA_COURSE_DATA);
         user = (User) intent.getSerializableExtra(IntentExtras.EXTRA_USER_DATA);
 
+        FloatingActionButton fab = findViewById(R.id.fab);
+        if (user.getType().equals(FirebaseStrings.DEFAULT_USER_TYPE)) {
+            // Ocultamos el botón de añadir tarea si el usuario es un alumno
+            fab.hide();
+        }
+        else if (user.getType().equals(FirebaseStrings.USER_TYPE_TEACHER)) {
+            fab.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    AddTaskDialogFragment dialog = new AddTaskDialogFragment();
+                    FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+                    Bundle b = new Bundle();
+                    b.putStringArrayList(IntentExtras.EXTRA_UNITS_ARRAY, new ArrayList<>(expandableListTitle));
+                    // Se lo pasamos al DialogFragment
+                    dialog.setArguments(b);
+                    // Lo mostramos
+                    dialog.show(ft, AddTaskDialogFragment.TAG);
+                    //TODO: Abrir formulario añadir tarea
+                }
+            });
+        }
+
         // Obtenemos el toolbar y lo añadimos al activity (para que se vean los iconos)
         Toolbar toolbar = findViewById(R.id.toolbar);
         toolbar.setTitle("");
@@ -69,9 +94,6 @@ public class CourseActivity extends AppCompatActivity {
                 onBackPressed();
             }
         });
-
-        // Tipos de entrega
-        //final String type1 = "DELIVER";
 
         // Instancia de Firebase Firestore
         db = FirebaseFirestore.getInstance();
