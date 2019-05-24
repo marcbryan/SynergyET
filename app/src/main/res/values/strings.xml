@@ -107,6 +107,13 @@
     <string name="change_picture">Pulsa en la imagen para cambiar de foto</string>
     <string name="uploading_profile_image">Subiendo imagen…</string>
     <string name="upload_profile_img_error">Ha habido un error al subir tu imagen</string>
+    
+    <!-- Textos TaskDialogFragment -->
+    <string name="subtitleText">Estado de la entrega</string>
+    <string name="title_qualifStatus">Calificación</string>
+    <string name="title_deadLine">Fecha límite</string>
+    <string name="title_dateDelivered">Fecha de entrega</string>
+    <string name="title_fileDelivered">Archivo entregado</string>
 
     <string name="default_notification_channel_id" translatable="false">fcm_default_channel</string>
     <!--

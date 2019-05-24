@@ -30,13 +30,9 @@ import com.synergy.synergyet.model.User;
 import com.synergy.synergyet.strings.FirebaseStrings;
 import com.synergy.synergyet.strings.IntentExtras;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -48,7 +44,6 @@ public class CourseActivity extends AppCompatActivity {
     private UnitExpandableListAdapter expandableListAdapter;
     private Map<String, List<UnitTask>> expandableListDetail = new LinkedHashMap<>();
     private List<String> expandableListTitle;
-    private SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm");
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -87,25 +82,6 @@ public class CourseActivity extends AppCompatActivity {
             @Override
             public boolean onChildClick(ExpandableListView parent, View v, int groupPosition, int childPosition, long id) {
                 //TODO: Quitar toast de prueba
-                UnitTask task = expandableListDetail.get(expandableListTitle.get(groupPosition)).get(childPosition);
-                // Si la tarea es una entrega y el usuario es un estudiante
-                if (task.getType().equals(FirebaseStrings.TASK_TYPE1) && user.getType().equals(FirebaseStrings.DEFAULT_USER_TYPE)) {
-                    try {
-                        // Fecha de entrega
-                        Date deadLine = sdf.parse(task.getDead_line());
-                        // Fecha de hoy
-                        Date now = Calendar.getInstance().getTime();
-                        if (deadLine.compareTo(now) > 0) {
-                            // Todavía se puede entregar (la fecha de entrega es posterior a la de ahora)
-
-                        } else {
-                            // Ya no se puede entregar la tarea
-                            showDialog(getString(R.string.task_dead_line_passed));
-                        }
-                    } catch (ParseException e) {
-                        e.printStackTrace();
-                    }
-                }
                 Toast.makeText(v.getContext(), expandableListDetail.get(expandableListTitle.get(groupPosition)).get(childPosition).getTaskName(), Toast.LENGTH_SHORT).show();
                 return false;
             }
@@ -236,5 +212,4 @@ public class CourseActivity extends AppCompatActivity {
                     }
                 });
     }
-
 }

@@ -14,4 +14,7 @@
 
     <color name="colorBlueTitle">#0070a8</color>
     <color name="colorMessage">#509bff</color>
+
+    <color name="colorGrayRow">#e5e5e5</color>
+    <color name="colorGrayRowBorders">#d1d1d1</color>
 </resources>

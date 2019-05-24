@@ -1,6 +1,9 @@
 package com.synergy.synergyet.model;
 
-public class UnitTask {
+import java.io.Serializable;
+
+// Debe implementar la interfaz Serializable para poder pasar este objeto de un activity a otro con el método putExtra()
+public class UnitTask implements Serializable {
     private int task_id;
     private String taskName;
     private int unit_id;

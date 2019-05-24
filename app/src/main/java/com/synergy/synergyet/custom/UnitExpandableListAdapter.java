@@ -3,7 +3,10 @@ package com.synergy.synergyet.custom;
 import android.content.Context;
 import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
+import android.os.Bundle;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,6 +17,7 @@ import android.widget.TextView;
 import com.synergy.synergyet.R;
 import com.synergy.synergyet.model.UnitTask;
 import com.synergy.synergyet.strings.FirebaseStrings;
+import com.synergy.synergyet.strings.IntentExtras;
 
 import java.util.List;
 import java.util.Map;
@@ -49,8 +53,8 @@ public class UnitExpandableListAdapter extends BaseExpandableListAdapter {
     }
 
     @Override
-    public View getChildView(int listPosition, final int expandedListPosition,
-                             boolean isLastChild, View convertView, ViewGroup parent) {
+    public View getChildView(final int listPosition, final int expandedListPosition,
+                             final boolean isLastChild, View convertView, final ViewGroup parent) {
         final String expandedListText = getChild(listPosition, expandedListPosition).getTaskName();
         if (convertView == null) {
             LayoutInflater layoutInflater = (LayoutInflater) this.context
@@ -61,11 +65,29 @@ public class UnitExpandableListAdapter extends BaseExpandableListAdapter {
         expandedListTextView.setText(expandedListText);
         ImageView actionIcon = convertView.findViewById(R.id.actionIcon);
         String type = getChild(listPosition, expandedListPosition).getType();
-        // Si es una entrega y el usuario es un alumno
+        // Si la tarea es una entrega y el usuario es un alumno
         if (type.equals(FirebaseStrings.TASK_TYPE1) && userType.equals(FirebaseStrings.DEFAULT_USER_TYPE)) {
+            // Obtenemos la tarea
+            final UnitTask task = getChild(listPosition, expandedListPosition);
             // Pondremos un icono de subida de archivo
             actionIcon.setImageResource(R.drawable.ic_file_upload_gray_24dp);
             actionIcon.setContentDescription(convertView.getContext().getString(R.string.upload_task));
+            actionIcon.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    TaskDialogFragment dialog = new TaskDialogFragment();
+                    FragmentTransaction ft = ((AppCompatActivity) context).getSupportFragmentManager().beginTransaction();
+                    Bundle b = new Bundle();
+                    // Le pasamos el nombre de la unidad (UF)
+                    b.putString(IntentExtras.EXTRA_UNIT_NAME, getGroup(listPosition).toString());
+                    // Ponemos la tarea en el bundle
+                    b.putSerializable(IntentExtras.EXTRA_TASK_DATA, task);
+                    // Se lo pasamos al DialogFragment
+                    dialog.setArguments(b);
+                    // Lo mostramos
+                    dialog.show(ft, TaskDialogFragment.TAG);
+                }
+            });
         }
         return convertView;
     }
