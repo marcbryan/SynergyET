@@ -4,6 +4,9 @@ import android.content.Context;
 import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.os.Environment;
+import android.support.annotation.NonNull;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
@@ -13,12 +16,19 @@ import android.view.ViewGroup;
 import android.widget.BaseExpandableListAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.storage.FileDownloadTask;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 import com.synergy.synergyet.R;
 import com.synergy.synergyet.model.UnitTask;
 import com.synergy.synergyet.strings.FirebaseStrings;
 import com.synergy.synergyet.strings.IntentExtras;
 
+import java.io.File;
 import java.util.List;
 import java.util.Map;
 
@@ -65,13 +75,13 @@ public class UnitExpandableListAdapter extends BaseExpandableListAdapter {
         expandedListTextView.setText(expandedListText);
         ImageView actionIcon = convertView.findViewById(R.id.actionIcon);
         String type = getChild(listPosition, expandedListPosition).getType();
-        // Si la tarea es una entrega y el usuario es un alumno
-        if (type.equals(FirebaseStrings.TASK_TYPE1) && userType.equals(FirebaseStrings.DEFAULT_USER_TYPE)) {
+        // Si la tarea es una entrega o un examen y el usuario es un alumno
+        if ((type.equals(FirebaseStrings.TASK_TYPE1) || type.equals(FirebaseStrings.TASK_TYPE3)) && userType.equals(FirebaseStrings.DEFAULT_USER_TYPE)) {
             // Obtenemos la tarea
             final UnitTask task = getChild(listPosition, expandedListPosition);
             // Pondremos un icono de subida de archivo
             actionIcon.setImageResource(R.drawable.ic_file_upload_gray_24dp);
-            actionIcon.setContentDescription(convertView.getContext().getString(R.string.upload_task));
+            actionIcon.setContentDescription(convertView.getContext().getString(R.string.upload_file));
             actionIcon.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -86,6 +96,38 @@ public class UnitExpandableListAdapter extends BaseExpandableListAdapter {
                     dialog.setArguments(b);
                     // Lo mostramos
                     dialog.show(ft, TaskDialogFragment.TAG);
+                }
+            });
+        }
+        // Si la tarea es un documento y el usuario es un alumno
+        else if (type.equals(FirebaseStrings.TASK_TYPE2) && userType.equals(FirebaseStrings.DEFAULT_USER_TYPE)) {
+            // Obtenemos la tarea
+            final UnitTask task = getChild(listPosition, expandedListPosition);
+            // Pondremos un icono de descarga de archivo
+            actionIcon.setImageResource(R.drawable.ic_file_download_gray_24dp);
+            actionIcon.setContentDescription(convertView.getContext().getString(R.string.download_file));
+            actionIcon.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(final View v) {
+                    Toast.makeText(context, context.getString(R.string.download_started), Toast.LENGTH_SHORT).show();
+                    FirebaseStorage storage = FirebaseStorage.getInstance();
+                    StorageReference storageRef = storage.getReferenceFromUrl(task.getFileURL());
+                    String filename = storageRef.getName();
+                    File downloadsDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
+                    File localFile = new File(downloadsDir.getPath()+"/", filename);
+                    storageRef.getFile(localFile).addOnSuccessListener(new OnSuccessListener<FileDownloadTask.TaskSnapshot>() {
+                        @Override
+                        public void onSuccess(FileDownloadTask.TaskSnapshot taskSnapshot) {
+                            // El archivo se ha descargado correctamente, mostramos Snackbar
+                            Snackbar.make(v, context.getString(R.string.download_finished), Snackbar.LENGTH_SHORT).show();
+                        }
+                    }).addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception exception) {
+                            // Mostramos Toast de error
+                            Toast.makeText(context, context.getString(R.string.download_failed), Toast.LENGTH_SHORT).show();
+                        }
+                    });
                 }
             });
         }

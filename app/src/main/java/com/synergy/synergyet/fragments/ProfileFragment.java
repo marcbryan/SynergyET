@@ -116,6 +116,7 @@ public class ProfileFragment extends Fragment {
                 @Override
                 public Task<Uri> then(@NonNull Task<UploadTask.TaskSnapshot> task) {
                     if (!task.isSuccessful()) {
+                        progressDialog.dismiss();
                         Log.e("Error: ", task.getException()+"");
                     }
                     return fileReference.getDownloadUrl();

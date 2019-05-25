@@ -19,6 +19,7 @@
     <string name="dialogCancel">Cancelar</string>
     <string name="dialog_empty_email">Introduce un correo electrónico</string>
     <string name="dialog_wrong_email">Introduce un correo electrónico válido</string>
+    <string name="snackbar_mail_sent">Mail para cambiar de contraseña enviado</string>
     <string name="toast1">Bienvenido</string>
 
     <!-- Textos SignUpActivity -->
@@ -99,8 +100,12 @@
 
     <!-- Textos CourseActivity -->
     <string name="task_created">Tarea creada correctamente</string>
-    <string name="upload_task">Subir archivo</string>
+    <string name="upload_file">Subir archivo</string>
+    <string name="download_file">Descargar archivo</string>
     <string name="task_dead_line_passed">Ya no puedes entregar esta tarea, habla con el profesor para ver si puedes entregarsela personalmente</string>
+    <string name="download_started">La descarga ha comenzado</string>
+    <string name="download_finished">Archivo descargado correctamente</string>
+    <string name="download_failed">La descarga del archivo ha fallado</string>
 
     <!-- Textos ProfileFragment -->
     <string name="profile_title">Perfil</string>
@@ -117,16 +122,24 @@
 
     <!-- Textos AddTaskDialogFragment -->
     <string name="title_AddTaskDialogFragment">Añadir una nueva tarea</string>
-    <string name="title_taskName">Nombre de la tarea:</string>
+    <string name="title_taskName">Nombre de la tarea</string>
     <string name="title_taskType">Tipo de tarea:</string>
     <string name="title_unit">Unidad:</string>
-    <string name="title_taskDeadLine">Fecha límite:</string>
-    <string name="title_taskHour">Hora:</string>
-    <string name="title_uploadFile">Subir archivo</string>
+    <string name="title_taskDeadLine">Fecha límite</string>
+    <string name="title_taskHour">Hora</string>
+    <string name="title_uploadFile">Archivo:</string>
+    <string name="date_helper_text">Ej: 27/05/2019</string>
+    <string name="hour_helper_text">Ej: 16:05</string>
     <string name="select_date">Elige una fecha</string>
     <string name="select_hour">Elige una hora</string>
-    <string name="without_date">Sin fecha</string>
-    <string name="without_hour">Sin hora</string>
+    <string name="add_task">Añadir tarea</string>
+    <string name="uploading_file">Subiendo archivo…</string>
+    <string name="no_task_name">Escribe un nombre para la tarea</string>
+    <string name="wrong_format">Formato incorrecto</string>
+    <string name="no_file_selected">Falta seleccionar un archivo!</string>
+    <string name="error_adding_task">Error al añadir la tarea, intentalo de nuevo</string>
+    <string name="error_opening_file_manager">Error al abrir el explorador de archivos</string>
+    <string name="error_uploading_file">Error al subir tu archivo, intentalo de nuevo</string>
     <string-array name="task_types">
         <item>Entrega</item>
         <item>Documento para alumnos</item>

@@ -9,6 +9,7 @@ public class UnitTask implements Serializable {
     private int unit_id;
     private String type;
     private String dead_line;
+    private String fileURL;
 
     /**
      * Para poder insertar los datos de una clase personalizada en Cloud Firestore, se necesita un constructor público sin parámetros
@@ -50,6 +51,10 @@ public class UnitTask implements Serializable {
         return dead_line;
     }
 
+    public String getFileURL() {
+        return fileURL;
+    }
+
     public void setTask_id(int task_id) {
         this.task_id = task_id;
     }
@@ -68,5 +73,9 @@ public class UnitTask implements Serializable {
 
     public void setDead_line(String dead_line) {
         this.dead_line = dead_line;
+    }
+
+    public void setFileURL(String fileURL) {
+        this.fileURL = fileURL;
     }
 }

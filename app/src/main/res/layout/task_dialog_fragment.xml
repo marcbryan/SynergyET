@@ -163,7 +163,7 @@
             android:layout_marginTop="25dp"
             android:drawableStart="@drawable/ic_file_upload_gray_24dp"
             android:drawableLeft="@drawable/ic_file_upload_gray_24dp"
-            android:text="@string/upload_task"
+            android:text="@string/upload_file"
             android:textAllCaps="false" />
 
     </RelativeLayout>

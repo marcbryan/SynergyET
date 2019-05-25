@@ -1,5 +1,6 @@
 package com.synergy.synergyet;
 
+import android.Manifest;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.support.annotation.NonNull;
@@ -19,9 +20,7 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
-import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.synergy.synergyet.custom.AddTaskDialogFragment;
@@ -40,6 +39,8 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import pub.devrel.easypermissions.EasyPermissions;
+
 public class CourseActivity extends AppCompatActivity {
     private FirebaseFirestore db;
     private User user;
@@ -47,6 +48,8 @@ public class CourseActivity extends AppCompatActivity {
     private UnitExpandableListAdapter expandableListAdapter;
     private Map<String, List<UnitTask>> expandableListDetail = new LinkedHashMap<>();
     private List<String> expandableListTitle;
+    private ArrayList<Integer> unitsIDs = new ArrayList<>();
+    private FloatingActionButton fab;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,27 +59,9 @@ public class CourseActivity extends AppCompatActivity {
         Course course = (Course) intent.getSerializableExtra(IntentExtras.EXTRA_COURSE_DATA);
         user = (User) intent.getSerializableExtra(IntentExtras.EXTRA_USER_DATA);
 
-        FloatingActionButton fab = findViewById(R.id.fab);
-        if (user.getType().equals(FirebaseStrings.DEFAULT_USER_TYPE)) {
-            // Ocultamos el botón de añadir tarea si el usuario es un alumno
-            fab.hide();
-        }
-        else if (user.getType().equals(FirebaseStrings.USER_TYPE_TEACHER)) {
-            fab.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    AddTaskDialogFragment dialog = new AddTaskDialogFragment();
-                    FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-                    Bundle b = new Bundle();
-                    b.putStringArrayList(IntentExtras.EXTRA_UNITS_ARRAY, new ArrayList<>(expandableListTitle));
-                    // Se lo pasamos al DialogFragment
-                    dialog.setArguments(b);
-                    // Lo mostramos
-                    dialog.show(ft, AddTaskDialogFragment.TAG);
-                    //TODO: Abrir formulario añadir tarea
-                }
-            });
-        }
+        // Ocultamos el botón de añadir
+        fab = findViewById(R.id.fab);
+        fab.hide();
 
         // Obtenemos el toolbar y lo añadimos al activity (para que se vean los iconos)
         Toolbar toolbar = findViewById(R.id.toolbar);
@@ -108,6 +93,8 @@ public class CourseActivity extends AppCompatActivity {
                 return false;
             }
         });
+        // Pedimos permiso de escritura, en el caso de que no haya permiso
+        requestWritePermission();
     }
 
     /**
@@ -127,8 +114,11 @@ public class CourseActivity extends AppCompatActivity {
         alert.show();
     }
 
-    //TODO: Comentar método
-    private void getUnits(int course_id) {
+    /**
+     * Método para obtener todas las unidades de un curso sabiendo su ID
+     * @param course_id - El ID del curso que queremos las unidades
+     */
+    private void getUnits(final int course_id) {
         db.collection(FirebaseStrings.COLLECTION_3)
                 .whereEqualTo(FirebaseStrings.FIELD6_C3, course_id)
                 .get()
@@ -150,6 +140,7 @@ public class CourseActivity extends AppCompatActivity {
                         for (Unit unit : units) {
                             // Añadimos las unidades al HashMap
                             expandableListDetail.put(unit.getName(), new ArrayList<UnitTask>());
+                            unitsIDs.add(unit.getUnit_id());
                         }
                         // Creamos un ArrayList con los elementos padre (las UFs)
                         expandableListTitle = new ArrayList<>(expandableListDetail.keySet());
@@ -161,7 +152,26 @@ public class CourseActivity extends AppCompatActivity {
                         for (Unit unit : units) {
                             getTasks(unit.getUnit_id(), unit.getName());
                         }
-
+                        // Si el usuario es un profesor, mostraremos el botón de añadir tarea
+                        if (user.getType().equals(FirebaseStrings.USER_TYPE_TEACHER)) {
+                            fab.show();
+                            fab.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    // Creamos el DialogFragment
+                                    AddTaskDialogFragment dialog = new AddTaskDialogFragment();
+                                    FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+                                    Bundle b = new Bundle();
+                                    b.putStringArrayList(IntentExtras.EXTRA_UNITS_ARRAY, new ArrayList<>(expandableListTitle));
+                                    b.putIntegerArrayList(IntentExtras.EXTRA_UNITS_IDS_ARRAY, unitsIDs);
+                                    b.putInt(IntentExtras.EXTRA_COURSE_ID, course_id);
+                                    // Se lo pasamos al DialogFragment
+                                    dialog.setArguments(b);
+                                    // Lo mostramos
+                                    dialog.show(ft, AddTaskDialogFragment.TAG);
+                                }
+                            });
+                        }
                     }
                 })
                 .addOnFailureListener(new OnFailureListener() {
@@ -172,7 +182,11 @@ public class CourseActivity extends AppCompatActivity {
                 });
     }
 
-    //TODO: Comentar método
+    /**
+     * Método para obtener las tareas de una unidad sabiendo su ID
+     * @param unit_id - El ID de la unidad
+     * @param unit_name - El nombre de la unidad (para actualizar el valor del HashMap)
+     */
     private void getTasks(int unit_id, final String unit_name) {
         db.collection(FirebaseStrings.COLLECTION_4)
                 .whereEqualTo(FirebaseStrings.FIELD3_C4, unit_id)
@@ -180,58 +194,34 @@ public class CourseActivity extends AppCompatActivity {
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                     @Override
                     public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                        List <UnitTask> tasks = new ArrayList<>();
-                        for (QueryDocumentSnapshot documentSnapshot : task.getResult()) {
-                            UnitTask unitTask = documentSnapshot.toObject(UnitTask.class);
-                            tasks.add(unitTask);
-                        }
-                        // Cambiamos el valor del HashMap
-                        expandableListDetail.put(unit_name, tasks);
-                        // Notificamos el cambio
-                        expandableListAdapter.notifyDataSetChanged();
-                    }
-                });
-
-    }
-
-    //TODO: Comentar método
-    private void getLastTaskID(final UnitTask unitTask) {
-        db.collection(FirebaseStrings.COLLECTION_4)
-                .orderBy(FirebaseStrings.FIELD1_C4, Query.Direction.ASCENDING)
-                .limit(1)
-                .get()
-                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                    @Override
-                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
                         if (task.isSuccessful()) {
-                            int id = 1;
+                            List<UnitTask> tasks = new ArrayList<>();
+                            // Añadimos las tareas al array
                             for (QueryDocumentSnapshot documentSnapshot : task.getResult()) {
                                 UnitTask unitTask = documentSnapshot.toObject(UnitTask.class);
-                                id = unitTask.getTask_id();
+                                tasks.add(unitTask);
                             }
-                            unitTask.setTask_id(id);
-                            addTask(unitTask);
+                            // Cambiamos el valor del HashMap
+                            expandableListDetail.put(unit_name, tasks);
+                            // Notificamos el cambio
+                            expandableListAdapter.notifyDataSetChanged();
                         } else {
-                            Log.e("ERROR: ", task.getException() + "");
+                            Log.e("ERROR", task.getException()+"");
                         }
                     }
                 });
 
     }
 
-    //TODO: Comentar método
-    private void addTask(UnitTask unitTask) {
-        db.collection(FirebaseStrings.COLLECTION_4)
-                .add(unitTask)
-                .addOnCompleteListener(new OnCompleteListener<DocumentReference>() {
-                    @Override
-                    public void onComplete(@NonNull Task<DocumentReference> task) {
-                        if (task.isSuccessful()) {
-                            Toast.makeText(CourseActivity.this, getString(R.string.task_created), Toast.LENGTH_SHORT).show();
-                        } else {
-                            Log.e("ERROR: ", task.getException() + "");
-                        }
-                    }
-                });
+    /**
+     * Muestra un Dialog pidiendo permisos de escritura para poder realizar descargas
+     */
+    public void requestWritePermission() {
+        String[] perms = { Manifest.permission.WRITE_EXTERNAL_STORAGE};
+        if (!EasyPermissions.hasPermissions(this, perms)) {
+            // Preguntamos por permisos
+            EasyPermissions.requestPermissions(this, "",
+                    1, perms);
+        }
     }
 }

@@ -55,6 +55,8 @@ public final class FirebaseStrings {
     public static final String USER_TYPE_TEACHER = "teacher";
     public static final String DEFAULT_IMAGE_VALUE = "default";
     public static final String TASK_TYPE1 = "DELIVER";
+    public static final String TASK_TYPE2 = "DOCUMENT";
+    public static final String TASK_TYPE3 = "EXAM";
 
     /**
      * Constructor privado

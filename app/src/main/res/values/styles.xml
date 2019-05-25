@@ -29,5 +29,10 @@
         <item name="colorAccent">@color/colorWhite</item>
         <item name="android:background">@color/colorPrimary</item>
     </style>
+    
+    <style name="TextInputLayoutTheme" parent="Widget.MaterialComponents.TextInputLayout.FilledBox.Dense">
+        <item name="colorAccent">@color/colorAccent</item>
+        <item name="colorControlNormal">@color/colorGrayBorder</item>
+    </style>
 
 </resources>

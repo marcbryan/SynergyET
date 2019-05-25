@@ -15,6 +15,11 @@
     <color name="colorBlueTitle">#0070a8</color>
     <color name="colorMessage">#509bff</color>
 
+    <!-- Colores TaskDialogFragment -->
     <color name="colorGrayRow">#e5e5e5</color>
     <color name="colorGrayRowBorders">#d1d1d1</color>
+
+    <!-- Colores AddTaskDialogFragment -->
+    <color name="colorGrayBorder">#666666</color>
+    <color name="colorGrayText">#9e9e9e</color>
 </resources>
