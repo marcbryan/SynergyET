@@ -24,6 +24,8 @@ public final class FirebaseStrings {
     public static final String FIELD1_C5 = "deliver_id";
     public static final String FIELD2_C5 = "student_uid";
     public static final String FIELD5_C5 = "task_id";
+    public static final String FIELD6_C5 = "grade";
+    public static final String FIELD11_C5 = "delivered_by";
 
     // Referencias Realtime Database
     public static final String REFERENCE_1 = "users";

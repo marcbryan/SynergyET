@@ -334,7 +334,7 @@ public class AddTaskDialogFragment extends DialogFragment {
                         int unit_id = unitsIDs.get(spinner2.getSelectedItemPosition());
                         // Creamos la tarea
                         UnitTask task = new UnitTask(taskName, unit_id, type_tag, null);
-                        showProgressDialog(getString(R.string.uploading_file));
+                        showProgressDialog(getString(R.string.creating_deliver));
                         // Subimos el archivo
                         uploadFile(uri, course_id, task);
                     }

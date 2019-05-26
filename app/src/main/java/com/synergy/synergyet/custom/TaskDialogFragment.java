@@ -50,6 +50,7 @@ public class TaskDialogFragment extends DialogFragment {
     private UnitTask taskData;
     private String unitTitle;
     private int course_id;
+    private String nameUser;
     private SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm");
     private TaskDelivered taskDelivered;
     private TextView tv_status;
@@ -70,6 +71,7 @@ public class TaskDialogFragment extends DialogFragment {
         taskData = (UnitTask) b.getSerializable(IntentExtras.EXTRA_TASK_DATA);
         unitTitle = b.getString(IntentExtras.EXTRA_UNIT_NAME);
         course_id = b.getInt(IntentExtras.EXTRA_COURSE_ID);
+        nameUser = b.getString(IntentExtras.EXTRA_NAME_USER);
         // Instancia de Firebase Firestore
         db = FirebaseFirestore.getInstance();
     }
@@ -214,7 +216,7 @@ public class TaskDialogFragment extends DialogFragment {
                                         Date now = Calendar.getInstance().getTime();
                                         String date = sdf.format(now);
                                         // Llamamos al método para subir el archivo del usuario
-                                        TaskDelivered delivered = new TaskDelivered(firebaseUser.getUid(), course_id, taskData.getUnit_id(), taskData.getTask_id(), -1, taskData.getType(), date, tv_fileDelivered.getText().toString());
+                                        TaskDelivered delivered = new TaskDelivered(firebaseUser.getUid(), course_id, taskData.getUnit_id(), taskData.getTask_id(), -1, taskData.getType(), date, tv_fileDelivered.getText().toString(), nameUser);
                                         uploadFileDelivered(delivered);
                                     } else {
                                         Toast.makeText(getContext(), getString(R.string.no_file_selected), Toast.LENGTH_SHORT).show();

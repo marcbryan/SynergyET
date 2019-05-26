@@ -11,13 +11,14 @@ public class TaskDelivered {
     private String date_delivered;
     private String url_file_delivered;
     private String file_name;
+    private String delivered_by;
 
     /**
      * Constructor vacío, necesario para Cloud Firestore
      */
     public TaskDelivered() {}
 
-    public TaskDelivered(String student_uid, int course_id, int unit_id, int task_id, double grade, String type, String date_delivered, String file_name) {
+    public TaskDelivered(String student_uid, int course_id, int unit_id, int task_id, double grade, String type, String date_delivered, String file_name, String delivered_by) {
         this.student_uid = student_uid;
         this.course_id = course_id;
         this.unit_id = unit_id;
@@ -26,6 +27,7 @@ public class TaskDelivered {
         this.type = type;
         this.date_delivered = date_delivered;
         this.file_name = file_name;
+        this.delivered_by = delivered_by;
     }
 
     public int getDeliver_id() {
@@ -68,6 +70,10 @@ public class TaskDelivered {
         return file_name;
     }
 
+    public String getDelivered_by() {
+        return delivered_by;
+    }
+
     public void setDeliver_id(int deliver_id) {
         this.deliver_id = deliver_id;
     }
@@ -106,5 +112,9 @@ public class TaskDelivered {
 
     public void setFile_name(String file_name) {
         this.file_name = file_name;
+    }
+
+    public void setDelivered_by(String delivered_by) {
+        this.delivered_by = delivered_by;
     }
 }

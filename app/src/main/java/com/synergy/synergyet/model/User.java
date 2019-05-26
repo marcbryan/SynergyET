@@ -8,7 +8,7 @@ public class User implements Serializable {
     private String UID;
     private String name;
     private String surname;
-    private String username;
+    private String email;
     private String password;
     private String type;
     private ArrayList<Integer> courses;
@@ -20,11 +20,10 @@ public class User implements Serializable {
 
     }
 
-    public User(String name, String surname, String username, String password, String type) {
+    public User(String name, String surname, String email, String type) {
         this.name = name;
         this.surname = surname;
-        this.username = username;
-        this.password = password;
+        this.email = email;
         this.type = type;
     }
 
@@ -40,12 +39,8 @@ public class User implements Serializable {
         return surname;
     }
 
-    public String getUsername() {
-        return username;
-    }
-
-    public String getPassword() {
-        return password;
+    public String getEmail() {
+        return email;
     }
 
     public String getType() {
@@ -68,12 +63,8 @@ public class User implements Serializable {
         this.surname = surname;
     }
 
-    public void setUsername(String username) {
-        this.username = username;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
+    public void setEmail(String username) {
+        this.email = username;
     }
 
     public void setType(String type) {
@@ -82,18 +73,5 @@ public class User implements Serializable {
 
     public void setCourses(ArrayList<Integer> courses) {
         this.courses = courses;
-    }
-
-    @Override
-    public String toString() {
-        return "User{" +
-                "UID='" + UID + '\'' +
-                ", name='" + name + '\'' +
-                ", surname='" + surname + '\'' +
-                ", username='" + username + '\'' +
-                ", password='" + password + '\'' +
-                ", type='" + type + '\'' +
-                ", courses=" + courses +
-                '}';
     }
 }

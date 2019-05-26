@@ -36,6 +36,7 @@ public class UnitExpandableListAdapter extends BaseExpandableListAdapter {
     private Context context;
     private List<String> expandableListTitle;
     private Map<String, List<UnitTask>> expandableListDetail;
+    private String nameUser;
     private String userType;
     private int course_id;
 
@@ -43,10 +44,11 @@ public class UnitExpandableListAdapter extends BaseExpandableListAdapter {
     private Drawable expand_less;
 
     public UnitExpandableListAdapter(Context context, List<String> expandableListTitle,
-                                         Map<String, List<UnitTask>> expandableListDetail, String userType, int course_id) {
+                                         Map<String, List<UnitTask>> expandableListDetail, String nameUser, String userType, int course_id) {
         this.context = context;
         this.expandableListTitle = expandableListTitle;
         this.expandableListDetail = expandableListDetail;
+        this.nameUser = nameUser;
         this.userType = userType;
         this.course_id = course_id;
         // Las imagenes de las flechas del ExpandableListView
@@ -96,6 +98,8 @@ public class UnitExpandableListAdapter extends BaseExpandableListAdapter {
                     b.putSerializable(IntentExtras.EXTRA_TASK_DATA, task);
                     // Ponemos el ID del curso
                     b.putInt(IntentExtras.EXTRA_COURSE_ID, course_id);
+                    // Le pasamos el nombre del usuario
+                    b.putString(IntentExtras.EXTRA_NAME_USER, nameUser);
                     // Se lo pasamos al DialogFragment
                     dialog.setArguments(b);
                     // Lo mostramos
@@ -113,10 +117,14 @@ public class UnitExpandableListAdapter extends BaseExpandableListAdapter {
             actionIcon.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(final View v) {
+                    // Mostramos toast de comienzo de descarga
                     Toast.makeText(context, context.getString(R.string.download_started), Toast.LENGTH_SHORT).show();
+                    // Para descargar un archivo de Cloud Storage
                     FirebaseStorage storage = FirebaseStorage.getInstance();
                     StorageReference storageRef = storage.getReferenceFromUrl(task.getFileURL());
+                    // Nombre del archivo que se descargará
                     String filename = storageRef.getName();
+                    // El archivo se guardará en la carpeta de descargas
                     File downloadsDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
                     File localFile = new File(downloadsDir.getPath()+"/", filename);
                     storageRef.getFile(localFile).addOnSuccessListener(new OnSuccessListener<FileDownloadTask.TaskSnapshot>() {
@@ -137,7 +145,25 @@ public class UnitExpandableListAdapter extends BaseExpandableListAdapter {
         }
         // Si la tarea es una entrega o examen y el usuario es un profesor
         else if ((type.equals(FirebaseStrings.TASK_TYPE1) || type.equals(FirebaseStrings.TASK_TYPE3)) && userType.equals(FirebaseStrings.USER_TYPE_TEACHER)) {
-            //TODO: Abrir activity/fragment con listview de para corregir examenes
+            // Obtenemos la tarea
+            final UnitTask task = getChild(listPosition, expandedListPosition);
+            // Pondremos un icono para indicar que es una correción al ImageView
+            actionIcon.setImageResource(R.drawable.ic_school_gray_24dp);
+            actionIcon.setContentDescription(convertView.getContext().getString(R.string.description_correct));
+            actionIcon.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    CorrectDialogFragment dialog = new CorrectDialogFragment();
+                    FragmentTransaction ft = ((AppCompatActivity) context).getSupportFragmentManager().beginTransaction();
+                    Bundle b = new Bundle();
+                    // Ponemos la tarea en el bundle
+                    b.putSerializable(IntentExtras.EXTRA_TASK_DATA, task);
+                    // Se lo pasamos al DialogFragment
+                    dialog.setArguments(b);
+                    // Lo mostramos
+                    dialog.show(ft, CorrectDialogFragment.TAG);
+                }
+            });
         }
         return convertView;
     }

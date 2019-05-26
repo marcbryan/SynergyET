@@ -221,6 +221,8 @@ public class MainActivity extends AppCompatActivity {
         moveTaskToBack(true);
     }
 
+    // TODO: Cambiar style de los AlertDialog de todas las activitys
+
     /**
      * Muesta un diálogo con un botón de ok y el texto que le pasamos como parámetro
      * @param dialog_txt - El texto a mostrar en el diálogo
@@ -270,7 +272,8 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         // Finaliza el ProgressDialog
-                        progressDialog.dismiss();
+                        //progressDialog.dismiss();
+                        progressDialog.cancel();
                         if (task.isSuccessful()) {
                             // Si el login se realiza con éxito, accederá a la aplicación
                             user = mAuth.getCurrentUser();

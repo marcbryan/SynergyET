@@ -138,7 +138,7 @@ public class CourseActivity extends AppCompatActivity {
                         // Creamos un ArrayList con los elementos padre (las UFs)
                         expandableListTitle = new ArrayList<>(expandableListDetail.keySet());
                         // Creamos el adapter para el ExpandableListView
-                        expandableListAdapter = new UnitExpandableListAdapter(CourseActivity.this, expandableListTitle, expandableListDetail, user.getType(), course_id);
+                        expandableListAdapter = new UnitExpandableListAdapter(CourseActivity.this, expandableListTitle, expandableListDetail, user.getName()+" "+user.getSurname(), user.getType(), course_id);
                         // Ponemos el adapter en el ExpandableListView
                         expandableListView.setAdapter(expandableListAdapter);
                         // Después de añadir las unidades (las UFs), añadimos los hijos (las tareas) de cada unidad

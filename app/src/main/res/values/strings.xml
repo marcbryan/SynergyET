@@ -26,7 +26,8 @@
     <string name="dialog2_txt1">Faltan campos por rellenar</string>
     <string name="dialog2_txt2">Las contraseñas no coinciden</string>
     <string name="dialog_email_already_exists">Ese correo electrónico ya está en uso. Prueba con otro.</string>
-    <string name="dialog2_txt3">El registro de la cuenta ha fallado, vuelve a intentarlo</string>
+    <string name="error_creating_account">El registro de la cuenta ha fallado, vuelve a intentarlo</string>
+    <string name="creating_account">Creando cuenta, por favor espera…</string>
     <string name="toast2">Cuenta creada correctamente!</string>
 
     <!-- Textos MyCoursesFragment -->
@@ -140,6 +141,7 @@
     <string name="select_hour">Elige una hora</string>
     <string name="add_task">Añadir tarea</string>
     <string name="uploading_file">Subiendo archivo…</string>
+    <string name="creating_deliver">Creando entrega…</string>
     <string name="no_task_name">Escribe un nombre para la tarea</string>
     <string name="wrong_format">Formato incorrecto</string>
     <string name="no_file_selected">Falta seleccionar un archivo!</string>
@@ -152,6 +154,19 @@
         <item>Examen</item>
     </string-array>
 
+    <!-- Textos CorrectDialogFragment -->
+    <string name="title_student_name">Alumno:</string>
+    <string name="title_student_file">Archivo entregado:</string>
+    <string name="title_student_grade">Nota:</string>
+    <string name="description_correct">Corregir</string>
+    <string name="title_GradeInputDialog">Corregir tarea</string>
+    <string name="msg_GradeInputDialog">Pon una nota entre 0 y 10</string>
+    <string name="hint_grade">Nota</string>
+    <string name="no_grade">Pon una nota</string>
+    <string name="invalid_grade">Nota incorrecta</string>
+    <string name="updating_grade">Actualizando nota…</string>
+    <string name="toast_updated_grade">Nota actualizada correctamente!</string>
+    <string name="toast_error_updating_grade">Error al actualizar la nota, vuelve a intentarlo</string>
 
     <string name="default_notification_channel_id" translatable="false">fcm_default_channel</string>
     <!--
