@@ -86,10 +86,13 @@ public class SignUpActivity extends AppCompatActivity {
 
     }
 
-    //TODO: Comentar método y cambiar style
+    /**
+     * Muesta un diálogo con un botón de OK y el texto que le pasamos como parámetro
+     * @param dialog_txt - El texto a mostrar en el diálogo
+     */
     private void showDialog(String dialog_txt) {
         // Creo un diálogo
-        AlertDialog.Builder builder = new AlertDialog.Builder(SignUpActivity.this);
+        AlertDialog.Builder builder = new AlertDialog.Builder(SignUpActivity.this, R.style.CustomAlertDialog);
         builder.setMessage(dialog_txt)
                 .setCancelable(false)
                 .setPositiveButton(getString(R.string.dialogOK_button), new DialogInterface.OnClickListener() {

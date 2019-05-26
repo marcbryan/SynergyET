@@ -14,7 +14,6 @@ import android.util.Log;
 import android.view.View;
 import android.widget.ExpandableListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -88,23 +87,6 @@ public class CourseActivity extends AppCompatActivity {
         getUnits(course.getCourse_id());
         // Pedimos permiso de escritura, en el caso de que no haya permiso
         requestWritePermission();
-    }
-
-    /**
-     * Muesta un diálogo con un botón de ok y el texto que le pasamos como parámetro
-     * @param dialog_txt - El texto a mostrar en el diálogo
-     */
-    private void showDialog(String dialog_txt) {
-        // Creo un diálogo
-        AlertDialog.Builder builder = new AlertDialog.Builder(CourseActivity.this, R.style.CustomAlertDialog);
-        builder.setMessage(dialog_txt)
-                .setCancelable(false)
-                .setPositiveButton(getString(R.string.dialogOK_button), new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {}
-                });
-        AlertDialog alert = builder.create();
-        // Lo muestro
-        alert.show();
     }
 
     /**

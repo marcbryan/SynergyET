@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -79,6 +80,7 @@ public class MessageActivity extends AppCompatActivity {
             }
         });
 
+        // Muy importante para enviar JSON para las notificaciones
         apiService = Client.getClient("https://fcm.googleapis.com/").create(APIService.class);
 
         recyclerView = findViewById(R.id.recyclerView);
@@ -98,7 +100,6 @@ public class MessageActivity extends AppCompatActivity {
         conversation_id = getIntent().getStringExtra(IntentExtras.EXTRA_CONVERSATION_ID);
 
         firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
-        //TODO: Revisar esta parte
         reference = FirebaseDatabase.getInstance().getReference(FirebaseStrings.REFERENCE_1).child(receiver_uid);
         reference.addValueEventListener(new ValueEventListener() {
             @Override
@@ -118,7 +119,6 @@ public class MessageActivity extends AppCompatActivity {
 
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
-                //TODO: Mostrar AlertDialog de error
                 System.err.println(databaseError.getMessage());
             }
         });
@@ -129,7 +129,6 @@ public class MessageActivity extends AppCompatActivity {
                 // Obtenemos el texto del EditText
                 String msg = text_send.getText().toString();
                 if (!msg.equals("")) {
-
                     // Ejemplo fecha -> 18/05/2019 13:30:45
                     SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
                     String date = sdf.format(Calendar.getInstance().getTime());
@@ -168,9 +167,6 @@ public class MessageActivity extends AppCompatActivity {
         lastMsgInfo.put(FirebaseStrings.K1R2_CHILD3, msg.getSender());
         reference.child(FirebaseStrings.KEY1_R2).updateChildren(lastMsgInfo);
 
-        //TODO: Actualizar el número de mensajes no leidos
-
-
         reference = FirebaseDatabase.getInstance().getReference(FirebaseStrings.REFERENCE_1).child(firebaseUser.getUid());
         reference.addValueEventListener(new ValueEventListener() {
             @Override
@@ -185,36 +181,45 @@ public class MessageActivity extends AppCompatActivity {
 
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
-                //TODO: Mostrar AlertDialog de error
+                System.err.println(databaseError.getMessage());
             }
         });
     }
 
+    /**
+     * Envia una notificación, al enviar un mensaje se llama a este método
+     * @param receiver - El UID del usuario que recibirá la notficación
+     * @param displayName - El nombre del usuario que envía la notificación
+     * @param message - El mensaje que se envía
+     */
     private void sendNotification(final String receiver, final String displayName, final String message) {
+        // Buscamos el token del usuario para enviarle la notificación
         DatabaseReference tokens = FirebaseDatabase.getInstance().getReference(FirebaseStrings.REFERENCE_3);
         Query query = tokens.orderByKey().equalTo(receiver);
         query.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                    // Obtenemos el token
                     Token token = snapshot.getValue(Token.class);
+                    // Preparamos los datos que enviaremos en un JSON
                     Data data = new Data(firebaseUser.getUid(), imageURL, message, displayName, receiver);
                     Sender sender = new Sender(data, token.getToken());
+                    // Mandamos el JSON
                     apiService.sendNotification(sender)
                             .enqueue(new Callback<MyResponse>() {
                                 @Override
                                 public void onResponse(Call<MyResponse> call, Response<MyResponse> response) {
                                     if (response.code() == 200) {
                                         if (response.body().success != 1) {
-                                            //TODO: Reemplazar texto hardcodeado
-                                            Toast.makeText(MessageActivity.this, "Fallo al enviar notificación", Toast.LENGTH_SHORT).show();
+                                            Log.e("ERROR", "Response failed");
                                         }
                                     }
                                 }
 
                                 @Override
                                 public void onFailure(Call<MyResponse> call, Throwable t) {
-                                    //TODO: Mostrar AlertDialog o Toast de error
+                                    Log.e("ERROR", t.getMessage());
                                 }
                             });
                 }
@@ -222,7 +227,7 @@ public class MessageActivity extends AppCompatActivity {
 
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
-                //TODO: Mostrar AlertDialog o Toast de error
+                System.err.println(databaseError.getMessage());
             }
         });
     }
@@ -251,7 +256,6 @@ public class MessageActivity extends AppCompatActivity {
 
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
-                //TODO: Mostrar AlertDialog de error
                 System.err.println(databaseError.getMessage());
             }
         });

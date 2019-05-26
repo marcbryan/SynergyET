@@ -13,8 +13,8 @@
     <string name="create_user"><u>No tiene una cuenta de usuario?</u></string>
     <string name="or">o</string>
     <string name="desc_eye">Ver contraseña</string>
-    <string name="dialog1_txt1">Introduce un correo electrónico y contraseña</string>
-    <string name="dialog1_txt2">Esta combinación de correo electrónico y contraseña no es correcta. Vuelve a intentarlo</string>
+    <string name="dialog_enter_email_pass">Introduce un correo electrónico y contraseña</string>
+    <string name="dialog_wrong_combination">Esta combinación de correo electrónico y contraseña no es correcta. Vuelve a intentarlo</string>
     <string name="dialogOK_button">Aceptar</string>
     <string name="dialogCancel">Cancelar</string>
     <string name="dialog_empty_email">Introduce un correo electrónico</string>
@@ -53,6 +53,7 @@
 
     <!-- Textos CategoriesActivity -->
     <string name="titleCategories">Selecciona una categoría</string>
+    <string name="course_not_available">Curso no disponible</string>
     <string name="group1">ESO</string>
     <string name="group2">Bachillerato</string>
     <string name="group3">Ciclos Formativos</string>

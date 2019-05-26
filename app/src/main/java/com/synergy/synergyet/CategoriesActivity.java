@@ -10,6 +10,7 @@ import android.widget.ExpandableListView;
 import android.widget.Toast;
 
 import com.synergy.synergyet.custom.CategoryExpandableListAdapter;
+import com.synergy.synergyet.strings.FirebaseStrings;
 import com.synergy.synergyet.strings.IntentExtras;
 
 import java.util.ArrayList;
@@ -18,10 +19,7 @@ import java.util.HashMap;
 import java.util.List;
 
 public class CategoriesActivity extends AppCompatActivity {
-    private Toolbar toolbar;
-    private ExpandableListView expandableListView;
-    private CategoryExpandableListAdapter expandableListAdapter;
-    private HashMap<String, List<String>> expandableListDetail = new HashMap<String, List<String>>();
+    private HashMap<String, List<String>> expandableListDetail = new HashMap<>();
     private List<String> expandableListTitle;
 
     private String group1;
@@ -33,7 +31,7 @@ public class CategoriesActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_categories);
         // Obtenemos el toolbar y lo añadimos al activity (para que se vean los iconos)
-        toolbar = findViewById(R.id.toolbar);
+        Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         // Mostrar la flecha para volver atrás
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -50,20 +48,20 @@ public class CategoriesActivity extends AppCompatActivity {
         group2 = getString(R.string.group2);
         group3 = getString(R.string.group3);
 
-        expandableListView = findViewById(R.id.expandable_list);
+        ExpandableListView expandableListView = findViewById(R.id.expandable_list);
         expandableListDetail = getData();
         expandableListTitle = new ArrayList<>(expandableListDetail.keySet());
         // Creamos el adapter para el ExpandableListView
-        expandableListAdapter = new CategoryExpandableListAdapter(this, expandableListTitle, expandableListDetail);
+        CategoryExpandableListAdapter expandableListAdapter = new CategoryExpandableListAdapter(this, expandableListTitle, expandableListDetail);
         // Ponemos el adapter en el ExpandableListView
         expandableListView.setAdapter(expandableListAdapter);
 
         expandableListView.setOnChildClickListener(new ExpandableListView.OnChildClickListener() {
             @Override
             public boolean onChildClick(ExpandableListView parent, View v, int groupPosition, int childPosition, long id) {
-                //TODO: Pruebas, cambiar por implementación final
-                // Al hacer click en el elemento "Informática" (dentro de Ciclos Formativos), abrir Activity con los cursos de esa categoria
-                if (expandableListDetail.get(expandableListTitle.get(groupPosition)).get(childPosition).equals("Informática")) {
+                // Solo podremos inscribirnos a cursos de Informática, los otros no estan disponibles
+                // Al hacer click en el elemento "Informática" (dentro de Ciclos Formativos), se abre un Activity con los cursos de esa categoria
+                if (expandableListDetail.get(expandableListTitle.get(groupPosition)).get(childPosition).equals(FirebaseStrings.IT_CATEGORY)) {
                     String group_name = expandableListTitle.get(groupPosition);
                     String category_name = expandableListDetail.get(group_name).get(childPosition);
                     Intent intent = new Intent(v.getContext(), InscribeCourseActivity.class);
@@ -71,7 +69,8 @@ public class CategoriesActivity extends AppCompatActivity {
                     intent.putExtra(IntentExtras.EXTRA_CATEGORY_NAME, category_name);
                     startActivity(intent);
                 } else {
-                    Toast.makeText(v.getContext(), expandableListDetail.get(expandableListTitle.get(groupPosition)).get(childPosition), Toast.LENGTH_SHORT).show();
+                    // Mostramos Toast diciendo que no está disponible
+                    Toast.makeText(v.getContext(), getString(R.string.course_not_available), Toast.LENGTH_SHORT).show();
                 }
                 return false;
             }

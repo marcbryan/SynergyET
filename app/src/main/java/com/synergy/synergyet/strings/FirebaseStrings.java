@@ -25,7 +25,6 @@ public final class FirebaseStrings {
     public static final String FIELD2_C5 = "student_uid";
     public static final String FIELD5_C5 = "task_id";
     public static final String FIELD6_C5 = "grade";
-    public static final String FIELD11_C5 = "delivered_by";
 
     // Referencias Realtime Database
     public static final String REFERENCE_1 = "users";
@@ -60,6 +59,7 @@ public final class FirebaseStrings {
     public static final String DEFAULT_USER_TYPE = "student";
     public static final String USER_TYPE_TEACHER = "teacher";
     public static final String DEFAULT_IMAGE_VALUE = "default";
+    public static final String IT_CATEGORY = "Informática";
     public static final String TASK_TYPE1 = "DELIVER";
     public static final String TASK_TYPE2 = "DOCUMENT";
     public static final String TASK_TYPE3 = "EXAM";

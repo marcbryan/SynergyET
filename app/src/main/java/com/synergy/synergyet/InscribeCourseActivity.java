@@ -54,9 +54,6 @@ public class InscribeCourseActivity extends AppCompatActivity {
     private AlertDialog dialog;
     private Dialog progressDialog;
 
-    private String ok_text;
-    private String cancel_text;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -92,10 +89,6 @@ public class InscribeCourseActivity extends AppCompatActivity {
         // Mostramos Dialog de espera
         showProgressDialog(getString(R.string.loading_cg_courses));
         getCourses(category);
-
-        // Obtenemos los textos 'Aceptar' y 'Cancelar' de strings.xml (para ponerlo en el Dialog)
-        ok_text = getString(R.string.dialogOK_button);
-        cancel_text = getString(R.string.dialogCancel);
 
         // Buscamos el ListView
         listView = findViewById(R.id.courses_list);
@@ -134,12 +127,12 @@ public class InscribeCourseActivity extends AppCompatActivity {
                     }
                 });
                 // Creamos el listener del botón Aceptar vacío (más adelante lo sobreescribiremos)
-                builder.setPositiveButton(ok_text, new DialogInterface.OnClickListener() {
+                builder.setPositiveButton(getString(R.string.dialogOK_button), new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {}
                 });
                 // Listener del botón Cancelar
-                builder.setNegativeButton(cancel_text, new DialogInterface.OnClickListener() {
+                builder.setNegativeButton(getString(R.string.dialogCancel), new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         // Si pulsa Cancelar se cerrará el Dialog
@@ -209,7 +202,7 @@ public class InscribeCourseActivity extends AppCompatActivity {
         AlertDialog.Builder builder = new AlertDialog.Builder(InscribeCourseActivity.this);
         builder.setMessage(dialog_txt)
                 .setCancelable(false)
-                .setPositiveButton(ok_text, new DialogInterface.OnClickListener() {
+                .setPositiveButton(getString(R.string.dialogOK_button), new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {}
                 });
         AlertDialog alert = builder.create();

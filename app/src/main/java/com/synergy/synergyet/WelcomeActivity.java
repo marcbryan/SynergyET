@@ -50,8 +50,6 @@ public class WelcomeActivity extends AppCompatActivity {
     private DrawerLayout drawer;
     private User user_data = null;
 
-    //TODO: Revisar clase
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
