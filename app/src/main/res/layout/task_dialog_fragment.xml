@@ -63,7 +63,7 @@
 
             <TextView
                 android:id="@+id/titleTaskStatus"
-                android:layout_width="170dp"
+                android:layout_width="140dp"
                 android:layout_height="wrap_content"
                 android:text="@string/title_qualifStatus"
                 android:textColor="@android:color/black"
@@ -88,7 +88,7 @@
 
             <TextView
                 android:id="@+id/title_dead_line"
-                android:layout_width="170dp"
+                android:layout_width="140dp"
                 android:layout_height="wrap_content"
                 android:text="@string/title_deadLine"
                 android:textColor="@android:color/black"
@@ -114,7 +114,7 @@
 
             <TextView
                 android:id="@+id/titleDateDelivered"
-                android:layout_width="170dp"
+                android:layout_width="140dp"
                 android:layout_height="wrap_content"
                 android:text="@string/title_dateDelivered"
                 android:textColor="@android:color/black"
@@ -129,7 +129,7 @@
 
         </LinearLayout>
 
-        <LinearLayout
+        <RelativeLayout
             android:id="@+id/row4"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -139,7 +139,7 @@
 
             <TextView
                 android:id="@+id/titleFileDelivered"
-                android:layout_width="170dp"
+                android:layout_width="140dp"
                 android:layout_height="wrap_content"
                 android:text="@string/title_fileDelivered"
                 android:textColor="@android:color/black"
@@ -149,22 +149,35 @@
                 android:id="@+id/fileDelivered"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_toRightOf="@+id/titleFileDelivered"
+                android:layout_toEndOf="@+id/titleFileDelivered"
+                android:layout_toLeftOf="@+id/iv_uploadFile"
+                android:layout_toStartOf="@+id/iv_uploadFile"
                 android:textColor="@android:color/black"
                 android:textSize="14sp" />
 
-        </LinearLayout>
+            <ImageView
+                android:id="@+id/iv_uploadFile"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentRight="true"
+                android:contentDescription="@string/upload_file"
+                android:visibility="gone"
+                app:srcCompat="@drawable/ic_file_upload_gray_24dp" />
+
+        </RelativeLayout>
 
         <Button
-            android:id="@+id/btn_uploadFile"
+            android:id="@+id/btn_deliver"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@+id/row4"
             android:layout_centerHorizontal="true"
             android:layout_marginTop="25dp"
-            android:drawableStart="@drawable/ic_file_upload_gray_24dp"
-            android:drawableLeft="@drawable/ic_file_upload_gray_24dp"
-            android:text="@string/upload_file"
-            android:textAllCaps="false" />
+            android:text="@string/deliver_task"
+            android:textAllCaps="false"
+            android:visibility="gone" />
 
     </RelativeLayout>
 

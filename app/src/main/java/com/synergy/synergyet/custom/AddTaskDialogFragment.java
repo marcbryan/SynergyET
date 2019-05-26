@@ -244,7 +244,7 @@ public class AddTaskDialogFragment extends DialogFragment {
             @Override
             public void onClick(View v) {
                 // mimeType -> "*/*"
-                openFile("*/*");
+                openFileExplorer("*/*");
             }
         });
 
@@ -357,8 +357,8 @@ public class AddTaskDialogFragment extends DialogFragment {
     }
 
     /**
-     * Sirve para obtener el último ID de tarea
-     * @param unitTask - La tarea a añadir para después llamar al método addTask()
+     * Sirve para obtener el último ID de tarea y sumarle uno para no repetirlo
+     * @param unitTask - La tarea a añadir, para después llamar al método addTask()
      */
     private void getLastTaskID(final UnitTask unitTask) {
         db.collection(FirebaseStrings.COLLECTION_4)
@@ -443,7 +443,7 @@ public class AddTaskDialogFragment extends DialogFragment {
      * Abre el explorador para seleccionar un fichero
      * @param mimeType - mimeType
      */
-    private void openFile(String mimeType) {
+    private void openFileExplorer(String mimeType) {
         // Este intent no funciona en móviles Samsung
         Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
         intent.setType(mimeType);
@@ -522,16 +522,18 @@ public class AddTaskDialogFragment extends DialogFragment {
      * @param course_id - La ID del curso al que pertenece la unidad de la tarea
      * @param uTask - La tarea que después insertaremos en Cloud Firestore
      */
-    public void uploadFile(Uri uri, int course_id, final UnitTask uTask) {
+    private void uploadFile(Uri uri, int course_id, final UnitTask uTask) {
         FirebaseStorage storage = FirebaseStorage.getInstance();
         StorageReference storageRef = storage.getReference();
         // Ruta donde se almacenará el fichero
-        final StorageReference taskRef = storageRef.child("course_" + course_id + "/unit_" + uTask.getUnit_id() + "/" + tv_fileName.getText());
+        final StorageReference taskRef = storageRef.child("tasks/course_" + course_id + "/unit_" + uTask.getUnit_id() + "/" + tv_fileName.getText());
         UploadTask uploadTask = taskRef.putFile(uri);
         uploadTask.continueWithTask(new Continuation<UploadTask.TaskSnapshot, Task<Uri>>() {
             @Override
             public Task<Uri> then(@NonNull Task<UploadTask.TaskSnapshot> task) {
                 if (!task.isSuccessful()) {
+                    // Mostramos toast de error
+                    Toast.makeText(getContext(), getString(R.string.error_uploading_file), Toast.LENGTH_SHORT).show();
                     Log.e("ERROR", task.getException()+"");
                     // Cerramos el ProgressDialog
                     progressDialog.dismiss();

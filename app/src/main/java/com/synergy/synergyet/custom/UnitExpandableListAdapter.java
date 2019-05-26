@@ -37,16 +37,18 @@ public class UnitExpandableListAdapter extends BaseExpandableListAdapter {
     private List<String> expandableListTitle;
     private Map<String, List<UnitTask>> expandableListDetail;
     private String userType;
+    private int course_id;
 
     private Drawable expand_more;
     private Drawable expand_less;
 
     public UnitExpandableListAdapter(Context context, List<String> expandableListTitle,
-                                         Map<String, List<UnitTask>> expandableListDetail, String userType) {
+                                         Map<String, List<UnitTask>> expandableListDetail, String userType, int course_id) {
         this.context = context;
         this.expandableListTitle = expandableListTitle;
         this.expandableListDetail = expandableListDetail;
         this.userType = userType;
+        this.course_id = course_id;
         // Las imagenes de las flechas del ExpandableListView
         expand_less = ContextCompat.getDrawable(context, R.drawable.ic_expand_less_gray_24dp);
         expand_more = ContextCompat.getDrawable(context, R.drawable.ic_expand_more_gray_24dp);
@@ -92,6 +94,8 @@ public class UnitExpandableListAdapter extends BaseExpandableListAdapter {
                     b.putString(IntentExtras.EXTRA_UNIT_NAME, getGroup(listPosition).toString());
                     // Ponemos la tarea en el bundle
                     b.putSerializable(IntentExtras.EXTRA_TASK_DATA, task);
+                    // Ponemos el ID del curso
+                    b.putInt(IntentExtras.EXTRA_COURSE_ID, course_id);
                     // Se lo pasamos al DialogFragment
                     dialog.setArguments(b);
                     // Lo mostramos
@@ -130,6 +134,10 @@ public class UnitExpandableListAdapter extends BaseExpandableListAdapter {
                     });
                 }
             });
+        }
+        // Si la tarea es una entrega o examen y el usuario es un profesor
+        else if ((type.equals(FirebaseStrings.TASK_TYPE1) || type.equals(FirebaseStrings.TASK_TYPE3)) && userType.equals(FirebaseStrings.USER_TYPE_TEACHER)) {
+            //TODO: Abrir activity/fragment con listview de para corregir examenes
         }
         return convertView;
     }

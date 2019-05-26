@@ -84,15 +84,8 @@ public class CourseActivity extends AppCompatActivity {
         db = FirebaseFirestore.getInstance();
         // Buscamos el ExpandableListView en activity_course.xml
         expandableListView = findViewById(R.id.expandable_list);
+        // Obtenemos las unidades del curso
         getUnits(course.getCourse_id());
-        expandableListView.setOnChildClickListener(new ExpandableListView.OnChildClickListener() {
-            @Override
-            public boolean onChildClick(ExpandableListView parent, View v, int groupPosition, int childPosition, long id) {
-                //TODO: Quitar toast de prueba
-                Toast.makeText(v.getContext(), expandableListDetail.get(expandableListTitle.get(groupPosition)).get(childPosition).getTaskName(), Toast.LENGTH_SHORT).show();
-                return false;
-            }
-        });
         // Pedimos permiso de escritura, en el caso de que no haya permiso
         requestWritePermission();
     }
@@ -145,7 +138,7 @@ public class CourseActivity extends AppCompatActivity {
                         // Creamos un ArrayList con los elementos padre (las UFs)
                         expandableListTitle = new ArrayList<>(expandableListDetail.keySet());
                         // Creamos el adapter para el ExpandableListView
-                        expandableListAdapter = new UnitExpandableListAdapter(CourseActivity.this, expandableListTitle, expandableListDetail, user.getType());
+                        expandableListAdapter = new UnitExpandableListAdapter(CourseActivity.this, expandableListTitle, expandableListDetail, user.getType(), course_id);
                         // Ponemos el adapter en el ExpandableListView
                         expandableListView.setAdapter(expandableListAdapter);
                         // Después de añadir las unidades (las UFs), añadimos los hijos (las tareas) de cada unidad
@@ -214,7 +207,8 @@ public class CourseActivity extends AppCompatActivity {
     }
 
     /**
-     * Muestra un Dialog pidiendo permisos de escritura para poder realizar descargas
+     * Muestra un Dialog pidiendo permisos de escritura para poder realizar descargas,
+     * si ya hay permisos no se mostrará nada
      */
     public void requestWritePermission() {
         String[] perms = { Manifest.permission.WRITE_EXTERNAL_STORAGE};
