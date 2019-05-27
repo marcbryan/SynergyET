@@ -9,6 +9,30 @@
         <!-- Ocultar el ActionBar y el titulo -->
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
+        <!-- Cambia el color de la flecha del ActionBar -->
+        <item name="colorControlNormal">@color/colorWhite</item>
+        <!-- Aplicar el style para el SearchView -->
+        <item name="autoCompleteTextViewStyle">@style/SearchAutoCompleteTextView</item>
+    </style>
+
+    <!-- Style para el SearchView -->
+    <style name="SearchAutoCompleteTextView" parent="Widget.AppCompat.Light.AutoCompleteTextView">
+        <item name="android:textColor">@color/colorWhite</item>
+        <item name="android:textColorHint">@color/colorHint</item>
+    </style>
+
+    <!-- Style para el AlertDialog -->
+    <style name="CustomAlertDialog" parent="Theme.AppCompat.Light.Dialog.Alert">
+        <!-- Para cambiar el color del texto del mensaje -->
+        <item name="android:textColorPrimary">@color/colorWhite</item>
+        <!-- Para cambiar el color de los botones (aceptar/cancelar) -->
+        <item name="colorAccent">@color/colorWhite</item>
+        <item name="android:background">@color/colorPrimary</item>
+    </style>
+    
+    <style name="TextInputLayoutTheme" parent="Widget.MaterialComponents.TextInputLayout.FilledBox.Dense">
+        <item name="colorAccent">@color/colorAccent</item>
+        <item name="colorControlNormal">@color/colorGrayBorder</item>
     </style>
 
 </resources>
