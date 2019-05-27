@@ -6,13 +6,15 @@ public class Data {
     private String body;
     private String title;
     private String sent;
+    private String conversationId;
 
-    public Data(String user, String largeIcon, String body, String title, String sent) {
+    public Data(String user, String largeIcon, String body, String title, String sent, String conversationId) {
         this.user = user;
         this.largeIcon = largeIcon;
         this.body = body;
         this.title = title;
         this.sent = sent;
+        this.conversationId = conversationId;
     }
 
     public Data() {}
@@ -37,6 +39,10 @@ public class Data {
         return sent;
     }
 
+    public String getConversationId() {
+        return conversationId;
+    }
+
     public void setUser(String user) {
         this.user = user;
     }
@@ -55,5 +61,9 @@ public class Data {
 
     public void setSent(String sent) {
         this.sent = sent;
+    }
+
+    public void setConversationId(String conversationId) {
+        this.conversationId = conversationId;
     }
 }

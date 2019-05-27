@@ -37,8 +37,6 @@ public class ChatUserAdapter extends RecyclerView.Adapter<ChatUserAdapter.ViewHo
     private Context context;
     private List<ChatUser> users;
     private String imageURL;
-
-    private String conversation_id;
     private String last_msg_string;
     private SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
     private String you;
@@ -60,6 +58,7 @@ public class ChatUserAdapter extends RecyclerView.Adapter<ChatUserAdapter.ViewHo
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
+        String conversation_id = "";
         // Obtenemos el contacto
         final ChatUser user = users.get(position);
         // Mostramos el nombre del contacto
@@ -67,20 +66,16 @@ public class ChatUserAdapter extends RecyclerView.Adapter<ChatUserAdapter.ViewHo
         // Obtenemos nuestro usuario
         FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
         if (firebaseUser != null) {
-            //TODO: Comprobar si el ID de la conversación ya está en la base de datos
-            // De momento lo obtendremos así
             conversation_id = generateConversationID(firebaseUser.getUid(), user.getUid());
             // Mostraremos el último mensaje y la fecha (si hay último mensaje)
-            getLastMessageAndTime(firebaseUser.getUid(), user.getUid(), holder.last_message, holder.last_msg_date, imageURL);
+            getLastMessageAndTime(firebaseUser.getUid(), user.getUid(), holder.last_message, holder.last_msg_date, imageURL, conversation_id);
         }
         if (user.getImageURL().equals(FirebaseStrings.DEFAULT_IMAGE_VALUE)) {
             holder.profile_image.setImageResource(R.drawable.google_user_icon);
         } else {
             Glide.with(context).load(user.getImageURL()).into(holder.profile_image);
         }
-
-
-
+        final String conv_id = conversation_id;
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -89,7 +84,7 @@ public class ChatUserAdapter extends RecyclerView.Adapter<ChatUserAdapter.ViewHo
                 // Le pasamos el UID del usuario con el que chateará al siguiente Activity
                 intent.putExtra(IntentExtras.EXTRA_UID, user.getUid());
                 // También le pasamos el ID de la conversación
-                intent.putExtra(IntentExtras.EXTRA_CONVERSATION_ID, conversation_id);
+                intent.putExtra(IntentExtras.EXTRA_CONVERSATION_ID, conv_id);
                 context.startActivity(intent);
             }
         });
@@ -121,8 +116,9 @@ public class ChatUserAdapter extends RecyclerView.Adapter<ChatUserAdapter.ViewHo
      * @param sender - El UID del usuario actual
      * @param receiver - El UID del usuario con que el chateará el usuario actual
      * @param senderImageURL - La URL de la foto del usuario actual
+     * @param conversation_id - El ID de conversación entre dos usuarios
      */
-    private void getLastMessageAndTime(final String sender, final String receiver, final TextView last_msg, final TextView last_msg_date, final String senderImageURL) {
+    private void getLastMessageAndTime(final String sender, final String receiver, final TextView last_msg, final TextView last_msg_date, final String senderImageURL, final String conversation_id) {
         last_msg_string = "none";
         final DatabaseReference reference = FirebaseDatabase.getInstance().getReference(FirebaseStrings.REFERENCE_2).child(conversation_id).child(FirebaseStrings.KEY1_R2);
         reference.addValueEventListener(new ValueEventListener() {
@@ -163,27 +159,29 @@ public class ChatUserAdapter extends RecyclerView.Adapter<ChatUserAdapter.ViewHo
                     // Añadimos los datos a Realtime Database
                     ref2.child(conversation_id).setValue(userConvInfo);
                 } else {
-                    switch (last_msg_string) {
-                        case "none":
-                            // Si ningún usuario ha enviado mensajes, no habrá texto en los TextView
-                            last_msg.setText("");
-                            last_msg_date.setText("");
-                            break;
-                        default:
-                            SpannableString str = null;
-                            if (lmSender.equals(sender)) {
-                                // Sirve para mostrar 'Tú:' en negrita el resto del texto normal
-                                str = new SpannableString(you + " " + last_msg_string);
-                                str.setSpan(new StyleSpan(Typeface.BOLD), 0, you.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-                                // El usuario A ha mandado el último mensaje
-                                last_msg.setText(str);
-                            } else {
-                                // El usuario B ha mandado el último mensaje
-                                last_msg.setText(last_msg_string);
-                            }
-                            // Ponemos la hora de último mensaje (si el último mensaje es de hoy se verá la hora, si es de otro dia se verá la fecha)
-                            last_msg_date.setText(textForDateTextView(lmDate));
-                            break;
+                    if (last_msg_string != null) {
+                        switch (last_msg_string) {
+                            case "none":
+                                // Si ningún usuario ha enviado mensajes, no habrá texto en los TextView
+                                last_msg.setText("");
+                                last_msg_date.setText("");
+                                break;
+                            default:
+                                SpannableString str = null;
+                                if (lmSender.equals(sender)) {
+                                    // Sirve para mostrar 'Tú:' en negrita el resto del texto normal
+                                    str = new SpannableString(you + " " + last_msg_string);
+                                    str.setSpan(new StyleSpan(Typeface.BOLD), 0, you.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+                                    // El usuario A ha mandado el último mensaje
+                                    last_msg.setText(str);
+                                } else {
+                                    // El usuario B ha mandado el último mensaje
+                                    last_msg.setText(last_msg_string);
+                                }
+                                // Ponemos la hora de último mensaje (si el último mensaje es de hoy se verá la hora, si es de otro dia se verá la fecha)
+                                last_msg_date.setText(textForDateTextView(lmDate));
+                                break;
+                        }
                     }
                     last_msg_string = "none";
                 }
@@ -191,7 +189,6 @@ public class ChatUserAdapter extends RecyclerView.Adapter<ChatUserAdapter.ViewHo
 
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
-                // TODO: Mostrar AlertDialog o Toast de error
                 System.out.println(databaseError.getMessage());
             }
         });

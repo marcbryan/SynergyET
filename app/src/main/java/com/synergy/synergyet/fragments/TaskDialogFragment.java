@@ -1,4 +1,4 @@
-package com.synergy.synergyet.custom;
+package com.synergy.synergyet.fragments;
 
 import android.app.Dialog;
 import android.content.ActivityNotFoundException;
@@ -67,6 +67,8 @@ public class TaskDialogFragment extends DialogFragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setStyle(STYLE_NO_TITLE, 0);
+        // Obtenemos los argumentos del bundle
         Bundle b = getArguments();
         taskData = (UnitTask) b.getSerializable(IntentExtras.EXTRA_TASK_DATA);
         unitTitle = b.getString(IntentExtras.EXTRA_UNIT_NAME);

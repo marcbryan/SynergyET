@@ -1,4 +1,4 @@
-package com.synergy.synergyet.custom;
+package com.synergy.synergyet.fragments;
 
 import android.app.Dialog;
 import android.os.Bundle;
@@ -18,6 +18,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.synergy.synergyet.R;
+import com.synergy.synergyet.custom.CorrectListAdapter;
 import com.synergy.synergyet.model.TaskDelivered;
 import com.synergy.synergyet.model.UnitTask;
 import com.synergy.synergyet.strings.FirebaseStrings;
@@ -37,6 +38,7 @@ public class CorrectDialogFragment extends DialogFragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setStyle(STYLE_NO_TITLE, 0);
         Bundle b = getArguments();
         taskData = (UnitTask) b.getSerializable(IntentExtras.EXTRA_TASK_DATA);
         db = FirebaseFirestore.getInstance();

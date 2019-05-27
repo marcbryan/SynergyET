@@ -40,7 +40,6 @@ import de.hdodenhof.circleimageview.CircleImageView;
 import static android.app.Activity.RESULT_OK;
 
 public class ProfileFragment extends Fragment {
-
     private CircleImageView imageProfile;
     private TextView displayName;
 
@@ -97,8 +96,9 @@ public class ProfileFragment extends Fragment {
         return view;
     }
 
-    //TODO: Comentar métodos
-
+    /**
+     * Abre el exporador de archivos para seleccionar una imagen
+     */
     private void changeProfileImage() {
         Intent intent = new Intent();
         intent.setType("image/*");
@@ -106,6 +106,9 @@ public class ProfileFragment extends Fragment {
         startActivityForResult(intent, IMAGE_REQUEST);
     }
 
+    /**
+     * Sube una imagen a Cloud Storage y guarda la ruta de la imagen en Realtime Database
+     */
     @SuppressWarnings("unchecked")
     private void uploadImage() {
         showProgressDialog(getString(R.string.uploading_profile_image));

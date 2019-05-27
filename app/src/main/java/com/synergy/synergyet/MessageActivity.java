@@ -110,9 +110,14 @@ public class MessageActivity extends AppCompatActivity {
                     // Si el usuario tiene como ImageURL el valor 'default', le pondremos la imagen de usuario por defecto
                     profile_picture.setImageResource(R.drawable.google_user_icon);
                 } else {
-                    // Pone la imagen del usuario en el CircleImageView
-                    Glide.with(MessageActivity.this).load(user.getImageURL()).into(profile_picture);
-                    imageURL = user.getImageURL();
+                    try {
+                        // Pone la imagen del usuario en el CircleImageView
+                        Glide.with(MessageActivity.this).load(user.getImageURL()).into(profile_picture);
+                        imageURL = user.getImageURL();
+                    } catch (IllegalArgumentException e) {
+                        e.printStackTrace();
+                    }
+
                 }
                 getMessages(user.getImageURL());
             }
@@ -203,7 +208,7 @@ public class MessageActivity extends AppCompatActivity {
                     // Obtenemos el token
                     Token token = snapshot.getValue(Token.class);
                     // Preparamos los datos que enviaremos en un JSON
-                    Data data = new Data(firebaseUser.getUid(), imageURL, message, displayName, receiver);
+                    Data data = new Data(firebaseUser.getUid(), imageURL, message, displayName, receiver, conversation_id);
                     Sender sender = new Sender(data, token.getToken());
                     // Mandamos el JSON
                     apiService.sendNotification(sender)
@@ -240,6 +245,7 @@ public class MessageActivity extends AppCompatActivity {
     private void getMessages(final String imageURL) {
         messages = new ArrayList<>();
         // Vamos al nodo messages
+        System.out.println("CID: "+conversation_id);
         reference = FirebaseDatabase.getInstance().getReference(FirebaseStrings.REFERENCE_2).child(conversation_id).child(FirebaseStrings.KEY3_R2);
         reference.addValueEventListener(new ValueEventListener() {
             @Override
@@ -260,5 +266,4 @@ public class MessageActivity extends AppCompatActivity {
             }
         });
     }
-
 }

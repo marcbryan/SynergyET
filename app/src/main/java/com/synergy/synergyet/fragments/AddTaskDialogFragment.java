@@ -1,4 +1,4 @@
-package com.synergy.synergyet.custom;
+package com.synergy.synergyet.fragments;
 
 import android.app.DatePickerDialog;
 import android.app.Dialog;
@@ -71,6 +71,7 @@ public class AddTaskDialogFragment extends DialogFragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setStyle(STYLE_NO_TITLE, 0);
         // Obtenemos los extras que añadimos antes de mostrar este DialogFragment
         Bundle b = getArguments();
         unitNames = b.getStringArrayList(IntentExtras.EXTRA_UNITS_ARRAY);

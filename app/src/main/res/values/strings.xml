@@ -38,6 +38,7 @@
     <string name="dialog_error_userData">Se ha producido un error al intentar obtener tus datos, vuelve a intentarlo más tarde</string>
     <string name="dialog_error_courses">Se ha producido un error al intentar obtener tus cursos, vuelve a intentarlo más tarde</string>
     <string name="no_courses">No estás inscrito en ningún curso, para inscribirte a uno, pulsa el libro de la barra superior</string>
+    <string name="teacher">Profesor:</string>
     <string name="default_progress_dialog">Por favor, espere…</string>
 
     <!-- Textos Navigation Drawer -->
@@ -53,7 +54,7 @@
 
     <!-- Textos CategoriesActivity -->
     <string name="titleCategories">Selecciona una categoría</string>
-    <string name="course_not_available">Curso no disponible</string>
+    <string name="course_not_available">No disponible</string>
     <string name="group1">ESO</string>
     <string name="group2">Bachillerato</string>
     <string name="group3">Ciclos Formativos</string>

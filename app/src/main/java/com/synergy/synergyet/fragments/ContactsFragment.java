@@ -93,7 +93,6 @@ public class ContactsFragment extends Fragment {
 
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
-                //TODO: Mostrar AlertDialog de error
                 System.out.println(databaseError.getMessage());
             }
         });

@@ -8,6 +8,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -32,20 +33,21 @@ import java.util.ArrayList;
 public class MyCoursesFragment extends Fragment {
     private FirebaseFirestore db;
     private TextView textView;
-
     private CoursesListAdapter adapter;
     private ArrayList<Course> courses;
+    private User user;
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_my_courses, container, false);
-
+        // Instancia de Cloud Firestore
         db = FirebaseFirestore.getInstance();
         // Obtenemos los datos del usuario con getSerializableExtra()
-        final User user = (User) getActivity().getIntent().getSerializableExtra(IntentExtras.EXTRA_USER_DATA);
+        user = (User) getActivity().getIntent().getSerializableExtra(IntentExtras.EXTRA_USER_DATA);
         getUserCourses(user.getCourses());
 
+        // TextView en el que se mostrará un mensaje solo si el usuario no tiene cursos
         textView = view.findViewById(R.id.zero_courses);
 
         courses = new ArrayList<>();
@@ -57,26 +59,26 @@ public class MyCoursesFragment extends Fragment {
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                // Obtenemos los datos del curso
                 final Course course = (Course) listView.getItemAtPosition(position);
+                // Se los pasamos al siguiente Activity
                 Intent intent = new Intent(view.getContext(), CourseActivity.class);
                 intent.putExtra(IntentExtras.EXTRA_COURSE_DATA, course);
                 intent.putExtra(IntentExtras.EXTRA_USER_DATA, user);
                 startActivity(intent);
             }
         });
-
         return view;
     }
 
-    // TODO: Revisar, Cambiar style y textColor de los AlertDialog de todas las activitys
     /**
-     * Muesta un diálogo con un botón de ok y el texto que le pasamos como parámetro
+     * Muesta un diálogo con un botón de OK y el texto que le pasamos como parámetro
      * @param dialog_txt - El texto a mostrar en el diálogo
      * @param context - El contexto de la aplicación
      */
     private void showDialog(String dialog_txt, Context context) {
         // Creo un diálogo
-        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        AlertDialog.Builder builder = new AlertDialog.Builder(context, R.style.CustomAlertDialog);
         builder.setMessage(dialog_txt)
                 .setCancelable(false)
                 .setPositiveButton(getString(R.string.dialogOK_button), new DialogInterface.OnClickListener() {
@@ -111,14 +113,17 @@ public class MyCoursesFragment extends Fragment {
                                     adapter.notifyDataSetChanged();
                                 } else {
                                     showDialog(getString(R.string.dialog_error_courses), getContext());
-                                    //System.out.println("Error writing document -> "+task.getException());
+                                    Log.e("Error", " -> "+task.getException());
                                 }
                             }
                         });
             }
         } else {
-            // Mostramos en un TextView que el usuario no está inscrito en ningún curso
-            textView.setText(getString(R.string.no_courses));
+            // Si el usuario es un alumno
+            if (user.getType().equals(FirebaseStrings.DEFAULT_USER_TYPE)) {
+                // Mostramos en un TextView que el usuario no está inscrito en ningún curso
+                textView.setText(getString(R.string.no_courses));
+            }
         }
     }
 }

@@ -4,8 +4,8 @@
     android:id="@+id/relativeLayout"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:paddingTop="0dp"
-    android:paddingBottom="5dp"
+    android:paddingTop="8dp"
+    android:paddingBottom="8dp"
     android:paddingLeft="15dp"
     android:paddingRight="15dp">
 
@@ -13,9 +13,7 @@
         android:id="@+id/title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="15dp"
         android:text="@string/titleInscribe"
         android:textColor="@color/colorWhite"
         android:textSize="18sp"
@@ -25,9 +23,9 @@
         android:id="@+id/tv_message"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
+        android:layout_below="@+id/title"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="55dp"
+        android:layout_marginTop="10dp"
         android:text="@string/dialog3_txt"
         android:textColor="@color/colorWhite"
         android:textSize="14sp" />
@@ -36,9 +34,9 @@
         android:id="@+id/text_input_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
+        android:layout_below="@+id/tv_message"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="107dp"
+        android:layout_marginTop="10dp"
         app:errorEnabled="true"
         app:hintAnimationEnabled="false">
 

@@ -18,22 +18,18 @@ import java.util.List;
 import java.util.Locale;
 
 public class CoursesListAdapter extends ArrayAdapter<Course> implements View.OnClickListener {
-    private TextView course_name;
-    private TextView teacher_name;
-
     // Array con todos los cursos que le pase el constructor
     private final ArrayList<Course> courses_list;
     // Array con los cursos filtrados (cuando se hacen búsquedas)
     private ArrayList<Course> filtered_courses;
     private Comparator<Course> comparator;
-    Context context;
+    private Context context;
 
     public CoursesListAdapter(ArrayList<Course> data, Context context) {
         super(context, R.layout.course_item, data);
         this.context = context;
         courses_list = data;
         filtered_courses = data;
-        // TODO: Revisar Ordenación
         comparator = new Comparator<Course>() {
             @Override
             public int compare(Course c1, Course c2) {
@@ -53,21 +49,47 @@ public class CoursesListAdapter extends ArrayAdapter<Course> implements View.OnC
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         // Para evitar tener elementos duplicados en el ListView
-        convertView = null;
+        //convertView = null;
+        final ViewHolder holder;
         if (convertView == null) {
+            holder = new ViewHolder();
             convertView = LayoutInflater.from(getContext()).inflate(R.layout.course_item, parent, false);
             // Buscar los componentes para asignarle los datos
-            course_name = convertView.findViewById(R.id.title);
-            teacher_name = convertView.findViewById(R.id.subtitle);
+            holder.course_name = convertView.findViewById(R.id.title);
+            holder.teacher_name = convertView.findViewById(R.id.subtitle);
+            // Guardamos la vista en la memoria caché
+            convertView.setTag(holder);
+        } else {
+            holder = (ViewHolder) convertView.getTag();
         }
         // Obtener los datos del objeto Course de esta posición
         Course course = getItem(position);
         // Asignar los datos a los componentes
-        course_name.setText(course.getName());
-        //TODO: Testeo (falta cambiarlo)
-        teacher_name.setText("Profesor: ");
+        holder.course_name.setText(course.getName());
+        holder.teacher_name.setText("");
+        if (course.getTeachers() != null) {
+            String str_teacher = context.getString(R.string.teacher);
+            String str;
+            int size = course.getTeachers().size();
+            for (int i=0; i < size; i++) {
+                str = str_teacher;
+                if (size == 1 || (i == course.getTeachers().size()-1)) {
+                    str += " " + course.getTeachers().get(i);
+                } else {
+                    str += " " + course.getTeachers().get(i) + System.getProperty("line.separator");
+                }
+                str = holder.teacher_name.getText() + str;
+                holder.teacher_name.setText(str);
+            }
+        }
+
         // Devuelve la vista completada para mostrarla en la pantalla
         return convertView;
+    }
+
+    private class ViewHolder {
+        TextView course_name;
+        TextView teacher_name;
     }
 
 

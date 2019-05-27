@@ -199,7 +199,7 @@ public class InscribeCourseActivity extends AppCompatActivity {
      */
     private void showDialog(String dialog_txt) {
         // Creo un diálogo
-        AlertDialog.Builder builder = new AlertDialog.Builder(InscribeCourseActivity.this);
+        AlertDialog.Builder builder = new AlertDialog.Builder(InscribeCourseActivity.this, R.style.CustomAlertDialog);
         builder.setMessage(dialog_txt)
                 .setCancelable(false)
                 .setPositiveButton(getString(R.string.dialogOK_button), new DialogInterface.OnClickListener() {
@@ -294,7 +294,6 @@ public class InscribeCourseActivity extends AppCompatActivity {
                             //TODO: Finaliza ProgressDialog 2
                             // Muestro AlertDialog de error
                             showDialog(getString(R.string.dialog5_error));
-                            //System.out.println("Error getting documents: "+task.getException());
                         }
                     }
                 });

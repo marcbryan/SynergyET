@@ -87,9 +87,12 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         String url = remoteMessage.getData().get(FirebaseStrings.REMOTE_MSG_KEY2);
         String body = remoteMessage.getData().get(FirebaseStrings.REMOTE_MSG_KEY3);
         String title = remoteMessage.getData().get(FirebaseStrings.REMOTE_MSG_KEY4);
+        String conversation_id = remoteMessage.getData().get(FirebaseStrings.REMOTE_MSG_KEY6);
 
         int j = Integer.parseInt(user.replaceAll("[\\D]", ""));
         Intent intent = new Intent(this, MessageActivity.class);
+        intent.putExtra(IntentExtras.EXTRA_UID, user);
+        intent.putExtra(IntentExtras.EXTRA_CONVERSATION_ID, conversation_id);
         Bundle bundle = new Bundle();
         bundle.putString(IntentExtras.NOTIF_BUNDLE_STRING1, user);
         intent.putExtras(bundle);

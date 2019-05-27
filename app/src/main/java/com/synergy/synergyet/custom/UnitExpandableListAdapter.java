@@ -24,6 +24,8 @@ import com.google.firebase.storage.FileDownloadTask;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.synergy.synergyet.R;
+import com.synergy.synergyet.fragments.CorrectDialogFragment;
+import com.synergy.synergyet.fragments.TaskDialogFragment;
 import com.synergy.synergyet.model.UnitTask;
 import com.synergy.synergyet.strings.FirebaseStrings;
 import com.synergy.synergyet.strings.IntentExtras;

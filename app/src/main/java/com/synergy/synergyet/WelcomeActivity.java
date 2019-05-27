@@ -48,6 +48,7 @@ public class WelcomeActivity extends AppCompatActivity {
     private TextView email;
     private CircleImageView profile_image;
     private DrawerLayout drawer;
+    private Menu menu;
     private User user_data = null;
 
     @Override
@@ -159,6 +160,10 @@ public class WelcomeActivity extends AppCompatActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         // Hace un Inflate del menu, esto añade los elementos al ActionBar si está presente
         getMenuInflater().inflate(R.menu.course_menu, menu);
+        // Ocultamos el icono por defecto, luego lo mostraremos si el usuario es un alumno
+        MenuItem item = menu.findItem(R.id.action_inscribeBook);
+        item.setVisible(false);
+        this.menu = menu;
         return true;
     }
 
@@ -188,6 +193,12 @@ public class WelcomeActivity extends AppCompatActivity {
                 public void onSuccess(DocumentSnapshot documentSnapshot) {
                     // Obtener los datos del usuario
                     user_data = documentSnapshot.toObject(User.class);
+                    // Si el usuario es un alumno, mostramos el icono
+                    if (user_data.getType().equals(FirebaseStrings.DEFAULT_USER_TYPE)) {
+                        // Lo mostramos
+                        MenuItem item = menu.findItem(R.id.action_inscribeBook);
+                        item.setVisible(true);
+                    }
                     // Mostramos el email del usuario
                     email.setText(user_data.getEmail());
                     // Ponemos los datos del usuario en el Intent de este activity
