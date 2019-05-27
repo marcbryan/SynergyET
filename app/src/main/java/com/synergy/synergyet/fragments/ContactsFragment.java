@@ -79,7 +79,7 @@ public class ContactsFragment extends Fragment {
                     // Nos aseguramos que el usuario de la base datos y el de Firebase no son nulos
                     assert user != null;
                     assert firebaseUser != null;
-                    //TODO: Reemplazar por comprobación final (de momento añade todos los usuarios disponibles excepto el que está utilizando la aplicación)
+                    // Añade todos los usuarios disponibles excepto el que está utilizando la aplicación)
                     if (!user.getUid().equals(firebaseUser.getUid())) {
                         users.add(user);
                     } else {

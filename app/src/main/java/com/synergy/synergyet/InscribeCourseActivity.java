@@ -153,7 +153,6 @@ public class InscribeCourseActivity extends AppCompatActivity {
                             til.setError(getString(R.string.dialog3_error_msg1));
                         } else {
                             if (pwd.equals(course.getPassword())) {
-                                //TODO: Mostrar ProgressDialog 2
                                 checkAlreadyInscribed(user.getUid(), course.getCourse_id());
                             } else {
                                 // Mostramos mensaje de error (contraseña incorrecta)
@@ -281,7 +280,6 @@ public class InscribeCourseActivity extends AppCompatActivity {
                     public void onComplete(@NonNull Task<QuerySnapshot> task) {
                         if (task.isSuccessful()) {
                             if (!task.getResult().isEmpty()) {
-                                //TODO: Finaliza ProgressDialog 2
                                 // Cerramos el InputDialog
                                 dialog.dismiss();
                                 // Mostramos AlertDialog de error diciendo que ya está inscrito al curso
@@ -291,7 +289,6 @@ public class InscribeCourseActivity extends AppCompatActivity {
                                 updateUserCourses(UID, course_id);
                             }
                         } else {
-                            //TODO: Finaliza ProgressDialog 2
                             // Muestro AlertDialog de error
                             showDialog(getString(R.string.dialog5_error));
                         }
@@ -311,7 +308,6 @@ public class InscribeCourseActivity extends AppCompatActivity {
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void aVoid) {
-                        //TODO: Finaliza ProgressDialog 2
                         // Mostramos un toast diciendo que se ha inscrito correctamente
                         Toast.makeText(InscribeCourseActivity.this, getString(R.string.toast3), Toast.LENGTH_SHORT).show();
                         Intent intent = new Intent(InscribeCourseActivity.this, WelcomeActivity.class);
@@ -324,7 +320,6 @@ public class InscribeCourseActivity extends AppCompatActivity {
                 .addOnFailureListener(new OnFailureListener() {
                     @Override
                     public void onFailure(@NonNull Exception e) {
-                        //TODO: Finaliza ProgressDialog 2
                         // Muestro AlertDialog de error
                         showDialog(getString(R.string.dialog5_error));
                     }
