@@ -35,7 +35,7 @@ import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
-import com.synergy.synergyet.custom.CoursesListAdapater;
+import com.synergy.synergyet.custom.CoursesListAdapter;
 import com.synergy.synergyet.model.Course;
 import com.synergy.synergyet.strings.FirebaseStrings;
 import com.synergy.synergyet.strings.IntentExtras;
@@ -49,13 +49,10 @@ public class InscribeCourseActivity extends AppCompatActivity {
     private Toolbar toolbar;
     private ListView listView;
     private ArrayList<Course> courses;
-    private CoursesListAdapater adapter;
+    private CoursesListAdapter adapter;
     private AlertDialog.Builder builder;
     private AlertDialog dialog;
     private Dialog progressDialog;
-
-    private String ok_text;
-    private String cancel_text;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -93,10 +90,6 @@ public class InscribeCourseActivity extends AppCompatActivity {
         showProgressDialog(getString(R.string.loading_cg_courses));
         getCourses(category);
 
-        // Obtenemos los textos 'Aceptar' y 'Cancelar' de strings.xml (para ponerlo en el Dialog)
-        ok_text = getString(R.string.dialogOK_button);
-        cancel_text = getString(R.string.dialogCancel);
-
         // Buscamos el ListView
         listView = findViewById(R.id.courses_list);
         // Añadimos un listener (al pulsar un elemento del ListView)
@@ -111,8 +104,13 @@ public class InscribeCourseActivity extends AppCompatActivity {
                 View dialogView = inflater.inflate(R.layout.input_dialog, null);
                 builder.setCancelable(false);
                 builder.setView(dialogView);
-                // Obtenemos el TextInputEditText del InputDialog (para poder obtener el texto que introduce el usuario)
+
                 final TextInputLayout til = dialogView.findViewById(R.id.text_input_layout);
+                // Ponemos un contorno al TextInputLayout tipo Google (ejemplo -> https://i.stack.imgur.com/t2stI.png)
+                til.setBoxBackgroundMode(TextInputLayout.BOX_BACKGROUND_OUTLINE);
+                til.setBoxCornerRadii(5, 5, 5, 5);
+
+                // Obtenemos el TextInputEditText del InputDialog (para poder obtener el texto que introduce el usuario)
                 final TextInputEditText et_pass = dialogView.findViewById(R.id.input_password);
                 et_pass.addTextChangedListener(new TextWatcher() {
                     @Override
@@ -129,12 +127,12 @@ public class InscribeCourseActivity extends AppCompatActivity {
                     }
                 });
                 // Creamos el listener del botón Aceptar vacío (más adelante lo sobreescribiremos)
-                builder.setPositiveButton(ok_text, new DialogInterface.OnClickListener() {
+                builder.setPositiveButton(getString(R.string.dialogOK_button), new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {}
                 });
                 // Listener del botón Cancelar
-                builder.setNegativeButton(cancel_text, new DialogInterface.OnClickListener() {
+                builder.setNegativeButton(getString(R.string.dialogCancel), new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         // Si pulsa Cancelar se cerrará el Dialog
@@ -155,7 +153,6 @@ public class InscribeCourseActivity extends AppCompatActivity {
                             til.setError(getString(R.string.dialog3_error_msg1));
                         } else {
                             if (pwd.equals(course.getPassword())) {
-                                //TODO: Mostrar ProgressDialog 2
                                 checkAlreadyInscribed(user.getUid(), course.getCourse_id());
                             } else {
                                 // Mostramos mensaje de error (contraseña incorrecta)
@@ -201,10 +198,10 @@ public class InscribeCourseActivity extends AppCompatActivity {
      */
     private void showDialog(String dialog_txt) {
         // Creo un diálogo
-        AlertDialog.Builder builder = new AlertDialog.Builder(InscribeCourseActivity.this);
+        AlertDialog.Builder builder = new AlertDialog.Builder(InscribeCourseActivity.this, R.style.CustomAlertDialog);
         builder.setMessage(dialog_txt)
                 .setCancelable(false)
-                .setPositiveButton(ok_text, new DialogInterface.OnClickListener() {
+                .setPositiveButton(getString(R.string.dialogOK_button), new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {}
                 });
         AlertDialog alert = builder.create();
@@ -249,7 +246,7 @@ public class InscribeCourseActivity extends AppCompatActivity {
                                 courses.add(course);
                             }
                             // Creamos el adapter
-                            adapter = new CoursesListAdapater(courses, InscribeCourseActivity.this);
+                            adapter = new CoursesListAdapter(courses, InscribeCourseActivity.this);
                             // Se lo asignamos al ListView
                             listView.setAdapter(adapter);
                             // Activamos la filtración de datos para poder hacer búsquedas
@@ -283,7 +280,6 @@ public class InscribeCourseActivity extends AppCompatActivity {
                     public void onComplete(@NonNull Task<QuerySnapshot> task) {
                         if (task.isSuccessful()) {
                             if (!task.getResult().isEmpty()) {
-                                //TODO: Finaliza ProgressDialog 2
                                 // Cerramos el InputDialog
                                 dialog.dismiss();
                                 // Mostramos AlertDialog de error diciendo que ya está inscrito al curso
@@ -293,10 +289,8 @@ public class InscribeCourseActivity extends AppCompatActivity {
                                 updateUserCourses(UID, course_id);
                             }
                         } else {
-                            //TODO: Finaliza ProgressDialog 2
                             // Muestro AlertDialog de error
                             showDialog(getString(R.string.dialog5_error));
-                            //System.out.println("Error getting documents: "+task.getException());
                         }
                     }
                 });
@@ -314,7 +308,6 @@ public class InscribeCourseActivity extends AppCompatActivity {
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void aVoid) {
-                        //TODO: Finaliza ProgressDialog 2
                         // Mostramos un toast diciendo que se ha inscrito correctamente
                         Toast.makeText(InscribeCourseActivity.this, getString(R.string.toast3), Toast.LENGTH_SHORT).show();
                         Intent intent = new Intent(InscribeCourseActivity.this, WelcomeActivity.class);
@@ -327,7 +320,6 @@ public class InscribeCourseActivity extends AppCompatActivity {
                 .addOnFailureListener(new OnFailureListener() {
                     @Override
                     public void onFailure(@NonNull Exception e) {
-                        //TODO: Finaliza ProgressDialog 2
                         // Muestro AlertDialog de error
                         showDialog(getString(R.string.dialog5_error));
                     }

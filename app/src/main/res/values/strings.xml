@@ -2,7 +2,7 @@
 
     <string name="app_name">SynergyET</string>
 
-    <!--Textos InputDialogue-->
+    <!-- Textos InputDialog -->
     <string name="titleForgotPassword">Recuperar Contraseña</string>
 
     <!-- Textos MainActivity -->
@@ -13,30 +13,48 @@
     <string name="create_user"><u>No tiene una cuenta de usuario?</u></string>
     <string name="or">o</string>
     <string name="desc_eye">Ver contraseña</string>
-    <string name="dialog1_txt1">Introduce un correo electrónico y contraseña</string>
-    <string name="dialog1_txt2">Esta combinación de correo electrónico y contraseña no es correcta. Vuelve a intentarlo</string>
+    <string name="dialog_enter_email_pass">Introduce un correo electrónico y contraseña</string>
+    <string name="dialog_wrong_combination">Esta combinación de correo electrónico y contraseña no es correcta. Vuelve a intentarlo</string>
     <string name="dialogOK_button">Aceptar</string>
     <string name="dialogCancel">Cancelar</string>
     <string name="dialog_empty_email">Introduce un correo electrónico</string>
     <string name="dialog_wrong_email">Introduce un correo electrónico válido</string>
+    <string name="snackbar_mail_sent">Mail para cambiar de contraseña enviado</string>
     <string name="toast1">Bienvenido</string>
 
     <!-- Textos SignUpActivity -->
     <string name="dialog2_txt1">Faltan campos por rellenar</string>
     <string name="dialog2_txt2">Las contraseñas no coinciden</string>
-    <string name="dialog2_txt3">El registro de la cuenta ha fallado, vuelve a intentarlo</string>
+    <string name="dialog_email_already_exists">Ese correo electrónico ya está en uso. Prueba con otro.</string>
+    <string name="error_creating_account">El registro de la cuenta ha fallado, vuelve a intentarlo</string>
+    <string name="creating_account">Creando cuenta, por favor espera…</string>
     <string name="toast2">Cuenta creada correctamente!</string>
 
-    <!-- Textos WelcomeActivity -->
+    <!-- Textos MyCoursesFragment -->
     <string name="titleWelcome">Mis cursos</string>
     <string name="inscribe_course">Inscribirme a un curso</string>
+    <string name="logout_txt">Salir</string>
     <string name="loading_user_courses">Cargando tus cursos…</string>
     <string name="dialog_error_userData">Se ha producido un error al intentar obtener tus datos, vuelve a intentarlo más tarde</string>
     <string name="dialog_error_courses">Se ha producido un error al intentar obtener tus cursos, vuelve a intentarlo más tarde</string>
     <string name="no_courses">No estás inscrito en ningún curso, para inscribirte a uno, pulsa el libro de la barra superior</string>
+    <string name="teacher">Profesor:</string>
+    <string name="default_progress_dialog">Por favor, espere…</string>
+
+    <!-- Textos Navigation Drawer -->
+    <string name="navigation_drawer_open">Abrir barra de navegación horizontal</string>
+    <string name="navigation_drawer_close">Cerrar barra de navegación horizontal</string>
+    <string name="my_profile">Mi perfil</string>
+    <string name="nav_messages">Mensajes</string>
+    <string name="nav_chat">Chat</string>
+    <string name="nav_comunication">Comunicación</string>
+    <string name="nav_school_name">Esteve Terradas</string>
+    <string name="nav_facebook">Facebook</string>
+    <string name="nav_twitter">Twitter</string>
 
     <!-- Textos CategoriesActivity -->
     <string name="titleCategories">Selecciona una categoría</string>
+    <string name="course_not_available">No disponible</string>
     <string name="group1">ESO</string>
     <string name="group2">Bachillerato</string>
     <string name="group3">Ciclos Formativos</string>
@@ -71,4 +89,91 @@
     <string name="dialog4_error">No se han podido cargar los cursos, vuelve a intentarlo más tarde</string>
     <string name="dialog5_error">La inscripción al curso ha fallado, vuelve a intentalo</string>
     <string name="dialog6_txt">Ya estás inscrito en este curso, no puedes volver a inscribirte!</string>
+
+    <!-- Textos ContactsFragment -->
+    <string name="titleContacts">Contactos</string>
+    <string name="you">Tú:</string>
+
+    <!-- Textos MessageActivity -->
+    <string name="hint_text_toSend">Escribe un mensaje</string>
+    <string name="toast_no_msg">No puedes mandar un mensaje vacío!</string>
+    <string name="desc_send_msg">Enviar mensaje</string>
+    <string name="new_message">Nuevo mensaje</string>
+    <string name="msg_copied_clipboard">Copiado al portapapeles</string>
+
+    <!-- Textos CourseActivity -->
+    <string name="task_created">Tarea creada correctamente</string>
+    <string name="upload_file">Subir archivo</string>
+    <string name="download_file">Descargar archivo</string>
+    <string name="task_dead_line_passed">Ya no puedes entregar esta tarea, habla con el profesor para ver si puedes entregarsela personalmente</string>
+    <string name="download_started">La descarga ha comenzado</string>
+    <string name="download_finished">Archivo descargado correctamente</string>
+    <string name="download_failed">La descarga del archivo ha fallado</string>
+
+    <!-- Textos ProfileFragment -->
+    <string name="profile_title">Perfil</string>
+    <string name="change_picture">Pulsa en la imagen para cambiar de foto</string>
+    <string name="uploading_profile_image">Subiendo imagen…</string>
+    <string name="upload_profile_img_error">Ha habido un error al subir tu imagen</string>
+    <string name="error_delivering_task">Error al entregar tu tarea, intentalo de nuevo</string>
+    
+    <!-- Textos TaskDialogFragment -->
+    <string name="subtitleText">Estado de la entrega</string>
+    <string name="title_qualifStatus">Calificación</string>
+    <string name="title_deadLine">Fecha límite</string>
+    <string name="title_dateDelivered">Fecha de entrega</string>
+    <string name="title_fileDelivered">Archivo entregado</string>
+    <string name="pending_qualification">Pendiente de calificación</string>
+    <string name="deliver_task">Entregar</string>
+    <string name="delivering_onProgress">Entregando…</string>
+    <string name="task_delivered_successfully">Tarea entregada correctamente</string>
+    <string name="error_loading_taskDelivered">Error al cargar tu tarea, intentalo de nuevo</string>
+
+    <!-- Textos AddTaskDialogFragment -->
+    <string name="title_AddTaskDialogFragment">Añadir una nueva tarea</string>
+    <string name="title_taskName">Nombre de la tarea</string>
+    <string name="title_taskType">Tipo de tarea:</string>
+    <string name="title_unit">Unidad:</string>
+    <string name="title_taskDeadLine">Fecha límite</string>
+    <string name="title_taskHour">Hora</string>
+    <string name="title_uploadFile">Archivo:</string>
+    <string name="date_helper_text">Ej: 27/05/2019</string>
+    <string name="hour_helper_text">Ej: 16:05</string>
+    <string name="select_date">Elige una fecha</string>
+    <string name="select_hour">Elige una hora</string>
+    <string name="add_task">Añadir tarea</string>
+    <string name="uploading_file">Subiendo archivo…</string>
+    <string name="creating_deliver">Creando entrega…</string>
+    <string name="no_task_name">Escribe un nombre para la tarea</string>
+    <string name="wrong_format">Formato incorrecto</string>
+    <string name="no_file_selected">Falta seleccionar un archivo!</string>
+    <string name="error_adding_task">Error al añadir la tarea, intentalo de nuevo</string>
+    <string name="error_opening_file_manager">Error al abrir el explorador de archivos</string>
+    <string name="error_uploading_file">Error al subir tu archivo, intentalo de nuevo</string>
+    <string-array name="task_types">
+        <item>Entrega</item>
+        <item>Documento para alumnos</item>
+        <item>Examen</item>
+    </string-array>
+
+    <!-- Textos CorrectDialogFragment -->
+    <string name="title_student_name">Alumno:</string>
+    <string name="title_student_file">Archivo entregado:</string>
+    <string name="title_student_grade">Nota:</string>
+    <string name="description_correct">Corregir</string>
+    <string name="title_GradeInputDialog">Corregir tarea</string>
+    <string name="msg_GradeInputDialog">Pon una nota entre 0 y 10</string>
+    <string name="hint_grade">Nota</string>
+    <string name="no_grade">Pon una nota</string>
+    <string name="invalid_grade">Nota incorrecta</string>
+    <string name="updating_grade">Actualizando nota…</string>
+    <string name="toast_updated_grade">Nota actualizada correctamente!</string>
+    <string name="toast_error_updating_grade">Error al actualizar la nota, vuelve a intentarlo</string>
+
+    <string name="default_notification_channel_id" translatable="false">fcm_default_channel</string>
+    <!--
+        Este nombre será el que los usuarios vean cuando interactuan con este canal
+        Debería describir la categoria de notificaciones que se enviarán por este canal
+    -->
+    <string name="default_notification_channel_name" translatable="true">Mensajes</string>
 </resources>

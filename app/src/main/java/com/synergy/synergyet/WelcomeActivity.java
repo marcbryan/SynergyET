@@ -1,10 +1,12 @@
 package com.synergy.synergyet;
 
-import android.app.Dialog;
-import android.content.DialogInterface;
 import android.content.Intent;
+import android.net.Uri;
 import android.support.annotation.NonNull;
-import android.support.v7.app.AlertDialog;
+import android.support.design.widget.NavigationView;
+import android.support.v4.view.GravityCompat;
+import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
@@ -12,40 +14,41 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import com.google.android.gms.tasks.OnCompleteListener;
+import com.bumptech.glide.Glide;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.QuerySnapshot;
-import com.synergy.synergyet.custom.CoursesListAdapater;
-import com.synergy.synergyet.model.Course;
-import com.synergy.synergyet.model.Unit;
+import com.synergy.synergyet.fragments.ContactsFragment;
+import com.synergy.synergyet.fragments.MyCoursesFragment;
+import com.synergy.synergyet.fragments.ProfileFragment;
+import com.synergy.synergyet.model.ChatUser;
 import com.synergy.synergyet.model.User;
 import com.synergy.synergyet.strings.FirebaseStrings;
+import com.synergy.synergyet.strings.IntentExtras;
 
-import java.util.ArrayList;
+import de.hdodenhof.circleimageview.CircleImageView;
 
 public class WelcomeActivity extends AppCompatActivity {
     private FirebaseUser user;
     private FirebaseFirestore db;
+    private DatabaseReference reference;
     private Toolbar toolbar;
-    private TextView textView;
-    private ListView listView;
-    private CoursesListAdapater adapater;
-    private ArrayList<Course> courses;
-
-    private Dialog progressDialog;
-    private String toast_txt1;
-
+    private TextView displayName;
+    private TextView email;
+    private CircleImageView profile_image;
+    private DrawerLayout drawer;
+    private Menu menu;
     private User user_data = null;
 
     @Override
@@ -55,35 +58,112 @@ public class WelcomeActivity extends AppCompatActivity {
 
         db = FirebaseFirestore.getInstance();
         user = FirebaseAuth.getInstance().getCurrentUser();
-        // Mostramos el Dialog de espera antes de obtener los datos del usuario
-        showProgressDialog(getString(R.string.loading_user_courses));
-        getUserData(user.getUid());
-
-        toast_txt1 = getString(R.string.toast1);
 
         // Obtenemos el toolbar y lo añadimos al activity (para que se vean los iconos)
         toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        textView = findViewById(R.id.zero_courses);
+        drawer = findViewById(R.id.drawer_layout);
+        NavigationView navigationView = findViewById(R.id.nav_view);
+        View nav_header = navigationView.getHeaderView(0);
+        displayName = nav_header.findViewById(R.id.user_displayName);
+        email = nav_header.findViewById(R.id.user_email);
+        profile_image = nav_header.findViewById(R.id.user_profile_image);
+        navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
+            @Override
+            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+                switch (item.getItemId()) {
+                    case R.id.nav_courses:
+                        // Primero cambiamos el título
+                        toolbar.setTitle(getString(R.string.titleWelcome));
+                        // Reemplazamos el fragment por el de bienvenida (el de los cursos)
+                        MyCoursesFragment myCoursesFragment = new MyCoursesFragment();
+                        getSupportFragmentManager().beginTransaction()
+                                .replace(R.id.fragment_container, myCoursesFragment).addToBackStack(null)
+                                .commit();
+                        break;
 
-        courses = new ArrayList<>();
-        adapater = new CoursesListAdapater(courses, this);
-        listView = findViewById(R.id.courses_list);
-        // Añadimos el adapter al ListView
-        listView.setAdapter(adapater);
+                    case R.id.nav_profile:
+                        // Primero cambiamos el título
+                        toolbar.setTitle(getString(R.string.my_profile));
+                        // Reemplazamos el fragment por el del perfil del usuario
+                        ProfileFragment profileFragment = new ProfileFragment();
+                        getSupportFragmentManager().beginTransaction()
+                                .replace(R.id.fragment_container, profileFragment).addToBackStack(null)
+                                .commit();
+                        break;
+
+                    case R.id.nav_chat:
+                        // Primero cambiamos el título
+                        toolbar.setTitle(getString(R.string.titleContacts));
+                        // Reemplazamos el fragment por el de contactos
+                        ContactsFragment contactsFragment = new ContactsFragment();
+                        getSupportFragmentManager().beginTransaction()
+                                .replace(R.id.fragment_container, contactsFragment).addToBackStack(null)
+                                .commit();
+                        break;
+
+                    case R.id.nav_logout:
+                        // Cerramos sesión
+                        FirebaseAuth.getInstance().signOut();
+                        // Volvemos al Activity de login
+                        Intent intent = new Intent(WelcomeActivity.this, MainActivity.class);
+                        startActivity(intent);
+                        finish();
+                        break;
+
+                    case R.id.nav_website:
+                        // Abre la página del Esteve Terradas
+                        Intent web = new Intent(Intent.ACTION_VIEW);
+                        web.setData(Uri.parse("http://www.iesesteveterradas.cat/"));
+                        startActivity(web);
+                        break;
+
+                    case R.id.nav_facebook:
+                        Intent fb = new Intent(Intent.ACTION_VIEW);
+                        fb.setData(Uri.parse("https://www.facebook.com/pages/IES-Esteve-Terradas-i-Illa/123296617686766"));
+                        startActivity(fb);
+                        break;
+
+                    case R.id.nav_twitter:
+                        Intent tw = new Intent(Intent.ACTION_VIEW);
+                        tw.setData(Uri.parse("https://twitter.com/iesteveterradas?lang=ca"));
+                        startActivity(tw);
+                        break;
+                }
+
+                drawer.closeDrawer(GravityCompat.START);
+                return true;
+            }
+        });
+
+        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawer, toolbar,
+                R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+        drawer.addDrawerListener(toggle);
+        toggle.syncState();
+
+        getProfile(user.getUid());
+        getUserData(user.getUid());
     }
 
     @Override
     public void onBackPressed() {
-        // Mostrar home screen de Android
-        moveTaskToBack(true);
+        if (drawer.isDrawerOpen(GravityCompat.START)) {
+            drawer.closeDrawer(GravityCompat.START);
+        } else {
+            // Mostrar home screen de Android
+            moveTaskToBack(true);
+        }
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Hace un Inflate del menu, esto añade los elementos al ActionBar si está presente
         getMenuInflater().inflate(R.menu.course_menu, menu);
+        // Ocultamos el icono por defecto, luego lo mostraremos si el usuario es un alumno
+        MenuItem item = menu.findItem(R.id.action_inscribeBook);
+        item.setVisible(false);
+        this.menu = menu;
         return true;
     }
 
@@ -91,51 +171,14 @@ public class WelcomeActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         // Obtenemos el id del item seleccionado
         int id = item.getItemId();
-        if (id == R.id.action_inscribeBook) {
-            // Si el id es igual al icono del libro se abrirá un activity con todos los cursos
-            Intent intent = new Intent(WelcomeActivity.this, CategoriesActivity.class);
-            startActivity(intent);
-            return true;
+        switch (id) {
+            case R.id.action_inscribeBook:
+                // Si el id es igual al icono del libro se abrirá un activity con todos los cursos
+                Intent intent = new Intent(WelcomeActivity.this, CategoriesActivity.class);
+                startActivity(intent);
+                break;
         }
         return super.onOptionsItemSelected(item);
-    }
-
-    // TODO: Cambiar style y textColor de los AlertDialog de todas las activitys
-    /**
-     * Muesta un diálogo con un botón de ok y el texto que le pasamos como parámetro
-     * @param dialog_txt - El texto a mostrar en el diálogo
-     */
-    private void showDialog(String dialog_txt) {
-        // Creo un diálogo
-        AlertDialog.Builder builder = new AlertDialog.Builder(WelcomeActivity.this);
-        builder.setMessage(dialog_txt)
-                .setCancelable(false)
-                .setPositiveButton(getString(R.string.dialogOK_button), new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {}
-                });
-        AlertDialog alert = builder.create();
-        // Lo muestro
-        alert.show();
-    }
-
-    /**
-     * Muestra un AlertDialog que emula a un ProgressDialog (la clase ProgressDialog está deprecated, por eso usamos este)
-     * @param msg - El mensaje que se mostrará en el Dialog
-     */
-    private void showProgressDialog(String msg){
-        // Creamos el AlertDialog y le aplicamos un style personalizado
-        AlertDialog.Builder builder = new AlertDialog.Builder(this, R.style.CustomAlertDialog);
-        // Inflate de la vista
-        View view = getLayoutInflater().inflate(R.layout.custom_progress_dialog, null);
-        // Obtenemos el TextView de la vista para poder poner el texto
-        TextView tv_message = view.findViewById(R.id.loading_msg);
-        tv_message.setText(msg);
-        // Ponemos la vista y lo hacemos no cancelable (para hacerlo modal)
-        builder.setView(view)
-                .setCancelable(false);
-        progressDialog = builder.create();
-        // Mostramos el Dialog
-        progressDialog.show();
     }
 
     /**
@@ -150,102 +193,57 @@ public class WelcomeActivity extends AppCompatActivity {
                 public void onSuccess(DocumentSnapshot documentSnapshot) {
                     // Obtener los datos del usuario
                     user_data = documentSnapshot.toObject(User.class);
-                    getUserCourses(user_data.getCourses(), user_data.getName());
+                    // Si el usuario es un alumno, mostramos el icono
+                    if (user_data.getType().equals(FirebaseStrings.DEFAULT_USER_TYPE)) {
+                        // Lo mostramos
+                        MenuItem item = menu.findItem(R.id.action_inscribeBook);
+                        item.setVisible(true);
+                    }
+                    // Mostramos el email del usuario
+                    email.setText(user_data.getEmail());
+                    // Ponemos los datos del usuario en el Intent de este activity
+                    getIntent().putExtra(IntentExtras.EXTRA_USER_DATA, user_data);
+                    // Creamos el fragment principal
+                    MyCoursesFragment fragment = new MyCoursesFragment();
+                    getSupportFragmentManager().beginTransaction()
+                            .replace(R.id.fragment_container, fragment)
+                            .commit();
                 }
             }).addOnFailureListener(new OnFailureListener() {
                  @Override
                  public void onFailure(@NonNull Exception e) {
-                     // Finaliza ProgressBar
-                     progressDialog.dismiss();
-                     showDialog(getString(R.string.dialog_error_userData));
-                     //System.out.println("Error -> " + e);
+                     e.printStackTrace();
                  }
              });
     }
 
     /**
-     * Busca los cursos a los que está inscrito el usuario para poder mostrarlos en el ListView
-     * @param courses_ids - El array con los IDs de los cursos a los que está inscrito el usuario (podria ser nulo, lo comprueba este método)
-     * @param name - El nombre del usuario para enseñar un Toast de bienvenida al finalizar este método
+     * Busca los datos del usuario en Realtime Database sabiendo su ID
+     * @param UID - El UID del usuario del que queremos los datos
      */
-    private void getUserCourses(ArrayList<Integer> courses_ids, String name){
-        if (courses_ids != null) {
-            for (int course_id : courses_ids) {
-                db.collection(FirebaseStrings.COLLECTION_2)
-                        .whereEqualTo(FirebaseStrings.FIELD1_C2, course_id)
-                        // Aplicamos el filtro limit() para que la consulta devuelva 1 resultado
-                        .limit(1)
-                        .get()
-                        .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                            @Override
-                            public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                                if (task.isSuccessful()) {
-                                    // Obtenemos el primer resultado de la consulta (no debería devolver más de 1, pero lo hago para evitar hacer un bucle)
-                                    Course course = task.getResult().getDocuments().get(0).toObject(Course.class);
-                                    // Añadimos el curso al array
-                                    courses.add(course);
-                                    // Notificamos al adapter que se añadido un curso (para que se vea en el ListView)
-                                    adapater.notifyDataSetChanged();
-                                } else {
-                                    showDialog(getString(R.string.dialog_error_courses));
-                                    //System.out.println("Error writing document -> "+task.getException());
-                                }
-                            }
-                        });
+    private void getProfile(String UID) {
+        reference = FirebaseDatabase.getInstance().getReference(FirebaseStrings.REFERENCE_1).child(UID);
+        reference.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                ChatUser user = dataSnapshot.getValue(ChatUser.class);
+                // Ponemos el nombre que utiliza el usuario en el chat en el navigation header
+                displayName.setText(user.getDisplayName());
+                if (user.getImageURL().equals(FirebaseStrings.DEFAULT_IMAGE_VALUE)) {
+                    // Si el usuario tiene como ImageURL el valor 'default', le pondremos la imagen de usuario por defecto
+                    profile_image.setImageResource(R.drawable.google_user_icon);
+                } else {
+                    // Pone la imagen del usuario en el CircleImageView
+                    if (user.getImageURL() != null) {
+                        Glide.with(WelcomeActivity.this).load(user.getImageURL()).into(profile_image);
+                    }
+                }
             }
-            // Mostrar Toast de bienvienida
-            Toast.makeText(WelcomeActivity.this, toast_txt1 + " " + name + "!! :)",
-                    Toast.LENGTH_SHORT).show();
-        } else {
-            // Mostrar Toast de bienvienida
-            Toast.makeText(WelcomeActivity.this, toast_txt1 + " " + name + "!! :)",
-                    Toast.LENGTH_SHORT).show();
-            // Mostramos en un TextView que el usuario no está inscrito en ningún curso
-            textView.setText(getString(R.string.no_courses));
-        }
-        // Finaliza ProgressBar
-        progressDialog.dismiss();
-    }
 
-    //TODO: Cambiar de Activity los métodos para hacer inserts
-
-    private void addCourse(Course course) {
-        db.collection(FirebaseStrings.COLLECTION_2)
-                // El ID del documento se genera automáticamente, para hacerlo usamos el método add() en vez de set()
-                .add(course)
-                .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
-                    @Override
-                    public void onSuccess(DocumentReference documentReference) {
-                        //TODO: Quitar texto hardcordeado
-                        Toast.makeText(WelcomeActivity.this, "Curso añadido correctamente",
-                                Toast.LENGTH_SHORT).show();
-                    }
-                })
-                .addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        Log.w("DOC", "Error writing document", e);
-                    }
-                });
-    }
-
-    private void addUnit(Unit unit) {
-        db.collection(FirebaseStrings.COLLECTION_3)
-                // El ID del documento se genera automáticamente, para hacerlo usamos el método add() en vez de set()
-                .add(unit)
-                .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
-                    @Override
-                    public void onSuccess(DocumentReference documentReference) {
-                        //TODO: Quitar texto hardcordeado
-                        Toast.makeText(WelcomeActivity.this, "Unidad añadida correctamente!",
-                                Toast.LENGTH_SHORT).show();
-                    }
-                })
-                .addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        Log.w("DOC", "Error writing document", e);
-                    }
-                });
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                Log.e("Error", databaseError.getMessage());
+            }
+        });
     }
 }

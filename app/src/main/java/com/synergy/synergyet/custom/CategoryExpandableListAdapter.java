@@ -12,19 +12,19 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import com.synergy.synergyet.R;
 
-import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class CategoryExpandableListAdapter extends BaseExpandableListAdapter {
     private Context context;
     private List<String> expandableListTitle;
-    private HashMap<String, List<String>> expandableListDetail;
+    private Map<String, List<String>> expandableListDetail;
 
     private Drawable expand_more;
     private Drawable expand_less;
 
     public CategoryExpandableListAdapter(Context context, List<String> expandableListTitle,
-                                         HashMap<String, List<String>> expandableListDetail) {
+                                         Map<String, List<String>> expandableListDetail) {
         this.context = context;
         this.expandableListTitle = expandableListTitle;
         this.expandableListDetail = expandableListDetail;
@@ -50,10 +50,10 @@ public class CategoryExpandableListAdapter extends BaseExpandableListAdapter {
         if (convertView == null) {
             LayoutInflater layoutInflater = (LayoutInflater) this.context
                     .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            convertView = layoutInflater.inflate(R.layout.category_expandable_item, null);//R.layout.list_item, null);
+            convertView = layoutInflater.inflate(R.layout.expandable_item, null);
         }
         TextView expandedListTextView = (TextView) convertView
-                .findViewById(R.id.itemTitle);//expandedListItem);
+                .findViewById(R.id.itemTitle);
         expandedListTextView.setText(expandedListText);
         return convertView;
     }
@@ -86,7 +86,7 @@ public class CategoryExpandableListAdapter extends BaseExpandableListAdapter {
         if (convertView == null) {
             LayoutInflater layoutInflater = (LayoutInflater) this.context.
                     getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            convertView = layoutInflater.inflate(R.layout.category_expandable_list, null);
+            convertView = layoutInflater.inflate(R.layout.expandable_list, null);
         }
         TextView listTitleTextView = (TextView) convertView
                 .findViewById(R.id.listTitle);

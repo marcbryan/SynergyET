@@ -1,26 +1,21 @@
 package com.synergy.synergyet.model;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class Unit {
     private int unit_id;
     private String name;
     private int hours;
-    private ArrayList<Task> tasks;
+    private List<UnitTask> tasks;
     private ArrayList<Object[]> assistance;
     private int course_id;
+    private int order;
 
     /**
      * Para poder insertar los datos de una clase personalizada en Cloud Firestore, se necesita un constructor público sin parámetros
      */
     public Unit() {}
-
-    public Unit(int unit_id, String name, int hours, int course_id) {
-        this.unit_id = unit_id;
-        this.name = name;
-        this.hours = hours;
-        this.course_id = course_id;
-    }
 
     public int getUnit_id() {
         return unit_id;
@@ -34,7 +29,7 @@ public class Unit {
         return hours;
     }
 
-    public ArrayList<Task> getTasks() {
+    public List<UnitTask> getTasks() {
         return tasks;
     }
 
@@ -44,6 +39,10 @@ public class Unit {
 
     public int getCourse_id() {
         return course_id;
+    }
+
+    public int getOrder() {
+        return order;
     }
 
     public void setUnit_id(int unit_id) {
@@ -58,8 +57,8 @@ public class Unit {
         this.hours = hours;
     }
 
-    public void setTasks(ArrayList<Task> tasks) {
-        this.tasks = tasks;
+    public void setTasks(List<UnitTask> unitTasks) {
+        this.tasks = unitTasks;
     }
 
     public void setAssistance(ArrayList<Object[]> assistance) {
@@ -69,4 +68,10 @@ public class Unit {
     public void setCourse_id(int course_id) {
         this.course_id = course_id;
     }
+
+    public void setOrder(int order) {
+        this.order = order;
+    }
+
+
 }

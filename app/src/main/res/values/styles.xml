@@ -23,9 +23,16 @@
 
     <!-- Style para el AlertDialog -->
     <style name="CustomAlertDialog" parent="Theme.AppCompat.Light.Dialog.Alert">
+        <!-- Para cambiar el color del texto del mensaje -->
+        <item name="android:textColorPrimary">@color/colorWhite</item>
         <!-- Para cambiar el color de los botones (aceptar/cancelar) -->
         <item name="colorAccent">@color/colorWhite</item>
         <item name="android:background">@color/colorPrimary</item>
+    </style>
+    
+    <style name="TextInputLayoutTheme" parent="Widget.MaterialComponents.TextInputLayout.FilledBox.Dense">
+        <item name="colorAccent">@color/colorAccent</item>
+        <item name="colorControlNormal">@color/colorGrayBorder</item>
     </style>
 
 </resources>

@@ -4,6 +4,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.support.annotation.NonNull;
+import android.support.design.widget.Snackbar;
 import android.support.design.widget.TextInputEditText;
 import android.support.design.widget.TextInputLayout;
 import android.support.v4.content.ContextCompat;
@@ -24,22 +25,18 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.firestore.DocumentReference;
-import com.google.firebase.firestore.DocumentSnapshot;
-import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.auth.SignInMethodQueryResult;
 import com.synergy.synergyet.custom.DelayedProgressDialog;
-import com.synergy.synergyet.model.User;
-import com.synergy.synergyet.strings.FirebaseStrings;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
 public class MainActivity extends AppCompatActivity {
-
     private EditText et_user;
     private EditText et_pass;
     private ImageView eye;
@@ -49,13 +46,8 @@ public class MainActivity extends AppCompatActivity {
     private FirebaseAuth mAuth;
     private FirebaseUser user;
     private AlertDialog.Builder builder;
-
-    private String dialog_txt1;
-    private String dialog_txt2;
-    private String dialogOK;
-    private boolean showing_pass = false;
-
     private DelayedProgressDialog progressDialog = new DelayedProgressDialog();
+    private boolean showing_pass = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -69,11 +61,6 @@ public class MainActivity extends AppCompatActivity {
             Intent intent = new Intent(MainActivity.this, WelcomeActivity.class);
             startActivity(intent);
         }
-
-        // Obtener los textos de strings.xml
-        dialog_txt1 = getString(R.string.dialog1_txt1);
-        dialog_txt2 = getString(R.string.dialog1_txt2);
-        dialogOK = getString(R.string.dialogOK_button);
 
         // Obtener los componentes del activity
         et_user = findViewById(R.id.et_username);
@@ -112,7 +99,8 @@ public class MainActivity extends AppCompatActivity {
                 String email = et_user.getText().toString();
                 String password = et_pass.getText().toString();
                 if (email.equals("") || password.equals("")) {
-                    showDialog(dialog_txt1);
+                    // Mostramos Dialog de error
+                    showDialog(getString(R.string.dialog_enter_email_pass));
                 } else {
                     // Si el usuario introduce email y password, comprobaremos si las credenciales son correctas
                     progressDialog.show(getSupportFragmentManager(), "tag");
@@ -169,12 +157,30 @@ public class MainActivity extends AppCompatActivity {
                 // Sobreescribimos el listener del botón Aceptar (si lo hacemos de esta manera evitamos que se cierre el Dialog al pulsar 'Aceptar')
                 dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(new View.OnClickListener() {
                     @Override
-                    public void onClick(View v) {
+                    public void onClick(final View v) {
                         if (TextUtils.isEmpty(et_dialogEmail.getText())) {
                             til.setError(getString(R.string.dialog_empty_email));
                         } else {
                             if (Patterns.EMAIL_ADDRESS.matcher(et_dialogEmail.getText()).matches()) {
-                                //TODO: Enviar mail para cambiar contraseña
+                                final String email = et_dialogEmail.getText().toString();
+                                mAuth.fetchSignInMethodsForEmail(email).addOnCompleteListener(new OnCompleteListener<SignInMethodQueryResult>() {
+                                    @Override
+                                    public void onComplete(@NonNull Task<SignInMethodQueryResult> task) {
+                                        // Si la cuenta existe, se enviará el correo, si no existe, no se enviará nada
+                                        if (task.getResult().getSignInMethods().size() > 0){
+                                            mAuth.sendPasswordResetEmail(email);
+                                        }
+                                        // Cerramos el Dialog
+                                        dialog.dismiss();
+                                        // Mostraremos el Snackbar de mail enviado (aunque la cuenta no exista)
+                                        Snackbar.make(getWindow().getDecorView().getRootView(), getString(R.string.snackbar_mail_sent), Snackbar.LENGTH_SHORT).show();
+                                    }
+                                }).addOnFailureListener(new OnFailureListener() {
+                                    @Override
+                                    public void onFailure(@NonNull Exception e) {
+                                        e.printStackTrace();
+                                    }
+                                });
                             } else {
                                 til.setError(getString(R.string.dialog_wrong_email));
                             }
@@ -188,22 +194,29 @@ public class MainActivity extends AppCompatActivity {
         signUp.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                // Abrimos el formulario para registrarse
                 Intent intent = new Intent(MainActivity.this, SignUpActivity.class);
                 startActivity(intent);
             }
         });
     }
 
+    @Override
+    public void onBackPressed() {
+        // Mostrar home screen de Android
+        moveTaskToBack(true);
+    }
+
     /**
-     * Muesta un diálogo con un botón de ok y el texto que le pasamos como parámetro
+     * Muesta un diálogo con un botón de OK y el texto que le pasamos como parámetro
      * @param dialog_txt - El texto a mostrar en el diálogo
      */
     private void showDialog(String dialog_txt) {
         // Creo un diálogo
-        AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+        AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this, R.style.CustomAlertDialog);
         builder.setMessage(dialog_txt)
                 .setCancelable(false)
-                .setPositiveButton(dialogOK, new DialogInterface.OnClickListener() {
+                .setPositiveButton(getString(R.string.dialogOK_button), new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
                         // Borra el texto del EditText del usuario y de la contraseña
                         et_user.setText("");
@@ -243,7 +256,7 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         // Finaliza el ProgressDialog
-                        progressDialog.dismiss();
+                        progressDialog.cancel();
                         if (task.isSuccessful()) {
                             // Si el login se realiza con éxito, accederá a la aplicación
                             user = mAuth.getCurrentUser();
@@ -253,8 +266,7 @@ public class MainActivity extends AppCompatActivity {
                             startActivity(intent);
                         } else {
                             // Si el login falla, se mostrará al usuario un diálogo con un mensaje de error
-                            showDialog(dialog_txt2);
-                            //Log.w("FirebaseError", "signInWithEmail:failure", task.getException());
+                            showDialog(getString(R.string.dialog_wrong_combination));
                         }
                     }
                 });

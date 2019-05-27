@@ -1,32 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="vertical">
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
+    android:orientation="horizontal"
+    tools:ignore="ContentDescription,UseCompoundDrawables">
 
         <ImageView
-            android:id="@+id/imageView"
-            android:layout_width="35dp"
-            android:layout_height="match_parent"
-            android:layout_marginLeft="5dp"
+            android:id="@+id/indicator"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:padding="10dp"
-            app:srcCompat="@drawable/dot_icon" />
+            app:srcCompat="@drawable/ic_expand_more_gray_24dp" />
 
         <TextView
-            android:id="@+id/itemTitle"
+            android:id="@+id/listTitle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:paddingTop="10dp"
             android:paddingBottom="10dp"
-            android:text="TextView"
             android:textColor="@color/colorBlueTitle"
-            android:textSize="18sp" />
-    </LinearLayout>
+            android:textSize="18sp"
+            android:textStyle="bold" />
 
 </LinearLayout>
