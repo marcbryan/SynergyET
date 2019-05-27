@@ -12,6 +12,7 @@ import android.os.Build;
 
 import com.synergy.synergyet.R;
 
+@SuppressWarnings("deprecation")
 public class OreoNotification extends ContextWrapper {
     private static final String CHANNEL_ID = "fcm_default_channel";
     private static final String CHANNEL_NAME = "Mensajes";

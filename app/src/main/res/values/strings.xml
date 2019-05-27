@@ -23,6 +23,13 @@
     <string name="toast1">Bienvenido</string>
 
     <!-- Textos SignUpActivity -->
+    <string name="titleNewUser">Nuevo Usuario</string>
+    <string name="hintEmail">Correo electrónico</string>
+    <string name="hintName">Nombre</string>
+    <string name="hintSurname">Apellido</string>
+    <string name="hintPassword">Contraseña</string>
+    <string name="textRegister">Registrarse</string>
+    <string name="hintRepeatPassword">Repita Contraseña</string>
     <string name="dialog2_txt1">Faltan campos por rellenar</string>
     <string name="dialog2_txt2">Las contraseñas no coinciden</string>
     <string name="dialog_email_already_exists">Ese correo electrónico ya está en uso. Prueba con otro.</string>
