@@ -1,6 +1,7 @@
 package com.synergy.synergyet;
 
 import android.Manifest;
+import android.annotation.TargetApi;
 import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
@@ -190,8 +191,9 @@ public class CourseActivity extends AppCompatActivity {
      * Muestra un Dialog pidiendo permisos de escritura para poder realizar descargas,
      * si ya hay permisos no se mostrará nada
      */
+    @TargetApi(16)
     public void requestWritePermission() {
-        String[] perms = { Manifest.permission.WRITE_EXTERNAL_STORAGE};
+        String[] perms = { Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE };
         if (!EasyPermissions.hasPermissions(this, perms)) {
             // Preguntamos por permisos
             EasyPermissions.requestPermissions(this, "",

@@ -44,6 +44,8 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 
+import static android.app.Activity.RESULT_OK;
+
 public class TaskDialogFragment extends DialogFragment {
     public static final String TAG = "TaskDialogFragment";
     public final int CHOOSE_FILE_REQUESTCODE = 100;
@@ -268,20 +270,26 @@ public class TaskDialogFragment extends DialogFragment {
      * @param resultCode - El código de resultado
      * @param data - Un intent con datos del archivo seleccionado (si ha elegido uno, si no el intent será null)
      */
+
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (data != null) {
-            // Buscamos el nombre del fichero
-            Cursor returnCursor =
-                    getContext().getContentResolver().query(data.getData(), null, null, null, null);
-            assert returnCursor != null;
-            int nameIndex = returnCursor.getColumnIndex(OpenableColumns.DISPLAY_NAME);
-            returnCursor.moveToFirst();
-            String name = returnCursor.getString(nameIndex);
-            returnCursor.close();
+        if (data != null && requestCode == CHOOSE_FILE_REQUESTCODE && resultCode == RESULT_OK && data.getData() != null) {
+            Uri uri = data.getData();
+            String name = "";
+            String scheme = uri.getScheme();
+
+            if (scheme.equals("file")) {
+                name = uri.getLastPathSegment();
+            }
+            else if (scheme.equals("content")) {
+                Cursor cursor = getContext().getContentResolver().query(uri, null, null, null, null);
+                if (cursor != null && cursor.moveToFirst()) {
+                    name = cursor.getString(cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME));
+                }
+            }
             // Lo mostramos en el TextView
             tv_fileDelivered.setText(name);
             // Guardamos la uri
-            uri = data.getData();
+            this.uri = data.getData();
         }
         super.onActivityResult(requestCode, resultCode, data);
     }

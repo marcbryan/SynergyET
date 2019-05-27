@@ -45,7 +45,6 @@ public class MyCoursesFragment extends Fragment {
         db = FirebaseFirestore.getInstance();
         // Obtenemos los datos del usuario con getSerializableExtra()
         user = (User) getActivity().getIntent().getSerializableExtra(IntentExtras.EXTRA_USER_DATA);
-        getUserCourses(user.getCourses());
 
         // TextView en el que se mostrará un mensaje solo si el usuario no tiene cursos
         textView = view.findViewById(R.id.zero_courses);
@@ -68,6 +67,9 @@ public class MyCoursesFragment extends Fragment {
                 startActivity(intent);
             }
         });
+        if (user != null) {
+            getUserCourses(user.getCourses());
+        }
         return view;
     }
 
